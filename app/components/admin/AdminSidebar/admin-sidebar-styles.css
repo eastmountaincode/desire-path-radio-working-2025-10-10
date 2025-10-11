@@ -1,0 +1,20 @@
+.dark .admin-sidebar-link:hover {
+    background: var(--color-grey1);
+    color: var(--color-grey6);
+}
+
+.admin-sidebar-link:hover {
+    background: var(--color-grey6);
+    color: var(--color-grey1);
+}
+
+.active-admin-sidebar-link {
+    background: var(--color-grey6);
+    color: var(--color-grey1);
+}
+
+.dark .active-admin-sidebar-link {
+    background: var(--color-grey1);
+    color: var(--color-grey6);
+}
+

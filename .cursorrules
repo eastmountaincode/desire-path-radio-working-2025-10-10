@@ -1,0 +1,12 @@
+# Desire Path Radio Development Guidelines
+
+## Styling
+- Don't use `font-mono` class - it's already set globally on body in globals.css
+- Use exclusively colors defined in `app/globals.css` (@theme block: grey1-grey6, brand-dpr-orange, brand-dpr-green, brand-dpr-gray)
+
+## Dev Mode
+- We use DevModeProvider to add borders to client components for spacing visualization during development
+- Dev mode is toggled with the B key
+- Add dev mode borders to client components using: `className={devMode ? 'border border-red-500' : ''}`
+
+don't use transition-colors, I prefer if it just snaps to the new state

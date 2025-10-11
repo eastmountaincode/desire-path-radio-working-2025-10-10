@@ -1,0 +1,118 @@
+"use client"
+
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { ThemeToggle } from "./ThemeToggle"
+import { useState } from "react"
+import { useDevMode } from "./DevModeProvider"
+
+export default function Header() {
+    const pathname = usePathname()
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const devMode = useDevMode()
+
+    const isActive = (path: string) => pathname === path
+
+    return (
+        <header className={`px-6 ${devMode ? 'border border-red-500' : ''}`}>
+            <div className="flex items-center justify-between h-12">
+                <div className="flex items-center gap-12">
+                    <div className="select-none">
+                        desire path radio
+                    </div>
+
+                    {/* Desktop nav */}
+                    <nav className="hidden md:flex gap-3">
+                        <Link
+                            href="/"
+                            className={`group ${isActive("/") ? "text-brand-dpr-orange" : ""}`}
+                        >
+                            <span className={isActive("/") ? "" : "invisible group-hover:visible"}>[</span>home<span className={isActive("/") ? "" : "invisible group-hover:visible"}>]</span>
+                        </Link>
+                        <Link
+                            href="/archive"
+                            className={`group ${isActive("/archive") ? "text-brand-dpr-orange" : ""}`}
+                        >
+                            <span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>[</span>archive<span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>]</span>
+                        </Link>
+                        <Link
+                            href="/about"
+                            className={`group ${isActive("/about") ? "text-brand-dpr-orange" : ""}`}
+                        >
+                            <span className={isActive("/about") ? "" : "invisible group-hover:visible"}>[</span>about<span className={isActive("/about") ? "" : "invisible group-hover:visible"}>]</span>
+                        </Link>
+                        <Link
+                            href="/schedule"
+                            className={`group ${isActive("/schedule") ? "text-brand-dpr-orange" : ""}`}
+                        >
+                            <span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>[</span>schedule<span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>]</span>
+                        </Link>
+                        <Link
+                            href="/shop"
+                            className={`group ${isActive("/shop") ? "text-brand-dpr-orange" : ""}`}
+                        >
+                            <span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>[</span>shop<span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>]</span>
+                        </Link>
+                    </nav>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <ThemeToggle />
+
+                    {/* Hamburger menu button - mobile only */}
+                    <button
+                        className="md:hidden p-2 -mr-2"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        aria-label="Toggle menu"
+                    >
+                        <div className="w-[25px] h-3 relative flex flex-col justify-between">
+                            <span className={`h-0.5 w-full bg-current transition-transform origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-[5px]' : ''}`}></span>
+                            <span className={`h-0.5 w-full bg-current transition-transform origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-[5px]' : ''}`}></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            {/* Mobile menu dropdown */}
+            {mobileMenuOpen && (
+                <nav className={`md:hidden flex flex-col gap-3 ${devMode ? 'border border-red-500' : ''}`}>
+                    <Link
+                        href="/"
+                        className={isActive("/") ? "text-brand-dpr-orange" : ""}
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        {isActive("/") ? "[home]" : "home"}
+                    </Link>
+                    <Link
+                        href="/archive"
+                        className={isActive("/archive") ? "text-brand-dpr-orange" : ""}
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        {isActive("/archive") ? "[archive]" : "archive"}
+                    </Link>
+                    <Link
+                        href="/about"
+                        className={isActive("/about") ? "text-brand-dpr-orange" : ""}
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        {isActive("/about") ? "[about]" : "about"}
+                    </Link>
+                    <Link
+                        href="/schedule"
+                        className={isActive("/schedule") ? "text-brand-dpr-orange" : ""}
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        {isActive("/schedule") ? "[schedule]" : "schedule"}
+                    </Link>
+                    <Link
+                        href="/shop"
+                        className={isActive("/shop") ? "text-brand-dpr-orange" : ""}
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        {isActive("/shop") ? "[shop]" : "shop"}
+                    </Link>
+                </nav>
+            )}
+        </header>
+    )
+}
