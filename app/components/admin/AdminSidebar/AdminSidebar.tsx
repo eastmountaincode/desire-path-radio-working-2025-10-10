@@ -6,9 +6,9 @@ import { useDevMode } from "../../DevModeProvider"
 import "./admin-sidebar-styles.css"
 
 const navItems = [
-    { href: "/admin/dashboard", label: "Dashboard", icon: "◆" },
-    { href: "/admin/upload", label: "Upload", icon: "↑" },
-    { href: "/admin/analytics", label: "Analytics", icon: "⌗" },
+    { href: "/admin/dashboard", label: "dashboard", icon: "◆" },
+    { href: "/admin/upload", label: "upload", icon: "↑" },
+    { href: "/admin/analytics", label: "analytics", icon: "⌗" },
 ]
 
 export default function AdminSidebar() {

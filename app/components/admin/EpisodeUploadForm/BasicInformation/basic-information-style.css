@@ -1,0 +1,11 @@
+.slug-info-tooltip {
+    background-color: var(--color-grey1);
+    color: var(--color-grey6);
+    border: 1px solid var(--color-grey5);
+}
+
+.dark .slug-info-tooltip {
+    background-color: var(--color-grey6);
+    color: var(--color-grey1);
+    border: 1px solid var(--color-grey5);
+}

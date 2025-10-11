@@ -10,3 +10,5 @@
 - Add dev mode borders to client components using: `className={devMode ? 'border border-red-500' : ''}`
 
 don't use transition-colors, I prefer if it just snaps to the new state
+
+we're using supabase for metadata storage, and cloudflare r2 for object storage

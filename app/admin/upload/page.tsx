@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import EpisodeUploadForm from '@/app/components/admin/EpisodeUploadForm/EpisodeUploadForm'
 
 export default async function AdminUploads() {
   const cookieStore = await cookies()
@@ -10,9 +11,9 @@ export default async function AdminUploads() {
   }
 
   return (
-    <div className="p-6 border border-blue-500">
-      <h1 className="text-2xl mb-4">Upload Episodes</h1>
-      <p>Upload functionality coming soon...</p>
+    <div className="p-6">
+      <h1 className="text-2xl mb-6">Upload An Episode To The Archive</h1>
+      <EpisodeUploadForm />
     </div>
   )
 }
