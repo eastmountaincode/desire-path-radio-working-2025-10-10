@@ -1,4 +1,4 @@
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 
 export default function MainLayout({
   children,
@@ -8,7 +8,7 @@ export default function MainLayout({
   return (
     <>
       <Header />
-      <main className="p-6">
+      <main className="p-6 pt-[60px]">
         {children}
       </main>
     </>

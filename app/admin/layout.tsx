@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import AdminHeader from "../components/admin/AdminHeader"
+import AdminHeader from "../components/admin/AdminHeader/AdminHeader"
 import AdminSidebar from "../components/admin/AdminSidebar/AdminSidebar"
 
 export default async function AdminLayout({
@@ -13,7 +13,7 @@ export default async function AdminLayout({
   return (
     <div className="flex flex-col min-h-screen">
       <AdminHeader />
-      <div className="flex flex-1 mt-2">
+      <div className="flex flex-1 mt-2 pt-[60px]">
         {isAuthenticated && <AdminSidebar />}
         <main className="flex-1 overflow-auto">
           {children}

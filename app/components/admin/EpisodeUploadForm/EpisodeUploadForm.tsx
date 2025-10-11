@@ -4,7 +4,7 @@ import { useState, FormEvent } from 'react'
 import { useDevMode } from '@/app/components/DevModeProvider'
 import BasicInformation from './BasicInformation/BasicInformation'
 import MediaFiles from './MediaFiles'
-import GuestsSection, { type Guest } from './GuestsSection'
+import GuestsSection, { type Guest } from './GuestsSection/GuestsSection'
 import TagsSection from './TagsSection'
 
 interface FormData {

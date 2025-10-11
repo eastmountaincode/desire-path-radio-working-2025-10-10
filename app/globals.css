@@ -50,3 +50,23 @@ body {
     transition: background 0.2s ease, color 0.2s ease;
 }
 
+.dpr-button {
+    background-color: var(--color-grey6);
+    color: var(--color-grey1);
+    cursor: pointer;
+}
+
+.dpr-button:hover {
+    background-color: var(--color-grey5);
+    color: var(--color-grey1);
+}
+
+.dark .dpr-button {
+    background-color: var(--color-grey1);
+    color: var(--color-grey6);
+}
+
+.dark .dpr-button:hover {
+    background-color: var(--color-grey5);
+    color: var(--color-grey1);
+}

@@ -1,0 +1,9 @@
+header {
+    background-color: var(--color-grey1);
+    color: var(--color-grey6);
+}
+
+.dark header {
+    background-color: var(--color-grey6);
+    color: var(--color-grey1);
+}

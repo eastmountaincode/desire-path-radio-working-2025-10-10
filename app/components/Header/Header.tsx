@@ -2,9 +2,11 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ThemeToggle } from "./ThemeToggle"
+import { ThemeToggle } from "../ThemeToggle"
 import { useState } from "react"
-import { useDevMode } from "./DevModeProvider"
+import { useDevMode } from "../DevModeProvider"
+
+import "./header-style.css"
 
 export default function Header() {
     const pathname = usePathname()
@@ -14,7 +16,7 @@ export default function Header() {
     const isActive = (path: string) => pathname === path
 
     return (
-        <header className={`px-6 ${devMode ? 'border border-red-500' : ''}`}>
+        <header className={`fixed top-0 left-0 right-0 z-50 px-6 ${devMode ? 'border border-red-500' : ''}`}>
             <div className="flex items-center justify-between h-12">
                 <div className="flex items-center gap-12">
                     <div className="select-none">

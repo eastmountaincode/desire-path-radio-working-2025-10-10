@@ -13,7 +13,7 @@ export default function ClearCookieButton() {
   return (
     <button
       onClick={handleClearCookie}
-      className="px-4 py-2 border border-current hover:bg-grey6 hover:text-grey1 hover:border-color-grey6"
+      className="px-4 py-2 dpr-button"
     >
       clear auth cookie (test)
     </button>

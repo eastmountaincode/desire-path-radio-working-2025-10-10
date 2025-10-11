@@ -45,6 +45,7 @@ export default function GuestsSection({
               value={currentGuest.name}
               onChange={(e) => setCurrentGuest(prev => ({ ...prev, name: e.target.value }))}
               className="w-full p-2 border border-grey5"
+              placeholder="Enter guest name"
             />
           </div>
 
@@ -58,6 +59,7 @@ export default function GuestsSection({
               value={currentGuest.organization}
               onChange={(e) => setCurrentGuest(prev => ({ ...prev, organization: e.target.value }))}
               className="w-full p-2 border border-grey5"
+              placeholder="Optional"
             />
           </div>
         </div>
@@ -65,38 +67,46 @@ export default function GuestsSection({
         <button
           type="button"
           onClick={handleAddGuest}
-          className="px-4 py-2 bg-grey6 text-grey1 hover:bg-grey5"
+          className="px-4 py-2 dpr-button"
         >
-          Add Guest
+          Add Guest to List
         </button>
       </div>
 
-      {guests.length > 0 && (
-        <div className="space-y-2">
-          {guests.map((guest, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-2 border border-grey5"
-            >
-              <div>
-                <span className="font-bold">{guest.name}</span>
-                {guest.organization && (
-                  <span className="text-grey5 ml-2">
-                    ({guest.organization})
-                  </span>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveGuest(index)}
-                className="px-3 py-1 text-brand-dpr-orange hover:underline"
+      {/* Guest List */}
+      <div className="space-y-2">
+        <h3 className="text-lg font-bold text-grey6">
+          Guest List {guests.length > 0 && `(${guests.length})`}
+        </h3>
+        {guests.length === 0 ? (
+          <p className="text-grey5 italic">No guests added yet</p>
+        ) : (
+          <div className="space-y-2">
+            {guests.map((guest, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 border border-grey5 bg-grey1"
               >
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                <div>
+                  <span className="font-bold">{guest.name}</span>
+                  {guest.organization && (
+                    <span className="text-grey5 ml-2">
+                      ({guest.organization})
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveGuest(index)}
+                  className="px-3 py-1 text-brand-dpr-orange hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

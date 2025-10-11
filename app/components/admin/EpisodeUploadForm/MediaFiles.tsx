@@ -191,7 +191,7 @@ export default function MediaFiles({
         </label>
         
         <div className="flex items-center gap-4">
-          <label className="px-4 py-2 bg-grey6 text-grey1 cursor-pointer hover:bg-grey5">
+          <label className="px-4 py-2 dpr-button">
             Choose Audio File
             <input
               ref={audioInputRef}
@@ -227,7 +227,7 @@ export default function MediaFiles({
         </label>
         
         <div className="flex items-center gap-4">
-          <label className="px-4 py-2 bg-grey6 text-grey1 cursor-pointer hover:bg-grey5">
+          <label className="px-4 py-2 dpr-button">
             Choose Image File
             <input
               ref={imageInputRef}
