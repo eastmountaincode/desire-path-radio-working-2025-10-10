@@ -1,0 +1,19 @@
+.dpr-tag {
+    background-color: var(--color-grey1);
+}
+
+.dark .dpr-tag {
+    background-color: var(--color-grey6);
+}
+
+.selected-dpr-tag {
+    background-color: var(--color-brand-dpr-orange);
+    color: var(--color-grey1);
+    border-color: var(--color-brand-dpr-orange);
+}
+
+.dark .selected-dpr-tag {
+    background-color: var(--color-grey1);
+    color: var(--color-brand-dpr-orange);
+    border-color: var(--color-brand-dpr-orange);
+}

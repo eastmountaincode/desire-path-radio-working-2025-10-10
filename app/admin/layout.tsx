@@ -2,6 +2,9 @@ import { cookies } from 'next/headers'
 import AdminHeader from "../components/admin/AdminHeader/AdminHeader"
 import AdminSidebar from "../components/admin/AdminSidebar/AdminSidebar"
 
+// Force dynamic rendering to check authentication on every request
+export const dynamic = 'force-dynamic'
+
 export default async function AdminLayout({
   children,
 }: {

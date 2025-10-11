@@ -1,6 +1,9 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
+// Force dynamic rendering to check authentication on every request
+export const dynamic = 'force-dynamic'
+
 export default async function AnalyticsPage() {
     const cookieStore = await cookies()
     const isAuthenticated = cookieStore.get('admin_authenticated')?.value === 'true'

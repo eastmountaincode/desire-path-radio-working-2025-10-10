@@ -4,8 +4,9 @@ import { useState, FormEvent } from 'react'
 import { useDevMode } from '@/app/components/DevModeProvider'
 import BasicInformation from './BasicInformation/BasicInformation'
 import MediaFiles from './MediaFiles'
-import GuestsSection, { type Guest } from './GuestsSection/GuestsSection'
-import TagsSection from './TagsSection'
+import GuestsSection, { type Guest } from './GuestsSection'
+import TagsSection from './TagsSection/TagsSection'
+import { type Tag } from '@/lib/tags'
 
 interface FormData {
   title: string
@@ -16,7 +17,7 @@ interface FormData {
   image_url: string | null
   duration_seconds: number | null
   guests: Guest[]
-  tag_ids: number[]
+  tags: Tag[]
 }
 
 export default function EpisodeUploadForm() {
@@ -30,7 +31,7 @@ export default function EpisodeUploadForm() {
     image_url: null,
     duration_seconds: null,
     guests: [],
-    tag_ids: []
+    tags: []
   })
   
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -68,7 +69,7 @@ export default function EpisodeUploadForm() {
         image_url: null,
         duration_seconds: null,
         guests: [],
-        tag_ids: []
+        tags: []
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
@@ -127,7 +128,10 @@ export default function EpisodeUploadForm() {
         onChange={(guests) => setFormData(prev => ({ ...prev, guests }))}
       />
 
-      <TagsSection />
+      <TagsSection
+        tags={formData.tags}
+        onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
+      />
 
       {/* Submit Button */}
       <div className="pt-4">

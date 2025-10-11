@@ -75,7 +75,7 @@ export default function GuestsSection({
 
       {/* Guest List */}
       <div className="space-y-2">
-        <h3 className="text-lg font-bold text-grey6">
+        <h3 className="text-lg font-bold">
           Guest List {guests.length > 0 && `(${guests.length})`}
         </h3>
         {guests.length === 0 ? (
@@ -85,12 +85,12 @@ export default function GuestsSection({
             {guests.map((guest, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 border border-grey5 bg-grey1"
+                className="flex items-center justify-between p-3 border border-grey5"
               >
                 <div>
                   <span className="font-bold">{guest.name}</span>
                   {guest.organization && (
-                    <span className="text-grey5 ml-2">
+                    <span className="ml-2">
                       ({guest.organization})
                     </span>
                   )}
