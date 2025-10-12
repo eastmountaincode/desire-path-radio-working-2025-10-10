@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { supabase } from '@/lib/supabase'
+import { createServerSupabase } from '@/lib/supabase'
+import type { Database } from '@/types/database'
 
 interface Guest {
   name: string
   organization: string
+}
+
+interface Tag {
+  type: string
+  value: string
 }
 
 interface EpisodeData {
@@ -16,7 +22,16 @@ interface EpisodeData {
   image_url: string | null
   duration_seconds: number | null
   guests: Guest[]
-  tag_ids: number[]
+  tags: Tag[]
+  is_test: boolean
+}
+
+// Helper function to create a slug from a string
+function createSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
 }
 
 export async function POST(request: NextRequest) {
@@ -32,6 +47,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const supabase = await createServerSupabase()
     const data: EpisodeData = await request.json()
 
     // Validate required fields
@@ -45,7 +61,8 @@ export async function POST(request: NextRequest) {
     // Start a transaction-like process
     // We'll track what we've created so we can rollback if needed
     const createdGuestIds: number[] = []
-    const createdEpisodeId: number | null = null
+    const createdTagIds: number[] = []
+    let createdEpisodeId: number | null = null
 
     try {
       // Step 1: Create or find guests
@@ -64,11 +81,13 @@ export async function POST(request: NextRequest) {
         }
 
         if (existingGuest) {
+          // @ts-ignore
           guestIds.push(existingGuest.id)
         } else {
           // Create new guest
           const { data: newGuest, error: createError } = await supabase
             .from('guests')
+            // @ts-ignore - Supabase type inference issue
             .insert({
               name: guest.name,
               organization: guest.organization || null
@@ -81,7 +100,9 @@ export async function POST(request: NextRequest) {
           }
 
           if (newGuest) {
+            // @ts-ignore
             guestIds.push(newGuest.id)
+            // @ts-ignore
             createdGuestIds.push(newGuest.id)
           }
         }
@@ -90,6 +111,7 @@ export async function POST(request: NextRequest) {
       // Step 2: Create episode
       const { data: episode, error: episodeError } = await supabase
         .from('episodes')
+        // @ts-ignore - Supabase type inference issue
         .insert({
           title: data.title,
           slug: data.slug,
@@ -97,7 +119,8 @@ export async function POST(request: NextRequest) {
           aired_on: data.aired_on,
           audio_url: data.audio_url,
           image_url: data.image_url,
-          duration_seconds: data.duration_seconds
+          duration_seconds: data.duration_seconds,
+          is_test: data.is_test
         })
         .select('id')
         .single()
@@ -106,7 +129,9 @@ export async function POST(request: NextRequest) {
         throw new Error(`Failed to create episode: ${episodeError.message}`)
       }
 
+      // @ts-ignore
       const episodeId = episode.id
+      createdEpisodeId = episodeId
 
       // Step 3: Link guests to episode
       if (guestIds.length > 0) {
@@ -117,6 +142,7 @@ export async function POST(request: NextRequest) {
 
         const { error: guestsLinkError } = await supabase
           .from('episode_guests')
+          // @ts-ignore - Supabase type inference issue
           .insert(episodeGuests)
 
         if (guestsLinkError) {
@@ -124,15 +150,64 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Step 4: Link tags to episode
-      if (data.tag_ids.length > 0) {
-        const episodeTags = data.tag_ids.map(tagId => ({
+      // Step 4: Create or find tags
+      const tagIds: number[] = []
+      
+      for (const tag of data.tags) {
+        const tagSlug = createSlug(tag.value)
+        const tagType = tag.type.toUpperCase()
+        
+        // Try to find existing tag by type and value
+        const { data: existingTag, error: findError } = await supabase
+          .from('tags')
+          .select('id')
+          .eq('type', tagType)
+          .eq('name', tag.value)
+          .maybeSingle()
+
+        if (findError && findError.code !== 'PGRST116') { // PGRST116 is "not found"
+          throw new Error(`Failed to search for tag: ${findError.message}`)
+        }
+
+        if (existingTag) {
+          // @ts-ignore
+          tagIds.push(existingTag.id)
+        } else{
+          // Create new tag
+          const { data: newTag, error: createError } = await supabase
+            .from('tags')
+            // @ts-ignore - Supabase type inference issue
+            .insert({
+              name: tag.value,
+              slug: tagSlug,
+              type: tagType
+            })
+            .select('id')
+            .single()
+
+          if (createError) {
+            throw new Error(`Failed to create tag: ${createError.message}`)
+          }
+
+          if (newTag) {
+            // @ts-ignore
+            tagIds.push(newTag.id)
+            // @ts-ignore
+            createdTagIds.push(newTag.id)
+          }
+        }
+      }
+
+      // Step 5: Link tags to episode
+      if (tagIds.length > 0) {
+        const episodeTags = tagIds.map(tagId => ({
           episode_id: episodeId,
           tag_id: tagId
         }))
 
         const { error: tagsLinkError } = await supabase
           .from('episode_tags')
+          // @ts-ignore - Supabase type inference issue
           .insert(episodeTags)
 
         if (tagsLinkError) {
@@ -160,6 +235,14 @@ export async function POST(request: NextRequest) {
           .from('guests')
           .delete()
           .in('id', createdGuestIds)
+      }
+
+      // Rollback: Delete newly created tags
+      if (createdTagIds.length > 0) {
+        await supabase
+          .from('tags')
+          .delete()
+          .in('id', createdTagIds)
       }
 
       throw error

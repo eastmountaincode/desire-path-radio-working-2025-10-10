@@ -80,38 +80,38 @@ export default function Header() {
                 <nav className={`md:hidden flex flex-col gap-3 ${devMode ? 'border border-red-500' : ''}`}>
                     <Link
                         href="/"
-                        className={isActive("/") ? "text-brand-dpr-orange" : ""}
+                        className={`group ${isActive("/") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setMobileMenuOpen(false)}
                     >
-                        {isActive("/") ? "[home]" : "home"}
+                        <span className={isActive("/") ? "" : "invisible group-hover:visible"}>[</span>home<span className={isActive("/") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
                     <Link
                         href="/archive"
-                        className={isActive("/archive") ? "text-brand-dpr-orange" : ""}
+                        className={`group ${isActive("/archive") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setMobileMenuOpen(false)}
                     >
-                        {isActive("/archive") ? "[archive]" : "archive"}
+                        <span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>[</span>archive<span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
                     <Link
                         href="/about"
-                        className={isActive("/about") ? "text-brand-dpr-orange" : ""}
+                        className={`group ${isActive("/about") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setMobileMenuOpen(false)}
                     >
-                        {isActive("/about") ? "[about]" : "about"}
+                        <span className={isActive("/about") ? "" : "invisible group-hover:visible"}>[</span>about<span className={isActive("/about") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
                     <Link
                         href="/schedule"
-                        className={isActive("/schedule") ? "text-brand-dpr-orange" : ""}
+                        className={`group ${isActive("/schedule") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setMobileMenuOpen(false)}
                     >
-                        {isActive("/schedule") ? "[schedule]" : "schedule"}
+                        <span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>[</span>schedule<span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
                     <Link
                         href="/shop"
-                        className={isActive("/shop") ? "text-brand-dpr-orange" : ""}
+                        className={`group ${isActive("/shop") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setMobileMenuOpen(false)}
                     >
-                        {isActive("/shop") ? "[shop]" : "shop"}
+                        <span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>[</span>shop<span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
                 </nav>
             )}

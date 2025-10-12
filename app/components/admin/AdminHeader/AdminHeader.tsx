@@ -75,17 +75,17 @@ export default function AdminHeader() {
         <nav className={`md:hidden pb-4 flex flex-col gap-3 ${devMode ? 'border border-red-500' : ''}`}>
           <Link 
             href="/" 
-            className={isActive("/") ? "text-brand-dpr-orange" : ""}
+            className={`group ${isActive("/") ? "text-brand-dpr-orange" : ""}`}
             onClick={() => setMobileMenuOpen(false)}
           >
-            {isActive("/") ? "[\u2190 go home]" : "\u2190 go home"}
+            <span className={isActive("/") ? "" : "invisible group-hover:visible"}>[</span>&larr; go home<span className={isActive("/") ? "" : "invisible group-hover:visible"}>]</span>
           </Link>
           <Link 
             href="/admin" 
-            className={isActive("/admin") ? "text-brand-dpr-orange" : ""}
+            className={`group ${isActive("/admin") ? "text-brand-dpr-orange" : ""}`}
             onClick={() => setMobileMenuOpen(false)}
           >
-            {isActive("/admin") ? "[admin]" : "admin"}
+            <span className={isActive("/admin") ? "" : "invisible group-hover:visible"}>[</span>admin<span className={isActive("/admin") ? "" : "invisible group-hover:visible"}>]</span>
           </Link>
         </nav>
       )}

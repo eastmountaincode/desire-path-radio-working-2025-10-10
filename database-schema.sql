@@ -11,6 +11,7 @@ CREATE TABLE episodes (
     audio_url TEXT NOT NULL,
     image_url TEXT,
     duration_seconds INTEGER,
+    is_test BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
