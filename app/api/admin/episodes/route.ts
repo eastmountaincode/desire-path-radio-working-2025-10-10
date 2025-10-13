@@ -47,7 +47,7 @@ function createSlug(text: string): string {
 }
 
 // Helper function to upload file to R2 and return public URL
-async function uploadToR2(file: File, bucketName: string, fileName: string): Promise<{ publicUrl: string, key: string }> {
+async function uploadToR2(file: File, bucketName: string, fileName: string): Promise<{ publicUrl: string, key: string, attempts: number }> {
   const timestamp = Date.now()
   const sanitizedName = fileName.replace(/[^a-z0-9.-]/gi, '-')
   const key = `${timestamp}-${sanitizedName}`
@@ -61,17 +61,39 @@ async function uploadToR2(file: File, bucketName: string, fileName: string): Pro
 
   const presignedUrl = await getSignedUrl(r2Client, command, { expiresIn: 3600 })
 
-  // Upload file using presigned URL
-  const uploadResponse = await fetch(presignedUrl, {
-    method: 'PUT',
-    body: file,
-    headers: {
-      'Content-Type': file.type,
-    },
-  })
+  // Upload file using presigned URL with retry logic
+  let uploadResponse: Response
+  const maxRetries = 3
+  let lastError: Error | null = null
+  let attempts = 0
 
-  if (!uploadResponse.ok) {
-    throw new Error('Failed to upload file to storage')
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    attempts = attempt
+    try {
+      uploadResponse = await fetch(presignedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
+      })
+
+      if (uploadResponse.ok) {
+        break
+      } else {
+        throw new Error(`Upload failed with status ${uploadResponse.status}`)
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown upload error')
+
+      // If this is the last attempt, throw the error
+      if (attempt === maxRetries) {
+        throw lastError
+      }
+
+      // Wait a bit before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100))
+    }
   }
 
   // Construct public URL based on bucket
@@ -84,7 +106,7 @@ async function uploadToR2(file: File, bucketName: string, fileName: string): Pro
     throw new Error(`Unknown bucket: ${bucketName}`)
   }
 
-  return { publicUrl, key }
+  return { publicUrl, key, attempts }
 }
 
 // Helper function to delete from R2
@@ -128,13 +150,18 @@ export async function POST(request: NextRequest) {
     const createdTagIds: number[] = []
     let createdEpisodeId: number | null = null
 
+    // Track upload attempts
+    let audioAttempts = 0
+    let imageAttempts = 0
+
     try {
       // Step 1: Upload audio file (if provided)
       let audioUrl: string | null = null
       if (audioFile) {
         const audioBucket = process.env.R2_AUDIO_BUCKET_NAME!
-        const { publicUrl, key } = await uploadToR2(audioFile, audioBucket, audioFile.name)
+        const { publicUrl, key, attempts } = await uploadToR2(audioFile, audioBucket, audioFile.name)
         audioUrl = publicUrl
+        audioAttempts = attempts
         createdR2Files.push({ bucket: audioBucket, key })
       }
 
@@ -142,8 +169,9 @@ export async function POST(request: NextRequest) {
       let imageUrl: string | null = null
       if (imageFile) {
         const imageBucket = process.env.R2_IMAGES_BUCKET_NAME!
-        const { publicUrl, key } = await uploadToR2(imageFile, imageBucket, imageFile.name)
+        const { publicUrl, key, attempts } = await uploadToR2(imageFile, imageBucket, imageFile.name)
         imageUrl = publicUrl
+        imageAttempts = attempts
         createdR2Files.push({ bucket: imageBucket, key })
       }
 
@@ -314,6 +342,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         episode_id: createdEpisodeId,
+        episode_slug: episodeSlug,
+        upload_attempts: {
+          audio: audioAttempts || 0,
+          image: imageAttempts || 0
+        },
         message: 'Episode created successfully'
       })
 

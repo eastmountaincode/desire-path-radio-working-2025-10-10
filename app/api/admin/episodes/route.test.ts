@@ -21,6 +21,13 @@ jest.mock('next/headers', () => ({
         ],
     })),
 }));
+
+beforeAll(async () => {
+    const { createServerSupabase } = await import('@/lib/supabase');
+    const supabase = await createServerSupabase();
+    await global.cleanupTestData(supabase);
+});
+
 test('route file should load and export POST', () => {
     expect(typeof POST).toBe('function')
 })
@@ -68,4 +75,68 @@ describe('POST /api/admin/episodes', () => {
         expect(data.episode_id).toBeDefined();
 
     });
+
+    it('should increment slug when uploading the same episode again', async () => {
+        const episode = global.createTestEpisodeData();
+    
+        const formData = new FormData();
+        formData.append('episodeData', JSON.stringify(episode));
+    
+        const audioPath = path.resolve(process.cwd(), 'public/test-assets/sound-of-waves-marine-drive-mumbai.mp3');
+        const audioBuffer = fs.readFileSync(audioPath);
+        const audioFile = new File([audioBuffer], 'sound-of-waves-marine-drive-mumbai.mp3', { type: 'audio/mpeg' });
+    
+        formData.append('audioFile', audioFile);
+    
+        const req = new NextRequest('http://localhost:3000/api/admin/episodes', {
+            method: 'POST',
+            body: formData,
+        });
+    
+        const res = await POST(req);
+        const data = await res.json();
+    
+        console.log('Duplicate upload response:', data);
+    
+        expect(res.status).toBe(200);
+        expect(data.success).toBe(true);
+        expect(data.episode_id).toBeDefined();
+        expect(data.message).toContain('Episode created successfully');
+        expect(data.episode_slug).toBe(`test-episode-1-1`);
+    });
+
+    it('should increment slug when uploading the same episode again... again', async () => {
+        const episode = global.createTestEpisodeData();
+    
+        const formData = new FormData();
+        formData.append('episodeData', JSON.stringify(episode));
+    
+        const audioPath = path.resolve(process.cwd(), 'public/test-assets/sound-of-waves-marine-drive-mumbai.mp3');
+        const audioBuffer = fs.readFileSync(audioPath);
+        const audioFile = new File([audioBuffer], 'sound-of-waves-marine-drive-mumbai.mp3', { type: 'audio/mpeg' });
+    
+        formData.append('audioFile', audioFile);
+    
+        const req = new NextRequest('http://localhost:3000/api/admin/episodes', {
+            method: 'POST',
+            body: formData,
+        });
+    
+        const res = await POST(req);
+        const data = await res.json();
+    
+        console.log('Duplicate upload response:', data);
+    
+        expect(res.status).toBe(200);
+        expect(data.success).toBe(true);
+        expect(data.episode_id).toBeDefined();
+        expect(data.message).toContain('Episode created successfully');
+        expect(data.episode_slug).toBe(`test-episode-1-2`);
+    });
+});
+
+afterAll(async () => {
+    const { createServerSupabase } = await import('@/lib/supabase');
+    const supabase = await createServerSupabase();
+    await global.cleanupTestData(supabase);
 });
