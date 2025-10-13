@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
     const tagsParam = searchParams.get('tags') // Comma-separated tag slugs
     const tagSlugs = tagsParam ? tagsParam.split(',').map(t => t.trim()).filter(Boolean) : []
     const includeTest = searchParams.get('includeTest') === 'true' // Default to false (production only)
+    const testTypes = searchParams.get('testTypes') ? searchParams.get('testTypes')!.split(',').map(t => t.trim()).filter(Boolean) : ['none']
 
     // Validate parameters
     if (limit < 1 || limit > 100) {
@@ -187,7 +188,7 @@ export async function GET(request: NextRequest) {
     
     // Apply filters
     if (!includeTest) {
-      query = query.eq('is_test', false) // Only show production episodes by default
+      query = query.in('test_type', testTypes) // Only show production episodes by default
     }
     
     if (episodeIds !== null) {
@@ -227,9 +228,9 @@ export async function GET(request: NextRequest) {
     let countQuery = supabase
       .from('episodes')
       .select('*', { count: 'exact', head: true })
-    
+
     if (!includeTest) {
-      countQuery = countQuery.eq('is_test', false)
+      countQuery = countQuery.in('test_type', testTypes)
     }
     
     if (episodeIds !== null) {
@@ -248,6 +249,7 @@ export async function GET(request: NextRequest) {
         orderBy,
         order,
         includeTest,
+        testTypes,
         ...(tagSlugs.length > 0 && { tags: tagSlugs })
       }
     })

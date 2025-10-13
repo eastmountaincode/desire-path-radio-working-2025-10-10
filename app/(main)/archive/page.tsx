@@ -51,7 +51,7 @@ export default function Archive() {
   const fetchEpisodes = async (currentOffset: number = 0) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/episodes?limit=${limit}&offset=${currentOffset}&orderBy=aired_on&order=desc&includeTest=true`)
+      const response = await fetch(`/api/episodes?limit=${limit}&offset=${currentOffset}&orderBy=aired_on&order=desc&includeTest=true&testTypes=none,manual`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch episodes')

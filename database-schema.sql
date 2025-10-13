@@ -1,6 +1,12 @@
 -- Desire Path Radio Database Schema
 -- This file serves as a reference for the Supabase database structure
 
+-- Test types
+-- none: no tests
+-- jest: created by a jest test
+-- manual: created manually using the admin panel
+CREATE TYPE test_type_enum AS ENUM ('none', 'jest', 'manual');
+
 -- Episodes
 CREATE TABLE episodes (
     id SERIAL PRIMARY KEY,
@@ -11,7 +17,7 @@ CREATE TABLE episodes (
     audio_url TEXT NOT NULL,
     image_url TEXT,
     duration_seconds INTEGER,
-    is_test BOOLEAN DEFAULT FALSE,
+    test_type test_type_enum NOT NULL DEFAULT 'none',
     created_at TIMESTAMP DEFAULT NOW()
 );
 

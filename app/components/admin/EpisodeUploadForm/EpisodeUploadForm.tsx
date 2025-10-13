@@ -19,7 +19,7 @@ interface FormData {
     duration_seconds: number | null
     guests: Guest[]
     tags: Tag[]
-    is_test: boolean
+    test_type: 'none' | 'jest' | 'manual'
 }
 
 export default function EpisodeUploadForm() {
@@ -34,7 +34,7 @@ export default function EpisodeUploadForm() {
         duration_seconds: null,
         guests: [],
         tags: [],
-        is_test: false
+        test_type: 'none' as const
     })
 
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -96,7 +96,7 @@ export default function EpisodeUploadForm() {
                 duration_seconds: formData.duration_seconds,
                 guests: formData.guests,
                 tags: formData.tags,
-                is_test: formData.is_test
+                test_type: formData.test_type
             }))
 
             // Add files
@@ -154,7 +154,7 @@ export default function EpisodeUploadForm() {
                     duration_seconds: null,
                     guests: [],
                     tags: [],
-                    is_test: false
+                    test_type: 'none' as const
                 })
                 setUploadSteps({
                     audio: 'pending',
@@ -227,15 +227,31 @@ export default function EpisodeUploadForm() {
             {/* Environment Selection */}
             <div className="space-y-2">
                 <h2 className="text-xl font-bold">Developer Settings</h2>
-                <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={formData.is_test}
-                        onChange={(e) => setFormData(prev => ({ ...prev, is_test: e.target.checked }))}
-                        className="w-5 h-5 border border-grey5"
-                    />
-                    <span>This is a test episode (not for production)</span>
-                </label>
+                <div className="space-y-3">
+                    <label className="block text-sm font-medium">Test Type</label>
+                    <div className="space-y-2">
+                        {[
+                            { value: 'none', label: 'Production (none)', description: 'Production episodes are shown to all users' },
+                            { value: 'jest', label: 'Jest Test', description: 'Jest test episodes are automatically cleaned up after tests' },
+                            { value: 'manual', label: 'Manual Test', description: 'Manual test episodes require manual deletion' }
+                        ].map((option) => (
+                            <label key={option.value} className="flex items-start gap-3 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="test_type"
+                                    value={option.value}
+                                    checked={formData.test_type === option.value}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, test_type: e.target.value as 'none' | 'jest' | 'manual' }))}
+                                    className="mt-1 w-4 h-4 border border-grey5"
+                                />
+                                <div className="flex-1">
+                                    <div className="font-medium">{option.label}</div>
+                                    <div className="text-sm text-grey5">{option.description}</div>
+                                </div>
+                            </label>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             {/* Upload Progress */}

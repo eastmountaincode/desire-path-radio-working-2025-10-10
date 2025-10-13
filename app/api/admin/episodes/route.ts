@@ -35,7 +35,7 @@ interface EpisodeData {
   duration_seconds: number | null
   guests: Guest[]
   tags: Tag[]
-  is_test: boolean
+  test_type: 'none' | 'jest' | 'manual'
 }
 
 // Helper function to create a slug from a string
@@ -207,7 +207,7 @@ export async function POST(request: NextRequest) {
             audio_url: audioUrl,
             image_url: imageUrl,
             duration_seconds: episodeData.duration_seconds,
-            is_test: episodeData.is_test
+            test_type: episodeData.test_type
           })
           .select('id')
           .single()
