@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 interface MediaFilesProps {
   audioUrl: string | null
   imageUrl: string | null
   duration: number | null
+  audioFileRef: React.MutableRefObject<File | null>
+  imageFileRef: React.MutableRefObject<File | null>
   onChange: (data: {
     audioUrl: string | null
     imageUrl: string | null
@@ -17,12 +19,14 @@ export default function MediaFiles({
   audioUrl,
   imageUrl,
   duration,
+  audioFileRef,
+  imageFileRef,
   onChange
 }: MediaFilesProps) {
-  const [audioUploading, setAudioUploading] = useState(false)
-  const [imageUploading, setImageUploading] = useState(false)
   const [audioError, setAudioError] = useState<string | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
+  const [audioDuration, setAudioDuration] = useState<number | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const audioInputRef = useRef<HTMLInputElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
 
@@ -31,23 +35,36 @@ export default function MediaFiles({
     return new Promise((resolve, reject) => {
       const audio = new Audio()
       audio.preload = 'metadata'
-      
+
       audio.onloadedmetadata = () => {
         window.URL.revokeObjectURL(audio.src)
         resolve(Math.floor(audio.duration))
       }
-      
+
       audio.onerror = () => {
+        window.URL.revokeObjectURL(audio.src)
         reject(new Error('Failed to load audio metadata'))
       }
-      
+
       audio.src = window.URL.createObjectURL(file)
     })
   }
 
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        window.URL.revokeObjectURL(imagePreview)
+      }
+    }
+  }, [imagePreview])
+
   const handleAudioSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    // Clear any previous errors
+    setAudioError(null)
 
     // Validate file type
     const validAudioTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/x-m4a']
@@ -62,134 +79,86 @@ export default function MediaFiles({
       return
     }
 
-    setAudioUploading(true)
-    setAudioError(null)
-
     try {
-      // Extract duration first
-      const audioDuration = await extractDuration(file)
+      // Extract duration
+      const duration = await extractDuration(file)
+      setAudioDuration(duration)
 
-      // Step 1: Get presigned URL from our API
-      const presignedResponse = await fetch('/api/admin/episode-audio', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileType: file.type,
-        }),
-      })
+      // Store file in ref for form submission
+      audioFileRef.current = file
 
-      if (!presignedResponse.ok) {
-        const data = await presignedResponse.json()
-        throw new Error(data.error || 'Failed to get upload URL')
-      }
-
-      const { presignedUrl, publicUrl } = await presignedResponse.json()
-
-      // Step 2: Upload directly to R2 using presigned URL
-      const uploadResponse = await fetch(presignedUrl, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
-      })
-
-      if (!uploadResponse.ok) {
-        throw new Error('Failed to upload file to storage')
-      }
-
+      // Update form with duration (URL will be set after orchestrated upload)
       onChange({
-        audioUrl: publicUrl,
+        audioUrl: null,
         imageUrl,
-        duration: audioDuration
+        duration
       })
     } catch (err) {
-      setAudioError(err instanceof Error ? err.message : 'Failed to upload audio')
-      console.error('Audio upload error:', err)
-    } finally {
-      setAudioUploading(false)
+      setAudioError('Failed to read audio file metadata')
+      console.error('Audio metadata error:', err)
     }
   }
 
-  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    // Clear any previous errors and preview
+    setImageError(null)
+
+    // Clean up previous preview URL
+    if (imagePreview) {
+      window.URL.revokeObjectURL(imagePreview)
+    }
 
     // Validate file type
     const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
     if (!validImageTypes.includes(file.type)) {
       setImageError('Please select a valid image file (.jpg, .png, .webp)')
+      // Clean up preview on error
+      if (imagePreview) {
+        window.URL.revokeObjectURL(imagePreview)
+        setImagePreview(null)
+      }
       return
     }
 
     // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
       setImageError('Image file must be less than 10MB')
+      // Clean up preview on error
+      if (imagePreview) {
+        window.URL.revokeObjectURL(imagePreview)
+        setImagePreview(null)
+      }
       return
     }
 
-    setImageUploading(true)
-    setImageError(null)
+    // Create preview URL for the selected image
+    const previewUrl = window.URL.createObjectURL(file)
+    setImagePreview(previewUrl)
 
-    try {
-      // Step 1: Get presigned URL from our API
-      const presignedResponse = await fetch('/api/admin/episode-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileType: file.type,
-        }),
-      })
+    // Store file in ref for form submission
+    imageFileRef.current = file
 
-      if (!presignedResponse.ok) {
-        const data = await presignedResponse.json()
-        throw new Error(data.error || 'Failed to get upload URL')
-      }
-
-      const { presignedUrl, publicUrl } = await presignedResponse.json()
-
-      // Step 2: Upload directly to R2 using presigned URL
-      const uploadResponse = await fetch(presignedUrl, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
-      })
-
-      if (!uploadResponse.ok) {
-        throw new Error('Failed to upload file to storage')
-      }
-
-      onChange({
-        audioUrl,
-        imageUrl: publicUrl,
-        duration
-      })
-    } catch (err) {
-      setImageError(err instanceof Error ? err.message : 'Failed to upload image')
-      console.error('Image upload error:', err)
-    } finally {
-      setImageUploading(false)
-    }
+    // Update form with null URL (will be set after orchestrated upload)
+    onChange({
+      audioUrl,
+      imageUrl: null,
+      duration
+    })
   }
 
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-bold">Media Files</h2>
-      
+
       {/* Audio Upload */}
       <div className="space-y-2">
         <label htmlFor="audio" className="block">
           Audio File *
         </label>
-        
+
         <div className="flex items-center gap-4">
           <label className="px-4 py-2 dpr-button">
             Choose Audio File
@@ -199,22 +168,19 @@ export default function MediaFiles({
               id="audio"
               accept=".mp3,.wav,.m4a,audio/mpeg,audio/wav,audio/x-m4a"
               onChange={handleAudioSelect}
-              disabled={audioUploading}
               className="hidden"
             />
           </label>
-          
-          {audioUrl && !audioUploading && (
+
+          {audioFileRef.current && !audioError && (
             <span className="text-sm text-brand-dpr-green">
-              ✓ Audio uploaded {duration && `(${Math.floor(duration / 60)}:${(duration % 60).toString().padStart(2, '0')})`}
+              ✓ {audioFileRef.current.name} ({(audioFileRef.current.size / (1024 * 1024)).toFixed(1)}MB
+              {audioDuration && ` • ${Math.floor(audioDuration / 60)}:${(audioDuration % 60).toString().padStart(2, '0')}`}
+              )
             </span>
           )}
         </div>
-        
-        {audioUploading && (
-          <p className="text-sm text-grey5">Uploading audio...</p>
-        )}
-        
+
         {audioError && (
           <p className="text-sm text-brand-dpr-orange">{audioError}</p>
         )}
@@ -225,7 +191,7 @@ export default function MediaFiles({
         <label htmlFor="image" className="block">
           Episode Image
         </label>
-        
+
         <div className="flex items-center gap-4">
           <label className="px-4 py-2 dpr-button">
             Choose Image File
@@ -235,26 +201,31 @@ export default function MediaFiles({
               id="image"
               accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
               onChange={handleImageSelect}
-              disabled={imageUploading}
               className="hidden"
             />
           </label>
-          
-          {imageUrl && !imageUploading && (
-            <span className="text-sm text-brand-dpr-green">✓ Image uploaded</span>
+
+          {imageFileRef.current && !imageError && (
+            <span className="text-sm text-brand-dpr-green">
+              ✓ {imageFileRef.current.name} ({(imageFileRef.current.size / (1024 * 1024)).toFixed(1)}MB)
+            </span>
           )}
         </div>
-        
-        {imageUploading && (
-          <p className="text-sm text-grey5">Uploading image...</p>
-        )}
-        
+
         {imageError && (
           <p className="text-sm text-brand-dpr-orange">{imageError}</p>
         )}
-        
-        {imageUrl && !imageUploading && (
-          <img src={imageUrl} alt="Episode preview" className="max-w-xs border border-grey5" />
+
+        {/* Show image preview - either selected file or uploaded URL */}
+        {(imagePreview || imageUrl) && (
+          <div className="space-y-2">
+            <p className="text-sm text-grey5">Preview:</p>
+            <img
+              src={imagePreview || imageUrl || ''}
+              alt="Episode preview"
+              className="max-w-xs border border-grey5"
+            />
+          </div>
         )}
       </div>
     </div>

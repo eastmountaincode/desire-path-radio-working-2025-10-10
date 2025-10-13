@@ -1,9 +1,11 @@
 header {
     background-color: var(--color-grey1);
     color: var(--color-grey6);
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .dark header {
     background-color: var(--color-grey6);
     color: var(--color-grey1);
 }
+

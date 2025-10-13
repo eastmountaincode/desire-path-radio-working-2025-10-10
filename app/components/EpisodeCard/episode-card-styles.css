@@ -1,0 +1,37 @@
+.episode-card-date {
+  font-family: var(--font-monument);
+  font-size: 14px;
+  letter-spacing: 0em;
+}
+
+.episode-card-title {
+  font-family: var(--font-monument-wide);
+  font-size: 20px;
+  letter-spacing: 0em;
+}
+
+.episode-card-guest {
+  font-family: var(--font-monument);
+  font-size: 14px;
+  letter-spacing: 0em;
+}
+
+.episode-card-duration {
+  font-family: var(--font-monument);
+  font-size: 14px;
+  letter-spacing: 0em;
+}
+
+.episode-card-tags {
+  font-family: var(--font-monument);
+  font-size: 12px;
+  letter-spacing: 0em;
+}
+
+.episode-card-tag {
+  border: 1px solid var(--color-grey5);
+  padding: 2px 8px;
+  background: transparent;
+  color: var(--color-grey5);
+  border-radius: 4px;
+}
