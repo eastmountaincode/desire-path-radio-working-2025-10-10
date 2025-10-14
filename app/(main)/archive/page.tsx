@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import EpisodeCard from '@/app/components/EpisodeCard/EpisodeCard'
+import ArchiveHeader from '@/app/components/ArchiveHeader/ArchiveHeader'
 
 interface Episode {
   id: number
@@ -98,10 +99,9 @@ export default function Archive() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <div className="border-b border-grey5">
+      <div className="">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">Archive</h1>
             <div className="text-sm text-grey5">
               {episodes.length} episode{episodes.length !== 1 ? 's' : ''}
             </div>
@@ -121,10 +121,12 @@ export default function Archive() {
           </div>
         ) : (
           <>
+            <ArchiveHeader />
+
             {/* Episodes Grid */}
             <div className="space-y-4 mb-8">
-              {episodes.map((episode) => (
-                <EpisodeCard key={episode.id} episode={episode} />
+              {episodes.map((episode, index) => (
+                <EpisodeCard key={episode.id} episode={episode} isLast={index === episodes.length - 1} />
               ))}
             </div>
 

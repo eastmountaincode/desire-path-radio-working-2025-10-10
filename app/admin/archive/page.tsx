@@ -53,7 +53,7 @@ export default function ArchiveManagementPage() {
             <h1 className="text-2xl mb-4">Archive Management</h1>
 
             <div className="space-y-4">
-                <div className="p-4 border border-red-500 rounded-lg">
+                <div className="p-4 border border-red-500">
                     <h2 className="text-lg font-semibold mb-2 text-red-600">Danger Zone</h2>
                     <p className="text-sm text-gray-600 mb-4">
                         These actions will permanently delete data from the database.
