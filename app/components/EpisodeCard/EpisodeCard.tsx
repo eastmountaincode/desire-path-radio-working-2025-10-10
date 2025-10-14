@@ -115,7 +115,7 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
                     ))}
                     {episode.tags.length > 2 && (
                         <span className={`episode-card-tag ${devMode ? 'border-green-500 border' : ''}`}>
-                            +{episode.tags.length - 2}
+                            +{episode.tags.length - 2}b
                         </span>
                     )}
                 </div>
