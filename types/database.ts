@@ -15,7 +15,7 @@ export interface Episode {
   created_at: string
 }
 
-export interface Guest {
+export interface Host {
   id: number
   name: string
   organization: string | null
@@ -28,9 +28,9 @@ export interface Tag {
   type: TagType
 }
 
-export interface EpisodeGuest {
+export interface EpisodeHost {
   episode_id: number
-  guest_id: number
+  host_id: number
 }
 
 export interface EpisodeTag {
@@ -46,20 +46,20 @@ export interface Database {
         Insert: Omit<Episode, 'id' | 'created_at'> & { test_type?: TestType }
         Update: Partial<Omit<Episode, 'id' | 'created_at'>>
       }
-      guests: {
-        Row: Guest
-        Insert: Omit<Guest, 'id'>
-        Update: Partial<Omit<Guest, 'id'>>
+      hosts: {
+        Row: Host
+        Insert: Omit<Host, 'id'>
+        Update: Partial<Omit<Host, 'id'>>
       }
       tags: {
         Row: Tag
         Insert: Omit<Tag, 'id'>
         Update: Partial<Omit<Tag, 'id'>>
       }
-      episode_guests: {
-        Row: EpisodeGuest
-        Insert: EpisodeGuest
-        Update: Partial<EpisodeGuest>
+      episode_hosts: {
+        Row: EpisodeHost
+        Insert: EpisodeHost
+        Update: Partial<EpisodeHost>
       }
       episode_tags: {
         Row: EpisodeTag

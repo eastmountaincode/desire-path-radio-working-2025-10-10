@@ -18,9 +18,9 @@ export default function ArchiveHeader() {
         title
       </div>
 
-      {/* Guest Header - desktop only */}
+      {/* Host Header - desktop only */}
       <div className={`archive-column-header-item hidden md:block md:col-span-2 lg:col-span-3 border-r ${devMode ? 'border-green-500 border' : ''}`}>
-        guest
+        host
       </div>
 
       {/* Duration Header - desktop only */}

@@ -4,7 +4,7 @@ import { useState, FormEvent, useRef } from 'react'
 import { useDevMode } from '@/app/components/DevModeProvider'
 import BasicInformation from './BasicInformation/BasicInformation'
 import MediaFiles from './MediaFiles'
-import GuestsSection, { type Guest } from './GuestsSection'
+import HostsSection, { type Host } from './HostsSection'
 import TagsSection from './TagsSection/TagsSection'
 import UploadProgress from './UploadProgress'
 import DeveloperSettings from './DeveloperSettings'
@@ -19,7 +19,7 @@ interface FormData {
     audio_url: string | null
     image_url: string | null
     duration_seconds: number | null
-    guests: Guest[]
+    hosts: Host[]
     tags: Tag[]
     test_type: 'none' | 'jest' | 'manual'
 }
@@ -34,7 +34,7 @@ export default function EpisodeUploadForm() {
         audio_url: null,
         image_url: null,
         duration_seconds: null,
-        guests: [],
+        hosts: [],
         tags: [],
         test_type: 'none' as const
     })
@@ -96,7 +96,7 @@ export default function EpisodeUploadForm() {
                 description: formData.description,
                 aired_on: formData.aired_on,
                 duration_seconds: formData.duration_seconds,
-                guests: formData.guests,
+                hosts: formData.hosts,
                 tags: formData.tags,
                 test_type: formData.test_type
             }))
@@ -154,7 +154,7 @@ export default function EpisodeUploadForm() {
                     audio_url: null,
                     image_url: null,
                     duration_seconds: null,
-                    guests: [],
+                    hosts: [],
                     tags: [],
                     test_type: 'none' as const
                 })
@@ -216,9 +216,9 @@ export default function EpisodeUploadForm() {
                 }))}
             />
 
-            <GuestsSection
-                guests={formData.guests}
-                onChange={(guests) => setFormData(prev => ({ ...prev, guests }))}
+            <HostsSection
+                hosts={formData.hosts}
+                onChange={(hosts) => setFormData(prev => ({ ...prev, hosts }))}
             />
 
             <TagsSection

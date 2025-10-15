@@ -13,7 +13,7 @@ interface Episode {
   audio_url: string
   image_url: string | null
   duration_seconds: number | null
-  guests: Array<{
+  hosts: Array<{
     id: number
     name: string
     organization: string | null

@@ -15,7 +15,7 @@ const r2Client = new S3Client({
   },
 })
 
-interface Guest {
+interface Host {
   name: string
   organization: string
 }
@@ -33,7 +33,7 @@ interface EpisodeData {
   audio_url?: string | null
   image_url?: string | null
   duration_seconds: number | null
-  guests: Guest[]
+  hosts: Host[]
   tags: Tag[]
   test_type: 'none' | 'jest' | 'manual'
 }
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
 
     // Track what we've created for rollback
     const createdR2Files: Array<{ bucket: string, key: string }> = []
-    const createdGuestIds: number[] = []
+    const createdHostIds: number[] = []
     const createdTagIds: number[] = []
     let createdEpisodeId: number | null = null
 
@@ -175,42 +175,42 @@ export async function POST(request: NextRequest) {
         createdR2Files.push({ bucket: imageBucket, key })
       }
 
-      // Step 3: Create guests
-      const guestIds: number[] = []
+      // Step 3: Create hosts
+      const hostIds: number[] = []
 
-      for (const guest of episodeData.guests) {
-        // Try to find existing guest by name
-        const { data: existingGuest, error: findError } = await supabase
-          .from('guests')
+      for (const host of episodeData.hosts) {
+        // Try to find existing host by name
+        const { data: existingHost, error: findError } = await supabase
+          .from('hosts')
           .select('id')
-          .eq('name', guest.name)
+          .eq('name', host.name)
           .maybeSingle() as { data: { id: number } | null, error: any }
 
         if (findError && findError.code !== 'PGRST116') {
-          throw new Error(`Failed to search for guest: ${findError.message}`)
+          throw new Error(`Failed to search for host: ${findError.message}`)
         }
 
-        if (existingGuest) {
-          guestIds.push(existingGuest.id)
+        if (existingHost) {
+          hostIds.push(existingHost.id)
         } else {
-          // Create new guest
-          const { data: newGuest, error: createError } = await supabase
-            .from('guests')
+          // Create new host
+          const { data: newHost, error: createError } = await supabase
+            .from('hosts')
             // @ts-ignore - Supabase type inference issue
             .insert({
-              name: guest.name,
-              organization: guest.organization || null
+              name: host.name,
+              organization: host.organization || null
             })
             .select('id')
             .single() as { data: { id: number } | null, error: any }
 
           if (createError) {
-            throw new Error(`Failed to create guest: ${createError.message}`)
+            throw new Error(`Failed to create host: ${createError.message}`)
           }
 
-          if (newGuest) {
-            guestIds.push(newGuest.id)
-            createdGuestIds.push(newGuest.id)
+          if (newHost) {
+            hostIds.push(newHost.id)
+            createdHostIds.push(newHost.id)
           }
         }
       }
@@ -253,20 +253,20 @@ export async function POST(request: NextRequest) {
         break // Success, exit the loop
       }
 
-      // Step 5: Link guests to episode
-      if (guestIds.length > 0) {
-        const episodeGuests = guestIds.map(guestId => ({
+      // Step 5: Link hosts to episode
+      if (hostIds.length > 0) {
+        const episodeHosts = hostIds.map(hostId => ({
           episode_id: createdEpisodeId,
-          guest_id: guestId
+          host_id: hostId
         }))
 
-        const { error: guestsLinkError } = await supabase
-          .from('episode_guests')
+        const { error: hostsLinkError } = await supabase
+          .from('episode_hosts')
           // @ts-ignore - Supabase type inference issue
-          .insert(episodeGuests)
+          .insert(episodeHosts)
 
-        if (guestsLinkError) {
-          throw new Error(`Failed to link guests: ${guestsLinkError.message}`)
+        if (hostsLinkError) {
+          throw new Error(`Failed to link hosts: ${hostsLinkError.message}`)
         }
       }
 
@@ -372,12 +372,12 @@ export async function POST(request: NextRequest) {
           .eq('id', createdEpisodeId)
       }
 
-      // Rollback: Delete newly created guests
-      if (createdGuestIds.length > 0) {
+      // Rollback: Delete newly created hosts
+      if (createdHostIds.length > 0) {
         await supabase
-          .from('guests')
+          .from('hosts')
           .delete()
-          .in('id', createdGuestIds)
+          .in('id', createdHostIds)
       }
 
       // Rollback: Delete newly created tags
@@ -417,9 +417,9 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const tableToClear = searchParams.get('table')
 
-    if (!tableToClear || !['episodes', 'guests', 'tags'].includes(tableToClear)) {
+    if (!tableToClear || !['episodes', 'hosts', 'tags'].includes(tableToClear)) {
       return NextResponse.json(
-        { error: 'Invalid or missing table parameter. Use ?table=episodes, ?table=guests, or ?table=tags' },
+        { error: 'Invalid or missing table parameter. Use ?table=episodes, ?table=hosts, or ?table=tags' },
         { status: 400 }
       )
     }
@@ -428,7 +428,7 @@ export async function DELETE(request: NextRequest) {
     let message = ''
 
     if (tableToClear === 'episodes') {
-      // Delete all episodes - CASCADE will handle episode_guests and episode_tags automatically
+      // Delete all episodes - CASCADE will handle episode_hosts and episode_tags automatically
       const { error: deleteError } = await supabase
         .from('episodes')
         .delete()
@@ -438,17 +438,17 @@ export async function DELETE(request: NextRequest) {
         throw new Error(`Failed to delete episodes: ${deleteError.message}`)
       }
       message = 'All episodes and related data cleared successfully'
-    } else if (tableToClear === 'guests') {
-      // Delete all guests - CASCADE will handle episode_guests automatically
+    } else if (tableToClear === 'hosts') {
+      // Delete all hosts - CASCADE will handle episode_hosts automatically
       const { error: deleteError } = await supabase
-        .from('guests')
+        .from('hosts')
         .delete()
         .neq('id', 0) // This deletes all rows
 
       if (deleteError) {
-        throw new Error(`Failed to delete guests: ${deleteError.message}`)
+        throw new Error(`Failed to delete hosts: ${deleteError.message}`)
       }
-      message = 'All guests cleared successfully'
+      message = 'All hosts cleared successfully'
     } else if (tableToClear === 'tags') {
       // Delete all tags - CASCADE will handle episode_tags automatically
       const { error: deleteError } = await supabase

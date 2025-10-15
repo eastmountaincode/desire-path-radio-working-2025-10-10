@@ -10,7 +10,7 @@ interface EpisodeWithRelations {
   audio_url: string
   image_url: string | null
   duration_seconds: number | null
-  guests: Array<{
+  hosts: Array<{
     id: number
     name: string
     organization: string | null
@@ -169,8 +169,8 @@ export async function GET(request: NextRequest) {
         image_url,
         duration_seconds,
         created_at,
-        episode_guests (
-          guests (
+        episode_hosts (
+          hosts (
             id,
             name,
             organization
@@ -220,7 +220,7 @@ export async function GET(request: NextRequest) {
       image_url: episode.image_url,
       duration_seconds: episode.duration_seconds,
       created_at: episode.created_at,
-      guests: episode.episode_guests?.map((eg: any) => eg.guests) || [],
+      hosts: episode.episode_hosts?.map((eh: any) => eh.hosts) || [],
       tags: episode.episode_tags?.map((et: any) => et.tags) || []
     }))
 

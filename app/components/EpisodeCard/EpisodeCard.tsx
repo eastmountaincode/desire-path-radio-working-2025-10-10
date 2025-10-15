@@ -15,7 +15,7 @@ interface EpisodeCardProps {
         audio_url: string
         image_url: string | null
         duration_seconds: number | null
-        guests: Array<{
+        hosts: Array<{
             id: number
             name: string
             organization: string | null
@@ -66,19 +66,19 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
                     {formatDate(episode.aired_on)}
                 </div>
 
-                {/* Title Column - includes guest on mobile */}
+                {/* Title Column - includes host on mobile */}
                 <div className={`col-span-5 md:col-span-4 lg:col-span-5 ${devMode ? 'border-green-500 border' : ''}`}>
                     <div className="episode-card-title -mt-1.5">
                         <Link href={`/episodes/${episode.slug}`} className="hover:underline">
                             {episode.title}
                         </Link>
                     </div>
-                    {/* Guest shown under title on mobile only */}
-                    <div className={`md:hidden episode-card-guest mt-1 ${devMode ? 'border-green-500 border' : ''}`}>
-                        {episode.guests.length > 0 ? (
+                    {/* Host shown under title on mobile only */}
+                    <div className={`md:hidden episode-card-host mt-1 ${devMode ? 'border-green-500 border' : ''}`}>
+                        {episode.hosts.length > 0 ? (
                             <>
-                                {episode.guests[0]?.name}
-                                {episode.guests[0]?.organization && `, ${episode.guests[0].organization}`}
+                                {episode.hosts[0]?.name}
+                                {episode.hosts[0]?.organization && `, ${episode.hosts[0].organization}`}
                             </>
                         ) : (
                             ''
@@ -86,12 +86,12 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
                     </div>
                 </div>
 
-                {/* Guest Column - desktop only */}
-                <div className={`hidden md:block md:col-span-2 lg:col-span-3 episode-card-guest ${devMode ? 'border-green-500 border' : ''}`}>
-                    {episode.guests.length > 0 ? (
+                {/* Host Column - desktop only */}
+                <div className={`hidden md:block md:col-span-2 lg:col-span-3 episode-card-host ${devMode ? 'border-green-500 border' : ''}`}>
+                    {episode.hosts.length > 0 ? (
                         <>
-                            {episode.guests[0]?.name}
-                            {episode.guests[0]?.organization && `, ${episode.guests[0].organization}`}
+                            {episode.hosts[0]?.name}
+                            {episode.hosts[0]?.organization && `, ${episode.hosts[0].organization}`}
                         </>
                     ) : (
                         ''

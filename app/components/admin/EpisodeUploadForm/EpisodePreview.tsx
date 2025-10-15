@@ -9,7 +9,7 @@ interface EpisodePreviewProps {
         description: string
         aired_on: string
         duration_seconds: number | null
-        guests: Array<{
+        hosts: Array<{
             name: string
             organization: string
         }>
@@ -31,10 +31,10 @@ export default function EpisodePreview({ formData }: EpisodePreviewProps) {
         audio_url: '/placeholder-audio.mp3', // Placeholder since we don't have the actual URL yet
         image_url: null, // Placeholder
         duration_seconds: formData.duration_seconds,
-        guests: formData.guests.map((guest, index) => ({
+        hosts: formData.hosts.map((host, index) => ({
             id: index + 1, // Mock IDs for preview
-            name: guest.name || 'Guest Name',
-            organization: guest.organization || null
+            name: host.name || 'Host Name',
+            organization: host.organization || null
         })),
         tags: formData.tags.map((tag, index) => ({
             id: index + 1, // Mock IDs for preview

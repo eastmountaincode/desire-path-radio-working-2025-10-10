@@ -6,7 +6,7 @@ import { useState } from 'react'
 export default function ArchiveManagementPage() {
     const [loadingStates, setLoadingStates] = useState({
         episodes: false,
-        guests: false,
+        hosts: false,
         tags: false
     })
     const [message, setMessage] = useState<string | null>(null)
@@ -15,7 +15,7 @@ export default function ArchiveManagementPage() {
     const clearDatabase = async (table: string) => {
         const tableNames = {
             episodes: 'ALL episodes and related data',
-            guests: 'ALL guests',
+            hosts: 'ALL hosts',
             tags: 'ALL tags'
         }
 
@@ -76,17 +76,17 @@ export default function ArchiveManagementPage() {
                         </button>
 
                         <button
-                            onClick={() => clearDatabase('guests')}
-                            disabled={loadingStates.guests}
+                            onClick={() => clearDatabase('hosts')}
+                            disabled={loadingStates.hosts}
                             className={`
                                 w-auto px-6 py-2 rounded font-medium text-sm self-start
-                                ${loadingStates.guests
+                                ${loadingStates.hosts
                                     ? 'bg-gray-400 cursor-not-allowed'
                                     : 'bg-orange-600 hover:bg-orange-700 text-white'
                                 }
                             `}
                         >
-                            {loadingStates.guests ? 'Clearing Guests...' : 'Clear All Guests'}
+                            {loadingStates.hosts ? 'Clearing Hosts...' : 'Clear All Hosts'}
                         </button>
 
                         <button

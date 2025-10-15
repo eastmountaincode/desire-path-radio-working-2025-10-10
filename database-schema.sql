@@ -21,18 +21,18 @@ CREATE TABLE episodes (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Guests
-CREATE TABLE guests (
+-- Hosts
+CREATE TABLE hosts (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     organization TEXT
 );
 
--- Episode ↔ Guest join table
-CREATE TABLE episode_guests (
+-- Episode ↔ Host join table
+CREATE TABLE episode_hosts (
     episode_id INTEGER NOT NULL REFERENCES episodes(id) ON DELETE CASCADE,
-    guest_id INTEGER NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
-    PRIMARY KEY (episode_id, guest_id)
+    host_id INTEGER NOT NULL REFERENCES hosts(id) ON DELETE CASCADE,
+    PRIMARY KEY (episode_id, host_id)
 );
 
 -- Tags

@@ -22,7 +22,7 @@ global.createTestEpisodeData = (overrides = {}) => ({
     description: 'Test description for automated testing',
     aired_on: '2025-10-13',
     duration_seconds: 3600,
-    guests: [{ name: `Test Guest 1`, organization: 'Test Org' }],
+    hosts: [{ name: `Test Host 1`, organization: 'Test Org' }],
     tags: [
         { type: 'TOPIC', value: 'Technology' },
         { type: 'CHANNEL', value: 'Channel 1' }
@@ -37,7 +37,7 @@ global.createTestEpisodeDataFromFigma = (overrides = {}) => ({
     description: 'In this episode, we explore the importance of old growth forests and the threats they face. We talk about the importance of protecting these forests and the steps we can take to do so.',
     aired_on: '2025-04-18',
     duration_seconds: 3601,
-    guests: [{ name: `Rebecca Thompson`, organization: 'Forest Defense Coalition' }],
+    hosts: [{ name: `Rebecca Thompson`, organization: 'Forest Defense Coalition' }],
     tags: [
         { type: 'FORMAT', value: 'Music' },
         { type: 'FORMAT', value: 'Environment' }
@@ -56,7 +56,7 @@ global.cleanupTestData = async (supabase) => {
         // Delete test episodes (marked with test_type: 'jest')
         await supabase.from('episodes').delete().in('test_type', ['jest'])
 
-        // Note: CASCADE DELETE will automatically clean up episode_guests and episode_tags
+        // Note: CASCADE DELETE will automatically clean up episode_hosts and episode_tags
         // when episodes are deleted, so we don't need to manually delete them
 
         console.log('Test data cleaned up')
