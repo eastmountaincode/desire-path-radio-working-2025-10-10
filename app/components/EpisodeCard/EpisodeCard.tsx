@@ -54,21 +54,21 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
     }
 
     return (
-        <div className={`py-2 ${devMode ? 'border-red-500 border' : ''}`} style={isLast ? {} : {
+        <div className={`py-4 ${devMode ? 'border-red-500 border' : ''}`} style={isLast ? {} : {
           backgroundImage: 'linear-gradient(90deg, var(--color-grey6) 54%, transparent 46%)',
           backgroundSize: '4px 1.3px',
           backgroundPosition: '0 100%',
           backgroundRepeat: 'repeat-x'
         }}>
-            <div className={`grid grid-cols-2 md:grid-cols-6 lg:grid-cols-9 gap-4 h-24 items-center ${devMode ? 'border-blue-500 border' : ''}`}>
+            <div className={`grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-26 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border' : ''}`}>
                 {/* Date Column */}
-                <div className={`episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>
+                <div className={`col-span-2 pe-4 md:col-span-2 episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>
                     {formatDate(episode.aired_on)}
                 </div>
 
                 {/* Title Column - includes guest on mobile */}
-                <div className={`md:col-span-2 lg:col-span-3 ${devMode ? 'border-green-500 border' : ''}`}>
-                    <div className="episode-card-title">
+                <div className={`col-span-5 md:col-span-4 lg:col-span-5 ${devMode ? 'border-green-500 border' : ''}`}>
+                    <div className="episode-card-title -mt-1.5">
                         <Link href={`/episodes/${episode.slug}`} className="hover:underline">
                             {episode.title}
                         </Link>
@@ -87,7 +87,7 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
                 </div>
 
                 {/* Guest Column - desktop only */}
-                <div className={`hidden md:block md:col-span-2 episode-card-guest ${devMode ? 'border-green-500 border' : ''}`}>
+                <div className={`hidden md:block md:col-span-2 lg:col-span-3 episode-card-guest ${devMode ? 'border-green-500 border' : ''}`}>
                     {episode.guests.length > 0 ? (
                         <>
                             {episode.guests[0]?.name}
@@ -99,12 +99,12 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
                 </div>
 
                 {/* Duration Column - desktop only */}
-                <div className={`hidden lg:block episode-card-duration ${devMode ? 'border-green-500 border' : ''}`}>
+                <div className={`hidden lg:block episode-card-duration lg:col-span-2 ${devMode ? 'border-green-500 border' : ''}`}>
                     {formatDuration(episode.duration_seconds)}
                 </div>
 
                 {/* Tags Column - desktop only */}
-                <div className={`hidden md:flex align-start lg:col-span-2 flex-wrap gap-1 episode-card-tags ${devMode ? 'border-green-500 border' : ''}`}>
+                <div className={`hidden md:flex align-start md:col-span-2 lg:col-span-3 flex-wrap gap-1 episode-card-tags ${devMode ? 'border-green-500 border' : ''}`}>
                     {episode.tags.slice(0, 2).map(tag => (
                         <span
                             key={tag.id}

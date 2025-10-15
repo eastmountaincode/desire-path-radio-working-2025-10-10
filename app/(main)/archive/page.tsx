@@ -100,7 +100,7 @@ export default function Archive() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="py-4">
           <div className="flex items-center justify-between">
             <div className="text-sm text-grey5">
               {episodes.length} episode{episodes.length !== 1 ? 's' : ''}
@@ -110,7 +110,7 @@ export default function Archive() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="py-8">
         {loading && episodes.length === 0 ? (
           <div className="flex justify-center py-12">
             <div className="text-grey5">Loading episodes...</div>
@@ -124,7 +124,7 @@ export default function Archive() {
             <ArchiveHeader />
 
             {/* Episodes Grid */}
-            <div className="space-y-4 mb-8">
+            <div className="space-y-3 mb-8">
               {episodes.map((episode, index) => (
                 <EpisodeCard key={episode.id} episode={episode} isLast={index === episodes.length - 1} />
               ))}
