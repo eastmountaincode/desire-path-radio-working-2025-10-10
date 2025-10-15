@@ -184,14 +184,13 @@ export async function POST(request: NextRequest) {
           .from('guests')
           .select('id')
           .eq('name', guest.name)
-          .maybeSingle()
+          .maybeSingle() as { data: { id: number } | null, error: any }
 
         if (findError && findError.code !== 'PGRST116') {
           throw new Error(`Failed to search for guest: ${findError.message}`)
         }
 
         if (existingGuest) {
-          // @ts-ignore
           guestIds.push(existingGuest.id)
         } else {
           // Create new guest
@@ -203,16 +202,14 @@ export async function POST(request: NextRequest) {
               organization: guest.organization || null
             })
             .select('id')
-            .single()
+            .single() as { data: { id: number } | null, error: any }
 
           if (createError) {
             throw new Error(`Failed to create guest: ${createError.message}`)
           }
 
           if (newGuest) {
-            // @ts-ignore
             guestIds.push(newGuest.id)
-            // @ts-ignore
             createdGuestIds.push(newGuest.id)
           }
         }
@@ -238,7 +235,7 @@ export async function POST(request: NextRequest) {
             test_type: episodeData.test_type
           })
           .select('id')
-          .single()
+          .single() as { data: { id: number } | null, error: any }
 
         if (episodeError) {
           // Check if it's a duplicate slug error
@@ -252,8 +249,7 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // @ts-ignore
-        createdEpisodeId = episode.id
+        createdEpisodeId = episode!.id
         break // Success, exit the loop
       }
 
@@ -278,45 +274,53 @@ export async function POST(request: NextRequest) {
       const tagIds: number[] = []
 
       for (const tag of episodeData.tags) {
-        const tagSlug = createSlug(tag.value)
         const tagType = tag.type.toUpperCase()
+        const normalizedTagName = tag.value.trim()
+        const tagSlug = createSlug(`${tagType.toLowerCase()}-${normalizedTagName}`)
+
+        console.log(`Looking for tag: type="${tagType}", name="${normalizedTagName}", slug="${tagSlug}"`)
 
         // Try to find existing tag by type and value
         const { data: existingTag, error: findError } = await supabase
           .from('tags')
-          .select('id')
+          .select('id, name, type, slug')
           .eq('type', tagType)
-          .eq('name', tag.value)
-          .maybeSingle()
+          .eq('name', normalizedTagName)
+          .maybeSingle() as { data: { id: number, name: string, type: string, slug: string } | null, error: any }
+
+        console.log('Tag lookup result:', { existingTag, findError })
 
         if (findError && findError.code !== 'PGRST116') {
+          console.error('Tag lookup error:', findError)
           throw new Error(`Failed to search for tag: ${findError.message}`)
         }
 
         if (existingTag) {
-          // @ts-ignore
+          console.log(`Found existing tag with ID: ${existingTag.id}`)
+          // Use existing tag
           tagIds.push(existingTag.id)
         } else {
+          console.log(`Creating new tag: ${tag.value} (${tagType})`)
           // Create new tag
           const { data: newTag, error: createError } = await supabase
             .from('tags')
             // @ts-ignore - Supabase type inference issue
             .insert({
-              name: tag.value,
+              name: normalizedTagName,
               slug: tagSlug,
               type: tagType
             })
             .select('id')
-            .single()
+            .single() as { data: { id: number } | null, error: any }
 
           if (createError) {
+            console.error('Tag creation error:', createError)
             throw new Error(`Failed to create tag: ${createError.message}`)
           }
 
           if (newTag) {
-            // @ts-ignore
+            console.log(`Created new tag with ID: ${newTag.id}`)
             tagIds.push(newTag.id)
-            // @ts-ignore
             createdTagIds.push(newTag.id)
           }
         }

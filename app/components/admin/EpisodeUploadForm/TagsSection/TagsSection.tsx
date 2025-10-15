@@ -88,25 +88,27 @@ export default function TagsSection({ tags, onChange }: TagsSectionProps) {
             ))}
           </div>
           {canAddCustomTags(category.type) && (
-            <div className="flex gap-2 mt-3">
-              <input
-                type="text"
-                value={customTagInputs[category.type] || ''}
-                onChange={(e) => setCustomTagInputs(prev => ({ 
-                  ...prev, 
-                  [category.type]: e.target.value 
-                }))}
-                onKeyPress={(e) => handleKeyPress(e, category.type)}
-                placeholder={`Add custom ${category.type.toLowerCase()}...`}
-                className="flex-1 px-3 py-1 border border-grey5"
-              />
-              <button
-                type="button"
-                onClick={() => addCustomTag(category.type)}
-                className="px-4 py-1 bg-grey6 text-grey1 hover:bg-grey5"
-              >
-                Add
-              </button>
+            <div className="mt-3">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={customTagInputs[category.type] || ''}
+                  onChange={(e) => setCustomTagInputs(prev => ({
+                    ...prev,
+                    [category.type]: e.target.value
+                  }))}
+                  onKeyPress={(e) => handleKeyPress(e, category.type)}
+                  placeholder={`Add custom ${category.type.toLowerCase()}...`}
+                  className="flex-1 max-w-md px-3 py-1 border border-grey5"
+                />
+                <button
+                  type="button"
+                  onClick={() => addCustomTag(category.type)}
+                  className="px-4 py-1 bg-grey6 text-grey1 hover:bg-grey5 whitespace-nowrap"
+                >
+                  Add
+                </button>
+              </div>
             </div>
           )}
         </div>

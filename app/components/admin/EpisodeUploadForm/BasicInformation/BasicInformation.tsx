@@ -62,7 +62,7 @@ export default function BasicInformation({
                 i
               </span>
               <span className="slug-info-tooltip absolute right-0 bottom-6 w-64 p-2 text-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none z-10">
-                A slug is a URL-friendly version of the title. It contains only lowercase letters, numbers, and hyphens. Example: "my-episode-title"
+                A slug is a URL-friendly version of the title. It contains only lowercase letters, numbers, and hyphens. Example: "my-episode-title". You don't need to enter this manually.
               </span>
             </span>
           </span>

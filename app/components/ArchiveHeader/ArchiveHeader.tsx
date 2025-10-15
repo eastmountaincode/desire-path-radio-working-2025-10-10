@@ -7,24 +7,24 @@ export default function ArchiveHeader() {
   const devMode = useDevMode()
 
   return (
-    <div className={`grid grid-cols-2 md:grid-cols-6 lg:grid-cols-8 gap-4 md:items-center py-2.5 mb-6 archive-header ${devMode ? 'border-blue-500 border' : ''}`}>
+    <div className={`grid grid-cols-2 md:grid-cols-6 lg:grid-cols-9 gap-4 md:items-center py-2.5 mb-6 archive-header ${devMode ? 'border-blue-500 border' : ''}`}>
       {/* Date Header */}
-      <div className={`archive-column-header-item border-r border-grey6 ${devMode ? 'border-green-500 border' : ''}`}>
+      <div className={`archive-column-header-item border-r ${devMode ? 'border-green-500 border' : ''}`}>
         date
       </div>
 
-      {/* Title Header - spans 2 columns */}
-      <div className={`archive-column-header-item md:col-span-2 border-r border-grey6 ${devMode ? 'border-green-500 border' : ''}`}>
+      {/* Title Header - spans 3 columns on desktop */}
+      <div className={`archive-column-header-item md:col-span-2 lg:col-span-3 md:border-r ${devMode ? 'border-green-500 border' : ''}`}>
         title
       </div>
 
       {/* Guest Header - desktop only */}
-      <div className={`archive-column-header-item hidden md:block md:col-span-2 border-r border-grey6 ${devMode ? 'border-green-500 border' : ''}`}>
+      <div className={`archive-column-header-item hidden md:block md:col-span-2 border-r ${devMode ? 'border-green-500 border' : ''}`}>
         guest
       </div>
 
       {/* Duration Header - desktop only */}
-      <div className={`archive-column-header-item hidden lg:block border-r border-grey6 ${devMode ? 'border-green-500 border' : ''}`}>
+      <div className={`archive-column-header-item hidden lg:block border-r ${devMode ? 'border-green-500 border' : ''}`}>
         duration
       </div>
 

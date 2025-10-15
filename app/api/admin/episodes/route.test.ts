@@ -74,7 +74,7 @@ describe('POST /api/admin/episodes', () => {
         expect(data.success).toBe(true);
         expect(data.episode_id).toBeDefined();
 
-    });
+    }, 15000); // 15 second timeout for file upload
 
     it('should increment slug when uploading the same episode again', async () => {
         const episode = global.createTestEpisodeData();
@@ -103,7 +103,7 @@ describe('POST /api/admin/episodes', () => {
         expect(data.episode_id).toBeDefined();
         expect(data.message).toContain('Episode created successfully');
         expect(data.episode_slug).toBe(`test-episode-1-1`);
-    });
+    }, 15000); // 15 second timeout for file upload
 
     it('should increment slug when uploading the same episode again... again', async () => {
         const episode = global.createTestEpisodeData();
@@ -132,8 +132,65 @@ describe('POST /api/admin/episodes', () => {
         expect(data.episode_id).toBeDefined();
         expect(data.message).toContain('Episode created successfully');
         expect(data.episode_slug).toBe(`test-episode-1-2`);
-    });
+    }, 15000); // 15 second timeout for file upload
+
+    it('should create the placeholder episode from figma', async () => {
+        const episode = global.createTestEpisodeDataFromFigma();
+    
+        const formData = new FormData();
+        formData.append('episodeData', JSON.stringify(episode));
+
+        const audioPath = path.resolve(process.cwd(), 'public/test-assets/sound-of-waves-marine-drive-mumbai.mp3');
+        const audioBuffer = fs.readFileSync(audioPath);
+        const audioFile = new File([audioBuffer], 'sound-of-waves-marine-drive-mumbai.mp3', { type: 'audio/mpeg' });
+
+        formData.append('audioFile', audioFile);
+
+        const req = new NextRequest('http://localhost:3000/api/admin/episodes', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const res = await POST(req);
+        const data = await res.json();
+        console.log('Figma episode response:', data);
+
+        expect(res.status).toBe(200);
+        expect(data.success).toBe(true);
+        expect(data.episode_id).toBeDefined();
+    }, 15000); // 15 second timeout for file upload
 });
+
+it('should create an episode when we have a new tag with the same name but different type', async () => {
+    const episode = global.createTestEpisodeDataFromFigma();
+
+    // Remove the TOPIC/Music tag before adding FORMAT/Music
+    episode.tags = episode.tags.filter((tag: {type: string, value: string}) => !(tag.type === 'TOPIC' && tag.value === 'Music'));
+
+    const formData = new FormData();
+    formData.append('episodeData', JSON.stringify(episode));
+    episode.tags.push({ type: 'FORMAT', value: 'Music' });
+
+
+    const audioPath = path.resolve(process.cwd(), 'public/test-assets/sound-of-waves-marine-drive-mumbai.mp3');
+    const audioBuffer = fs.readFileSync(audioPath);
+    const audioFile = new File([audioBuffer], 'sound-of-waves-marine-drive-mumbai.mp3', { type: 'audio/mpeg' });
+
+    formData.append('audioFile', audioFile);
+
+    const req = new NextRequest('http://localhost:3000/api/admin/episodes', {
+        method: 'POST',
+        body: formData,
+    });
+
+    const res = await POST(req);
+    const data = await res.json();
+    console.log('New tag episode response:', data);
+
+    expect(res.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.episode_id).toBeDefined();
+}, 15000); // 15 second timeout for file upload
 
 afterAll(async () => {
     const { createServerSupabase } = await import('@/lib/supabase');

@@ -31,6 +31,22 @@ global.createTestEpisodeData = (overrides = {}) => ({
     ...overrides,
 })
 
+global.createTestEpisodeDataFromFigma = (overrides = {}) => ({
+    title: `Saving the Old Growth Forest`,
+    slug: `saving-the-old-growth-forest`,
+    description: 'In this episode, we explore the importance of old growth forests and the threats they face. We talk about the importance of protecting these forests and the steps we can take to do so.',
+    aired_on: '2025-04-18',
+    duration_seconds: 3601,
+    guests: [{ name: `Rebecca Thompson`, organization: 'Forest Defense Coalition' }],
+    tags: [
+        { type: 'FORMAT', value: 'Music' },
+        { type: 'FORMAT', value: 'Environment' }
+    ],
+    test_type: 'jest',
+    ...overrides,
+})
+
+
 
 // Cleanup function for after tests - uses existing database
 global.cleanupTestData = async (supabase) => {

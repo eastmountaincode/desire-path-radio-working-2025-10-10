@@ -7,6 +7,8 @@ import MediaFiles from './MediaFiles'
 import GuestsSection, { type Guest } from './GuestsSection'
 import TagsSection from './TagsSection/TagsSection'
 import UploadProgress from './UploadProgress'
+import DeveloperSettings from './DeveloperSettings'
+import EpisodePreview from './EpisodePreview'
 import { type Tag } from '@/lib/tags'
 
 interface FormData {
@@ -183,7 +185,7 @@ export default function EpisodeUploadForm() {
     return (
         <form
             onSubmit={handleSubmit}
-            className={`space-y-6 mb-6 ${devMode ? 'border border-red-500' : ''}`}
+            className={`space-y-6 mb-6 max-w-7xl self-start ${devMode ? 'border border-red-500' : ''}`}
         >
 
             <BasicInformation
@@ -224,35 +226,13 @@ export default function EpisodeUploadForm() {
                 onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
             />
 
-            {/* Environment Selection */}
-            <div className="space-y-2">
-                <h2 className="text-xl font-bold">Developer Settings</h2>
-                <div className="space-y-3">
-                    <label className="block text-sm font-medium">Test Type</label>
-                    <div className="space-y-2">
-                        {[
-                            { value: 'none', label: 'Production (none)', description: 'Production episodes are shown to all users' },
-                            { value: 'jest', label: 'Jest Test', description: 'Jest test episodes are automatically cleaned up after tests' },
-                            { value: 'manual', label: 'Manual Test', description: 'Manual test episodes require manual deletion' }
-                        ].map((option) => (
-                            <label key={option.value} className="flex items-start gap-3 cursor-pointer">
-                                <input
-                                    type="radio"
-                                    name="test_type"
-                                    value={option.value}
-                                    checked={formData.test_type === option.value}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, test_type: e.target.value as 'none' | 'jest' | 'manual' }))}
-                                    className="mt-1 w-4 h-4 border border-grey5"
-                                />
-                                <div className="flex-1">
-                                    <div className="font-medium">{option.label}</div>
-                                    <div className="text-sm text-grey5">{option.description}</div>
-                                </div>
-                            </label>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            <DeveloperSettings
+                testType={formData.test_type}
+                onTestTypeChange={(testType) => setFormData(prev => ({ ...prev, test_type: testType }))}
+            />
+
+            {/* Episode Preview */}
+            <EpisodePreview formData={formData} />
 
             {/* Upload Progress */}
             <UploadProgress

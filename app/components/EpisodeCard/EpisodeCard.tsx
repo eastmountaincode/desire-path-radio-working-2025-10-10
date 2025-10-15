@@ -60,14 +60,14 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
           backgroundPosition: '0 100%',
           backgroundRepeat: 'repeat-x'
         }}>
-            <div className={`grid grid-cols-2 md:grid-cols-6 lg:grid-cols-8 gap-4 h-24 items-center ${devMode ? 'border-blue-500 border' : ''}`}>
+            <div className={`grid grid-cols-2 md:grid-cols-6 lg:grid-cols-9 gap-4 h-24 items-center ${devMode ? 'border-blue-500 border' : ''}`}>
                 {/* Date Column */}
                 <div className={`episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>
                     {formatDate(episode.aired_on)}
                 </div>
 
                 {/* Title Column - includes guest on mobile */}
-                <div className={`md:col-span-2 ${devMode ? 'border-green-500 border' : ''}`}>
+                <div className={`md:col-span-2 lg:col-span-3 ${devMode ? 'border-green-500 border' : ''}`}>
                     <div className="episode-card-title">
                         <Link href={`/episodes/${episode.slug}`} className="hover:underline">
                             {episode.title}
@@ -81,7 +81,7 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
                                 {episode.guests[0]?.organization && `, ${episode.guests[0].organization}`}
                             </>
                         ) : (
-                            'No guests'
+                            ''
                         )}
                     </div>
                 </div>
@@ -94,7 +94,7 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
                             {episode.guests[0]?.organization && `, ${episode.guests[0].organization}`}
                         </>
                     ) : (
-                        'No guests'
+                        ''
                     )}
                 </div>
 
@@ -115,7 +115,7 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
                     ))}
                     {episode.tags.length > 2 && (
                         <span className={`episode-card-tag ${devMode ? 'border-green-500 border' : ''}`}>
-                            +{episode.tags.length - 2}b
+                            +{episode.tags.length - 2}
                         </span>
                     )}
                 </div>
