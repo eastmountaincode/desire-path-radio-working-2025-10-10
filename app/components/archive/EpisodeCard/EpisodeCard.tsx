@@ -3,7 +3,7 @@
 import Link from 'next/link'
 
 import './episode-card-styles.css'
-import { useDevMode } from '../DevModeProvider'
+import { useDevMode } from '../../DevModeProvider'
 
 interface EpisodeCardProps {
     episode: {

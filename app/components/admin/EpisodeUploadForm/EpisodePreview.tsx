@@ -1,6 +1,6 @@
 'use client'
 
-import EpisodeCard from '@/app/components/EpisodeCard/EpisodeCard'
+import EpisodeCard from '@/app/components/archive/EpisodeCard/EpisodeCard'
 
 interface EpisodePreviewProps {
     formData: {

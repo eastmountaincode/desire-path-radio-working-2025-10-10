@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import EpisodeCard from '@/app/components/EpisodeCard/EpisodeCard'
-import ArchiveHeader from '@/app/components/ArchiveHeader/ArchiveHeader'
+import EpisodeCard from '@/app/components/archive/EpisodeCard/EpisodeCard'
+import ArchiveTableHeader from '@/app/components/archive/ArchiveTableHeader/ArchiveTableHeader'
+import ArchiveControlHeader from '@/app/components/archive/ArchiveControlHeader/ArchiveControlHeader'
 
 interface Episode {
   id: number
@@ -98,16 +99,8 @@ export default function Archive() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <div className="">
-        <div className="py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-grey5">
-              {episodes.length} episode{episodes.length !== 1 ? 's' : ''}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Control Header */}
+      <ArchiveControlHeader episodeCount={episodes.length} />
 
       {/* Content */}
       <div className="py-8">
@@ -121,7 +114,7 @@ export default function Archive() {
           </div>
         ) : (
           <>
-            <ArchiveHeader />
+            <ArchiveTableHeader />
 
             {/* Episodes Grid */}
             <div className="space-y-3 mb-8">

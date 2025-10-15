@@ -1,4 +1,4 @@
-.archive-header {
+.archive-table-header {
   border-bottom: 1px solid transparent;
   border-top: 1px solid transparent;
   background-image:
@@ -10,7 +10,7 @@
   color: var(--color-grey6);
 }
 
-.dark .archive-header {
+.dark .archive-table-header {
     border-bottom: 1px solid transparent;
     border-top: 1px solid transparent;
     background-image:
