@@ -54,12 +54,7 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
     }
 
     return (
-        <div className={`py-4 ${devMode ? 'border-red-500 border' : ''}`} style={isLast ? {} : {
-          backgroundImage: 'linear-gradient(90deg, var(--color-grey6) 54%, transparent 46%)',
-          backgroundSize: '4px 1.3px',
-          backgroundPosition: '0 100%',
-          backgroundRepeat: 'repeat-x'
-        }}>
+        <div className={`py-4 episode-card ${!isLast ? 'episode-card-dotted' : ''} ${devMode ? 'border-red-500 border' : ''}`}>
             <div className={`grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-26 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border' : ''}`}>
                 {/* Date Column */}
                 <div className={`col-span-2 pe-4 md:col-span-2 episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>

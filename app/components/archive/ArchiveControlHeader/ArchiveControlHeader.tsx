@@ -1,6 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { useDevMode } from '@/app/components/DevModeProvider'
+import FilterModal from './FilterModal'
+import './archive-control-header-styles.css'
 
 interface ArchiveControlHeaderProps {
   episodeCount: number
@@ -8,23 +11,35 @@ interface ArchiveControlHeaderProps {
 
 export default function ArchiveControlHeader({ episodeCount }: ArchiveControlHeaderProps) {
   const devMode = useDevMode()
+  const [showFilterModal, setShowFilterModal] = useState(false)
 
   return (
-    <div className={`flex items-center justify-between py-4 ${devMode ? 'border-orange-500 border' : ''}`}>
+    <div className={`relative flex items-center justify-between ${devMode ? 'border-orange-500 border' : ''}`}>
       {/* Left side - Episode count */}
-      <div className={`text-sm text-grey5 ${devMode ? 'border-red-500 border' : ''}`}>
-        {episodeCount} episode{episodeCount !== 1 ? 's' : ''}
+      <div className={`text-sm ${devMode ? 'border-red-500 border' : ''}`}>
+        {episodeCount} show{episodeCount !== 1 ? 's' : ''}
       </div>
 
       {/* Right side - Filter and Sort buttons */}
-      <div className={`flex items-center gap-2 sm:gap-3 ${devMode ? 'border-purple-500 border' : ''}`}>
-        <button className="px-2 py-1 text-xs bg-grey2 text-grey6 hover:bg-grey3 sm:px-3">
-          filter ⌄
+      <div className={`flex items-center text-sm gap-2 ${devMode ? 'border-purple-500 border' : ''}`}>
+        <button 
+          className="archive-control-button"
+          onClick={() => setShowFilterModal(!showFilterModal)}
+        >
+          <span className="mr-1">filter</span>
+          <i className="fi fi-tr-bars-filter"></i>
         </button>
-        <button className="px-2 py-1 text-xs bg-grey2 text-grey6 hover:bg-grey3 sm:px-3">
-          sort ⌄
+        <button className="archive-control-button">
+          <span className="mr-1">sort</span>
+          <i className="fi fi-tr-sort-alt"></i>
         </button>
       </div>
+
+      {/* Filter Modal */}
+      <FilterModal 
+        isOpen={showFilterModal} 
+        onClose={() => setShowFilterModal(false)} 
+      />
     </div>
   )
 }

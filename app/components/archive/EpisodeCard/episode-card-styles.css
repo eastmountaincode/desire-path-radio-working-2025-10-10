@@ -33,8 +33,22 @@
   padding: 2px 8px;
   background: transparent;
   border-radius: 4px;
+  color: var(--color-grey5);
 }
 
 .dark .episode-card-tag {
   border: 1px solid var(--color-grey5);
+  color: var(--color-grey2);
+}
+
+/* Episode card border styles */
+.episode-card-dotted {
+  background-image: linear-gradient(90deg, var(--color-grey6) 54%, transparent 46%);
+  background-size: 4px 1.3px;
+  background-position: 0 100%;
+  background-repeat: repeat-x;
+}
+
+.dark .episode-card-dotted {
+  background-image: linear-gradient(90deg, var(--color-grey1) 54%, transparent 46%);
 }

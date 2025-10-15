@@ -1,0 +1,18 @@
+.archive-control-button {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    background: transparent;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.archive-control-button:hover {
+    border: 1px solid;
+}
+
+.dark .archive-control-button:hover {
+    border: 1px solid;
+}
+
+/* Filter Modal Styles - moved to Tailwind classes in component */
