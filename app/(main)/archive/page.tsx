@@ -137,7 +137,7 @@ export default function Archive() {
                         <ArchiveTableHeader />
 
                         {/* Episodes Grid */}
-                        <div className="space-y-3 mb-8">
+                        <div className="space-y-0 mb-8">
                             {episodes.map((episode, index) => (
                                 <EpisodeCard key={episode.id} episode={episode} isLast={index === episodes.length - 1} />
                             ))}

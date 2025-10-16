@@ -1,3 +1,27 @@
+.episode-card {
+    cursor: pointer;
+}
+
+.episode-card:hover {
+    background-color: var(--color-grey6);
+    color: var(--color-grey1);
+}
+
+.dark .episode-card:hover {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+}
+
+.episode-card:hover .episode-card-tag {
+  border-color: var(--color-grey1);
+  color: var(--color-grey1);
+}
+
+.dark .episode-card:hover .episode-card-tag {
+  border-color: var(--color-grey6);
+  color: var(--color-grey6);
+}
+
 .episode-card-date {
   font-family: var(--font-monument);
   font-size: 13px;

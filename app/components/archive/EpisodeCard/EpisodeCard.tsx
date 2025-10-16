@@ -57,14 +57,14 @@ export default function EpisodeCard({ episode, isLast = false }: EpisodeCardProp
         <div className={`py-4 episode-card ${!isLast ? 'episode-card-dotted' : ''} ${devMode ? 'border-red-500 border' : ''}`}>
             <div className={`grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-26 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border' : ''}`}>
                 {/* Date Column */}
-                <div className={`col-span-2 pe-4 md:col-span-2 episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>
+                <div className={`pl-2 col-span-2 pe-4 md:col-span-2 episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>
                     {formatDate(episode.aired_on)}
                 </div>
 
                 {/* Title Column - includes host on mobile */}
                 <div className={`col-span-5 md:col-span-4 lg:col-span-5 ${devMode ? 'border-green-500 border' : ''}`}>
                     <div className="episode-card-title -mt-1.5">
-                        <Link href={`/episodes/${episode.slug}`} className="hover:underline">
+                        <Link href={`/episodes/${episode.slug}`} className="">
                             {episode.title}
                         </Link>
                     </div>
