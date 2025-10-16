@@ -24,7 +24,7 @@ export default function ArchiveControlHeader({ episodeCount }: ArchiveControlHea
       <div className={`flex items-center text-sm gap-2 ${devMode ? 'border-purple-500 border' : ''}`}>
         <div className="relative">
           <button 
-            className="archive-control-button"
+            className={`archive-control-button ${showFilterModal ? 'active' : ''}`}
             onClick={() => setShowFilterModal(!showFilterModal)}
           >
             <span className="mr-1">filter</span>

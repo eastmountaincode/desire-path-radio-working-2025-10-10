@@ -83,7 +83,7 @@ export default function FilterModal({ isOpen, onClose }: FilterModalProps) {
     if (!isOpen) return null
 
     return (
-        <div className={`filter-modal rounded-md absolute top-full right-0 z-50 mt-2 ${devMode ? 'border border-red-500' : ''}`}>
+        <div className={`filter-modal rounded-sm absolute top-full right-0 z-50 mt-2 ${devMode ? 'border border-red-500' : ''}`}>
             <div className={`p-4 min-w-72`}>
                 <div className={`filter-modal-header mb-4 ${devMode ? 'border border-red-500' : ''}`}>
                     <h3 className={`mb-1 pb-2 ${devMode ? 'border border-red-500' : ''}`}>
