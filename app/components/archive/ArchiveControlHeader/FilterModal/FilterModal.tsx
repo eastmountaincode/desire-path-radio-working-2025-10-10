@@ -21,9 +21,10 @@ interface GroupedTags {
 interface FilterModalProps {
     isOpen: boolean
     onClose: () => void
+    onApply: (tagSlugs: string[]) => void
 }
 
-export default function FilterModal({ isOpen, onClose }: FilterModalProps) {
+export default function FilterModal({ isOpen, onClose, onApply }: FilterModalProps) {
     const [openSections, setOpenSections] = useState({
         channel: true,
         format: false,
@@ -76,6 +77,19 @@ export default function FilterModal({ isOpen, onClose }: FilterModalProps) {
             }
             return newSet
         })
+    }
+
+    const handleApply = () => {
+        // Convert selected tag IDs to slugs
+        const selectedSlugs: string[] = []
+        Array.from(selectedTags).forEach(tagId => {
+            const tag = Object.values(tags).flat().find(t => t.id === tagId)
+            if (tag) {
+                selectedSlugs.push(tag.slug)
+            }
+        })
+        onApply(selectedSlugs)
+        onClose()
     }
 
     const devMode = useDevMode()
@@ -222,7 +236,10 @@ export default function FilterModal({ isOpen, onClose }: FilterModalProps) {
                 </div>
 
                 <div className="pt-3">
-                    <button className="filter-modal-apply-button w-full py-2 px-4 rounded">
+                    <button 
+                        className="filter-modal-apply-button w-full py-2 px-4 rounded"
+                        onClick={handleApply}
+                    >
                         apply
                     </button>
                 </div>

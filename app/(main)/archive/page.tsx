@@ -47,13 +47,16 @@ export default function Archive() {
     const [error, setError] = useState<string | null>(null)
     const [offset, setOffset] = useState(0)
     const [hasMore, setHasMore] = useState(false)
+    const [selectedTagSlugs, setSelectedTagSlugs] = useState<string[]>([])
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
     const limit = 3
 
-    const fetchEpisodes = async (currentOffset: number = 0) => {
+    const fetchEpisodes = async (currentOffset: number = 0, tagSlugs: string[] = [], order: 'asc' | 'desc' = 'desc') => {
         try {
             setLoading(true)
-            const response = await fetch(`/api/episodes?limit=${limit}&offset=${currentOffset}&orderBy=aired_on&order=desc&includeTest=true&testTypes=none,manual`)
+            const tagParams = tagSlugs.length > 0 ? `&tags=${tagSlugs.join(',')}` : ''
+            const response = await fetch(`/api/episodes?limit=${limit}&offset=${currentOffset}&orderBy=aired_on&order=${order}&includeTest=true&testTypes=none,manual${tagParams}`)
 
             if (!response.ok) {
                 throw new Error('Failed to fetch episodes')
@@ -79,11 +82,21 @@ export default function Archive() {
     }
 
     useEffect(() => {
-        fetchEpisodes(0)
-    }, [])
+        fetchEpisodes(0, selectedTagSlugs, sortOrder)
+    }, [selectedTagSlugs, sortOrder])
 
     const loadMore = () => {
-        fetchEpisodes(offset)
+        fetchEpisodes(offset, selectedTagSlugs, sortOrder)
+    }
+
+    const handleFilterApply = (tagSlugs: string[]) => {
+        setSelectedTagSlugs(tagSlugs)
+        setOffset(0)
+    }
+
+    const handleSortApply = (order: 'asc' | 'desc') => {
+        setSortOrder(order)
+        setOffset(0)
     }
 
     if (error) {
@@ -101,7 +114,12 @@ export default function Archive() {
         <div className="min-h-screen">
             {/* Control Header */}
             <div className="pt-6 pb-2">
-                <ArchiveControlHeader episodeCount={episodes.length} />
+                <ArchiveControlHeader 
+                    episodeCount={episodes.length}
+                    onFilterApply={handleFilterApply}
+                    onSortApply={handleSortApply}
+                    currentSortOrder={sortOrder}
+                />
             </div>
 
             {/* Content */}

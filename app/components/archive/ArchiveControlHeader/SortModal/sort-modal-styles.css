@@ -1,0 +1,88 @@
+.sort-modal {
+    background-color: var(--color-grey2);
+}
+
+.sort-modal-header {
+    border: none;
+    border-bottom: 1px solid transparent;
+    background-image:
+        linear-gradient(90deg, var(--color-grey6) 54%, transparent 46%);
+    background-size: 4px 1.3px;
+    background-position: 0 100%;
+    background-repeat: repeat-x;
+    color: var(--color-grey6);
+}
+
+/* Custom radio button styles */
+.sort-modal input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--color-grey4);
+    background-color: var(--color-grey1);
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+}
+
+.sort-modal input[type="radio"]:checked {
+    background-color: var(--color-grey6);
+    border-color: var(--color-grey6);
+}
+
+.sort-modal input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-grey1);
+    border-radius: 50%;
+}
+
+.sort-modal-apply-button {
+    background-color: var(--color-grey6);
+    color: var(--color-grey1);
+    cursor: pointer;
+}
+
+.sort-modal-apply-button:hover {
+    background-color: var(--color-grey5);
+}
+
+.dark .sort-modal {
+    background-color: var(--color-grey5);
+}
+
+.dark .sort-modal-header {
+    color: var(--color-grey1);
+    background-image:
+        linear-gradient(90deg, var(--color-grey1) 54%, transparent 46%);
+}
+
+.dark .sort-modal input[type="radio"] {
+    background-color: var(--color-grey6);
+    border-color: var(--color-grey3);
+}
+
+.dark .sort-modal input[type="radio"]:checked {
+    background-color: var(--color-grey1);
+    border-color: var(--color-grey1);
+}
+
+.dark .sort-modal input[type="radio"]:checked::after {
+    background-color: var(--color-grey6);
+}
+
+.dark .sort-modal-apply-button {
+    background-color: var(--color-grey1);
+    color: var(--color-grey6);
+}
+
+.dark .sort-modal-apply-button:hover {
+    background-color: var(--color-grey2);
+}
+
