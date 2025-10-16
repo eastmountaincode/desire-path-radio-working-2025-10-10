@@ -16,7 +16,7 @@ export default function Header() {
     const isActive = (path: string) => pathname === path
 
     return (
-        <header className={`fixed border-b top-0 left-0 right-0 z-50 px-7 ${devMode ? 'border border-red-500' : ''}`}>
+        <header className={`fixed border-b top-0 left-0 right-0 z-52 px-7 ${devMode ? 'border border-red-500' : ''}`}>
             <div className={`flex items-center justify-between h-12 ${devMode ? 'border border-blue-500' : ''}`}>
                 <div className="flex items-center gap-12">
                     <div className={`select-none ${devMode ? 'border border-green-500' : ''}`}>

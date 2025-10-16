@@ -1,0 +1,88 @@
+.filter-modal {
+    background-color: var(--color-grey2);
+}
+
+.dark .filter-modal {
+    background-color: var(--color-grey5);
+}
+
+.filter-modal-header {
+    border: none;
+    border-bottom: 1px solid transparent;
+    background-image:
+        linear-gradient(90deg, var(--color-grey6) 54%, transparent 46%);
+    background-size: 4px 1.3px;
+    background-position: 0 100%;
+    background-repeat: repeat-x;
+    color: var(--color-grey6);
+}
+
+.dark .filter-modal-header {
+    background-image:
+        linear-gradient(90deg, var(--color-grey1) 54%, transparent 46%);
+    color: var(--color-grey1);
+}
+
+/* Custom checkbox styles */
+.filter-modal input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--color-grey4);
+    background-color: var(--color-grey1);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.dark .filter-modal input[type="checkbox"] {
+    border-color: var(--color-grey2);
+    background-color: var(--color-grey6);
+}
+
+.filter-modal input[type="checkbox"]:checked {
+    background-color: var(--color-grey6);
+    border-color: var(--color-grey6);
+}
+
+.dark .filter-modal input[type="checkbox"]:checked {
+    background-color: var(--color-grey1);
+    border-color: var(--color-grey1);
+}
+
+.filter-modal input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 11px;
+    border: solid var(--color-grey1);
+    border-width: 0 1.5px 1.5px 0;
+    border-radius: 0.5px;
+    transform: rotate(45deg);
+}
+
+.dark .filter-modal input[type="checkbox"]:checked::after {
+    border-color: var(--color-grey6);
+}
+
+.filter-modal-apply-button {
+    background-color: var(--color-grey6);
+    color: var(--color-grey1);
+
+}
+
+.filter-modal-apply-button:hover {
+    background-color: var(--color-grey5);
+}
+
+.dark .filter-modal-apply-button:hover {
+    background-color: var(--color-grey2);
+}
+
+.dark .filter-modal-apply-button {
+    background-color: var(--color-grey1);
+    color: var(--color-grey6);
+}

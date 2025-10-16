@@ -48,7 +48,7 @@ export default function Archive() {
     const [offset, setOffset] = useState(0)
     const [hasMore, setHasMore] = useState(false)
 
-    const limit = 10
+    const limit = 3
 
     const fetchEpisodes = async (currentOffset: number = 0) => {
         try {
