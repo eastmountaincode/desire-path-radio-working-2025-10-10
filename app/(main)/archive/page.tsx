@@ -49,6 +49,7 @@ export default function Archive() {
     const [hasMore, setHasMore] = useState(false)
     const [selectedTagSlugs, setSelectedTagSlugs] = useState<string[]>([])
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+    const [expandedEpisodeId, setExpandedEpisodeId] = useState<number | null>(null)
 
     const limit = 3
 
@@ -99,6 +100,10 @@ export default function Archive() {
         setOffset(0)
     }
 
+    const handleEpisodeClick = (episodeId: number) => {
+        setExpandedEpisodeId(expandedEpisodeId === episodeId ? null : episodeId)
+    }
+
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -139,7 +144,13 @@ export default function Archive() {
                         {/* Episodes Grid */}
                         <div className="space-y-0 mb-8">
                             {episodes.map((episode, index) => (
-                                <EpisodeCard key={episode.id} episode={episode} isLast={index === episodes.length - 1} />
+                                <EpisodeCard 
+                                    key={episode.id} 
+                                    episode={episode} 
+                                    isLast={index === episodes.length - 1}
+                                    isExpanded={expandedEpisodeId === episode.id}
+                                    onToggle={() => handleEpisodeClick(episode.id)}
+                                />
                             ))}
                         </div>
 
