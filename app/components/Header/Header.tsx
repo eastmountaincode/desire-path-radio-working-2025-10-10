@@ -19,9 +19,12 @@ export default function Header() {
         <header className={`fixed border-b top-0 left-0 right-0 z-52 px-7 ${devMode ? 'border border-red-500' : ''}`}>
             <div className={`flex items-center justify-between h-12 ${devMode ? 'border border-blue-500' : ''}`}>
                 <div className="flex items-center gap-12">
-                    <div className={`select-none ${devMode ? 'border border-green-500' : ''}`}>
+                    <Link 
+                        href="/"
+                        className={`select-none hover:text-brand-dpr-orange ${devMode ? 'border border-green-500' : ''}`}
+                    >
                         desire path radio
-                    </div>
+                    </Link>
 
                     {/* Desktop nav */}
                     <nav className="hidden md:flex gap-3">

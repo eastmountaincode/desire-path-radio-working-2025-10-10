@@ -56,12 +56,14 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
 
     return (
         <div 
-            className={`py-4 episode-card ${!isLast ? 'episode-card-dotted' : ''} ${isExpanded ? 'episode-card-expanded-state' : ''} ${devMode ? 'border-red-500 border' : ''}`}
-            onClick={onToggle}
+            className={`p-6 md:p-6 episode-card ${!isLast ? 'episode-card-dotted' : ''} ${isExpanded ? 'episode-card-expanded-state' : ''} ${devMode ? 'border-red-500 border-2' : ''}`}
         >
-            <div className={`grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-26 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border' : ''}`}>
+            <div 
+                className={`cursor-pointer grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-26 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border-2' : ''}`}
+                onClick={onToggle}
+            >
                 {/* Date Column */}
-                <div className={`pl-2 col-span-2 pe-4 md:col-span-2 episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>
+                <div className={`col-span-2 pe-4 md:col-span-2 episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>
                     {formatDate(episode.aired_on)}
                 </div>
 
@@ -119,26 +121,38 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
             </div>
 
             {/* Expanded Content */}
-            <div className={`episode-card-expanded ${isExpanded ? 'episode-card-expanded-open' : ''} ${devMode ? 'border-purple-500 border' : ''}`}>
-                <div className="episode-card-expanded-content">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
-                        {/* Image */}
+            <div 
+                className={`cursor-auto episode-card-expanded ${isExpanded ? 'episode-card-expanded-open' : ''} ${devMode ? 'border-purple-500 border' : ''}`}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className={`episode-card-expanded-content ${devMode ? 'border-green-500 border' : ''}`}>
+                    <div className="md:pt-6 pb-2 grid grid-cols-1 md:grid-cols-12 gap-6">
+                        {/* Image - shown on mobile above description */}
                         {episode.image_url && (
-                            <div className={`md:col-span-4 ${devMode ? 'border-yellow-500 border' : ''}`}>
+                            <div className={`max-w-sm md:max-w-none md:col-span-4 ${devMode ? 'border border-yellow-500' : ''}`}>
                                 <Image
                                     src={episode.image_url}
                                     alt={episode.title}
                                     width={400}
                                     height={400}
                                     className="w-full h-auto"
+                                    unoptimized
                                 />
                             </div>
                         )}
                         
-                        {/* Description */}
-                        <div className={`${episode.image_url ? 'md:col-span-8' : 'md:col-span-12'} ${devMode ? 'border-yellow-500 border' : ''}`}>
+                        {/* Description and Play Button */}
+                        <div className={`flex flex-col md:flex-col ${episode.image_url ? 'md:col-span-8' : 'md:col-span-12'} ${devMode ? 'border-yellow-500 border' : ''}`}>
+                            {/* Play Button */}
+                            <button className={`flex items-center gap-2 mb-4 md:order-2 md:mt-4 font-mono ${devMode ? 'border-pink-500 border' : ''}`}>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M3 2L13 8L3 14V2Z" />
+                                </svg>
+                                play
+                            </button>
+                            
                             {episode.description && (
-                                <p className="episode-card-description">
+                                <p className={`episode-card-description md:order-1 ${devMode ? 'border-cyan-500 border' : ''}`}>
                                     {episode.description}
                                 </p>
                             )}
