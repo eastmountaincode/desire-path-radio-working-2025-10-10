@@ -3,6 +3,7 @@
 import { useAudioPlayer } from './AudioPlayerProvider'
 import { useDevMode } from '../DevModeProvider'
 import { useMobileMenu } from '../MobileMenuProvider'
+import { useRef, useEffect } from 'react'
 import './audio-player-styles.css'
 
 export default function AudioPlayer() {
@@ -19,7 +20,35 @@ export default function AudioPlayer() {
         setVolume
     } = useAudioPlayer()
     const devMode = useDevMode()
-    const { headerHeight } = useMobileMenu()
+    const { headerHeight, setAudioPlayerHeight } = useMobileMenu()
+    const playerRef = useRef<HTMLDivElement>(null)
+
+    // Measure audio player height and update context
+    useEffect(() => {
+        const updateHeight = () => {
+            if (playerRef.current) {
+                setAudioPlayerHeight(playerRef.current.offsetHeight)
+            }
+        }
+
+        // Use requestAnimationFrame to ensure DOM is ready
+        const rafId = requestAnimationFrame(() => {
+            updateHeight()
+        })
+
+        // Create ResizeObserver to watch for size changes
+        const resizeObserver = new ResizeObserver(updateHeight)
+        if (playerRef.current) {
+            resizeObserver.observe(playerRef.current)
+        }
+
+        return () => {
+            cancelAnimationFrame(rafId)
+            resizeObserver.disconnect()
+            // Reset to 0 when component unmounts
+            setAudioPlayerHeight(0)
+        }
+    }, [setAudioPlayerHeight, currentEpisode])
 
     // Don't render if no episode is loaded
     if (!currentEpisode) return null
@@ -56,10 +85,12 @@ export default function AudioPlayer() {
 
     return (
         <div 
+            ref={playerRef}
             className={`audio-player ${devMode ? 'border border-orange-500' : ''}`}
             style={{ top: `${headerHeight - 1}px` }}
         >
-            <div className={`audio-player-container ${devMode ? 'border border-yellow-500' : ''}`}>
+            {/* Desktop Layout */}
+            <div className={`audio-player-container hidden md:flex h-full ${devMode ? 'border border-yellow-500' : ''}`}>
                 {/* Left section - Controls and Info */}
                 <div className={`flex items-center gap-4 min-w-0 ${devMode ? 'border border-green-500' : ''}`}>
                     {/* Play/Pause Button */}
@@ -112,7 +143,7 @@ export default function AudioPlayer() {
                     </div>
 
                     {/* Additional controls (desktop only) */}
-                    <div className={`hidden md:flex md:ml-2 items-center gap-4 ${devMode ? 'border border-indigo-500' : ''}`}>
+                    <div className={`flex ml-2 items-center gap-4 ${devMode ? 'border border-indigo-500' : ''}`}>
                         {/* Seek Back 15s */}
                         <button
                             onClick={handleSeekBack}
@@ -152,9 +183,8 @@ export default function AudioPlayer() {
                     </div>
                 </div>
 
-                {/* Right section - Close button only */}
-                <div className={`hidden md:flex items-center ${devMode ? 'border border-indigo-500' : ''}`}>
-                    {/* Close Button */}
+                {/* Right section - Close button */}
+                <div className={`flex items-center ${devMode ? 'border border-indigo-500' : ''}`}>
                     <button
                         onClick={stop}
                         className={`audio-player-close-button ${devMode ? 'border border-pink-500' : ''}`}
@@ -164,20 +194,73 @@ export default function AudioPlayer() {
                             <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" strokeWidth="2" />
                         </svg>
                     </button>
+                </div>
+            </div>
+
+            {/* Mobile Layout - 3 Columns */}
+            <div className={`md:hidden grid grid-cols-[auto_1fr_auto] gap-4 items-center px-7 h-full ${devMode ? 'border border-yellow-500' : ''}`}>
+                {/* Left Column - Play Button */}
+                <button
+                    onClick={isPlaying ? pause : resume}
+                    className={`audio-player-play-button ${devMode ? 'border border-pink-500' : ''}`}
+                    aria-label={isPlaying ? 'Pause' : 'Play'}
+                >
+                    {isPlaying ? (
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <rect x="3" y="2" width="4" height="12" />
+                            <rect x="9" y="2" width="4" height="12" />
+                        </svg>
+                    ) : (
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M3 2L13 8L3 14V2Z" />
+                        </svg>
+                    )}
+                </button>
+
+                {/* Center Column - Title and Progress (stacked) */}
+                <div className={`flex flex-col gap-0 min-w-0 px-4 ${devMode ? 'border border-green-500' : ''}`}>
+                    {/* Episode Title */}
+                    <div className={`audio-player-title ${devMode ? 'border border-cyan-500' : ''}`}>
+                        {currentEpisode.title}
+                    </div>
+
+                    {/* Progress Bar with Timestamps */}
+                    <div className={`flex items-center gap-2 ${devMode ? 'border border-blue-500' : ''}`}>
+                        {/* Current Time */}
+                        <div className={`audio-player-time w-14 flex-shrink-0 ${devMode ? 'border border-red-500' : ''}`}>
+                            {formatTime(currentTime)}
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div
+                            className={`audio-player-progress-container flex-1 ${devMode ? 'border border-purple-500' : ''}`}
+                            onClick={handleProgressClick}
+                        >
+                            <div className="audio-player-progress-track">
+                                <div 
+                                    className="audio-player-progress-fill"
+                                    style={{ width: `${progressPercentage}%` }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Duration */}
+                        <div className={`audio-player-time w-14 flex-shrink-0 ${devMode ? 'border border-red-500' : ''}`}>
+                            {formatTime(duration)}
+                        </div>
+                    </div>
                 </div>
 
-                {/* Mobile - Close button only */}
-                <div className={`md:hidden flex items-center ${devMode ? 'border border-indigo-500' : ''}`}>
-                    <button
-                        onClick={stop}
-                        className={`audio-player-close-button ${devMode ? 'border border-pink-500' : ''}`}
-                        aria-label="Close player"
-                    >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" strokeWidth="2" />
-                        </svg>
-                    </button>
-                </div>
+                {/* Right Column - Close Button */}
+                <button
+                    onClick={stop}
+                    className={`audio-player-close-button ${devMode ? 'border border-pink-500' : ''}`}
+                    aria-label="Close player"
+                >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                </button>
             </div>
         </div>
     )

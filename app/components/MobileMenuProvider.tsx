@@ -7,6 +7,8 @@ interface MobileMenuContextType {
     setIsMobileMenuOpen: (open: boolean) => void
     headerHeight: number
     setHeaderHeight: (height: number) => void
+    audioPlayerHeight: number
+    setAudioPlayerHeight: (height: number) => void
 }
 
 const MobileMenuContext = createContext<MobileMenuContextType | undefined>(undefined)
@@ -14,13 +16,16 @@ const MobileMenuContext = createContext<MobileMenuContextType | undefined>(undef
 export function MobileMenuProvider({ children }: { children: ReactNode }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [headerHeight, setHeaderHeight] = useState(48) // Default to 48px
+    const [audioPlayerHeight, setAudioPlayerHeight] = useState(0) // Default to 0 (no player)
 
     return (
         <MobileMenuContext.Provider value={{ 
             isMobileMenuOpen, 
             setIsMobileMenuOpen,
             headerHeight,
-            setHeaderHeight
+            setHeaderHeight,
+            audioPlayerHeight,
+            setAudioPlayerHeight
         }}>
             {children}
         </MobileMenuContext.Provider>
