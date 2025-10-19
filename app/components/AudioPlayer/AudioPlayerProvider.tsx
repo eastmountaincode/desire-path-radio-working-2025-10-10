@@ -7,6 +7,7 @@ interface AudioPlayerContextType {
     currentEpisode: {
         id: number
         title: string
+        slug: string
         audioUrl: string
         imageUrl?: string
         hosts?: string
@@ -22,6 +23,7 @@ interface AudioPlayerContextType {
     play: (episode: {
         id: number
         title: string
+        slug: string
         audioUrl: string
         imageUrl?: string
         hosts?: string

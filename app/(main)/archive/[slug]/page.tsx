@@ -116,6 +116,7 @@ export default function EpisodePage() {
                                     play({
                                         id: episode.id,
                                         title: episode.title,
+                                        slug: episode.slug,
                                         audioUrl: episode.audio_url,
                                         imageUrl: episode.image_url || undefined,
                                         hosts: episode.hosts[0]?.name || undefined

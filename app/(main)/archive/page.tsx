@@ -67,15 +67,20 @@ export default function Archive() {
             const data: ApiResponse = await response.json()
 
             if (currentOffset === 0) {
-                // First load
+                // Replace episodes (first page load or after filter/sort change)
                 setEpisodes(data.episodes)
+                setOffset(limit)
             } else {
-                // Append more episodes
-                setEpisodes(prev => [...prev, ...data.episodes])
+                // Append more episodes, but deduplicate
+                setEpisodes(prev => {
+                    const existingIds = new Set(prev.map(ep => ep.id))
+                    const newEpisodes = data.episodes.filter(ep => !existingIds.has(ep.id))
+                    return [...prev, ...newEpisodes]
+                })
+                setOffset(prev => prev + limit)
             }
 
             setHasMore(data.pagination.hasMore)
-            setOffset(currentOffset + limit)
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred')
         } finally {
@@ -84,6 +89,9 @@ export default function Archive() {
     }
 
     useEffect(() => {
+        // Reset offset immediately when sort or filter changes
+        setOffset(0)
+        setEpisodes([])
         fetchEpisodes(0, selectedTagSlugs, sortOrder)
     }, [selectedTagSlugs, sortOrder])
 
@@ -93,12 +101,10 @@ export default function Archive() {
 
     const handleFilterApply = (tagSlugs: string[]) => {
         setSelectedTagSlugs(tagSlugs)
-        setOffset(0)
     }
 
     const handleSortApply = (order: 'asc' | 'desc') => {
         setSortOrder(order)
-        setOffset(0)
     }
 
     const handleEpisodeClick = (episodeId: number) => {

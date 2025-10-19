@@ -99,6 +99,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .dark .audio-player-title {

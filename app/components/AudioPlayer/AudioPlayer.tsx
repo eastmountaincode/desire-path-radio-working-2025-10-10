@@ -4,6 +4,7 @@ import { useAudioPlayer } from './AudioPlayerProvider'
 import { useDevMode } from '../DevModeProvider'
 import { useMobileMenu } from '../MobileMenuProvider'
 import { useRef, useEffect } from 'react'
+import Link from 'next/link'
 import './audio-player-styles.css'
 
 export default function AudioPlayer() {
@@ -112,9 +113,12 @@ export default function AudioPlayer() {
                     </button>
 
                     {/* Episode Title */}
-                    <div className={`audio-player-title ${devMode ? 'border border-cyan-500' : ''}`}>
+                    <Link 
+                        href={`/archive/${currentEpisode.slug}`}
+                        className={`audio-player-title hover:text-brand-dpr-orange ${devMode ? 'border border-cyan-500' : ''}`}
+                    >
                         {currentEpisode.title}
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Center section - Time and Progress */}
@@ -220,9 +224,12 @@ export default function AudioPlayer() {
                 {/* Center Column - Title and Progress (stacked) */}
                 <div className={`flex flex-col gap-0 min-w-0 px-4 ${devMode ? 'border border-green-500' : ''}`}>
                     {/* Episode Title */}
-                    <div className={`audio-player-title ${devMode ? 'border border-cyan-500' : ''}`}>
+                    <Link 
+                        href={`/archive/${currentEpisode.slug}`}
+                        className={`audio-player-title hover:text-brand-dpr-orange ${devMode ? 'border border-cyan-500' : ''}`}
+                    >
                         {currentEpisode.title}
-                    </div>
+                    </Link>
 
                     {/* Progress Bar with Timestamps */}
                     <div className={`flex items-center gap-2 ${devMode ? 'border border-blue-500' : ''}`}>
