@@ -1,0 +1,138 @@
+.audio-player {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    height: 48px;
+    background-color: var(--color-grey1);
+    border-bottom: 1px solid var(--color-grey6);
+}
+
+.dark .audio-player {
+    background-color: var(--color-grey6);
+    border-bottom: 1px solid var(--color-grey1);
+}
+
+.audio-player-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.75rem;
+    height: 100%;
+    max-width: 100%;
+}
+
+.audio-player-play-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-grey6);
+    flex-shrink: 0;
+}
+
+.dark .audio-player-play-button {
+    color: var(--color-grey1);
+}
+
+.audio-player-play-button:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.audio-player-control-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-grey6);
+    flex-shrink: 0;
+}
+
+.dark .audio-player-control-button {
+    color: var(--color-grey1);
+}
+
+.audio-player-control-button:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.audio-player-close-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-grey6);
+    flex-shrink: 0;
+}
+
+.dark .audio-player-close-button {
+    color: var(--color-grey1);
+}
+
+.audio-player-close-button:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.audio-player-title {
+    font-family: var(--font-monument);
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.045em;
+    color: var(--color-grey6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.dark .audio-player-title {
+    color: var(--color-grey1);
+}
+
+.audio-player-time {
+    font-size: 13px;
+    line-height: 1.5;
+    letter-spacing: -0.045em;
+    flex-shrink: 0;
+}
+
+.dark .audio-player-time {
+    color: var(--color-grey4);
+}
+
+.audio-player-progress-container {
+    flex: 1;
+    min-width: 0;
+    max-width: 600px;
+    cursor: pointer;
+    padding: 0.5rem 0;
+}
+
+.audio-player-progress-track {
+    height: 4px;
+    background-color: var(--color-grey2);
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.dark .audio-player-progress-track {
+    background-color: var(--color-grey5);
+}
+
+.audio-player-progress-fill {
+    height: 100%;
+    background-color: var(--color-brand-dpr-orange);
+    transition: width 0.1s linear;
+}
+

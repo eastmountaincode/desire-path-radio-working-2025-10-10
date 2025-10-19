@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 
 import './episode-card-styles.css'
 import { useDevMode } from '../../DevModeProvider'
@@ -141,15 +142,18 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
                             </div>
                         )}
                         
-                        {/* Description and Play Button */}
+                        {/* Description and Episode Link */}
                         <div className={`flex flex-col md:flex-col ${episode.image_url ? 'md:col-span-8' : 'md:col-span-12'} ${devMode ? 'border-yellow-500 border' : ''}`}>
-                            {/* Play Button */}
-                            <button className={`flex items-center gap-2 mb-4 md:order-2 md:mt-4 font-mono ${devMode ? 'border-pink-500 border' : ''}`}>
+                            {/* Episode Link */}
+                            <Link 
+                                href={`/archive/${episode.slug}`}
+                                className={`flex items-center gap-2 mb-4 md:order-2 md:mt-4 font-mono ${devMode ? 'border-pink-500 border' : ''}`}
+                            >
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                    <path d="M3 2L13 8L3 14V2Z" />
+                                    <path d="M3 8L10 8M10 8L7 5M10 8L7 11" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
                                 </svg>
-                                play
-                            </button>
+                                view episode
+                            </Link>
                             
                             {episode.description && (
                                 <p className={`episode-card-description md:order-1 ${devMode ? 'border-cyan-500 border' : ''}`}>

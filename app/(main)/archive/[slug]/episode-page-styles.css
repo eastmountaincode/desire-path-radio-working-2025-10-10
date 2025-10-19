@@ -1,0 +1,46 @@
+.episode-page-play-button {
+    color: var(--color-grey6);
+}
+
+.dark .episode-page-play-button {
+    color: var(--color-grey1);
+}
+
+.episode-page-play-button:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.episode-page-title {
+    color: var(--color-grey6);
+}
+
+.dark .episode-page-title {
+    color: var(--color-grey1);
+}
+
+.episode-page-subtitle {
+    color: var(--color-grey5);
+}
+
+.dark .episode-page-subtitle {
+    color: var(--color-grey4);
+}
+
+.episode-page-description {
+    color: var(--color-grey6);
+}
+
+.dark .episode-page-description {
+    color: var(--color-grey1);
+}
+
+.episode-page-tag {
+    border-color: var(--color-grey2);
+    color: var(--color-grey5);
+}
+
+.dark .episode-page-tag {
+    border-color: var(--color-grey5);
+    color: var(--color-grey2);
+}
+

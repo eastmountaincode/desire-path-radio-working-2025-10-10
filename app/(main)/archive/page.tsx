@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import EpisodeCard from '@/app/components/archive/EpisodeCard/EpisodeCard'
 import ArchiveTableHeader from '@/app/components/archive/ArchiveTableHeader/ArchiveTableHeader'
 import ArchiveControlHeader from '@/app/components/archive/ArchiveControlHeader/ArchiveControlHeader'
+import { useDevMode } from '@/app/components/DevModeProvider'
 
 interface Episode {
     id: number
@@ -53,7 +54,7 @@ export default function Archive() {
 
     const limit = 3
 
-    const fetchEpisodes = async (currentOffset: number = 0, tagSlugs: string[] = [], order: 'asc' | 'desc' = 'desc') => {
+    const fetchEpisodes = async (currentOffset: number = 0, tagSlugs: string[] = [], order: 'asc' | 'desc' = 'desc') => {        
         try {
             setLoading(true)
             const tagParams = tagSlugs.length > 0 ? `&tags=${tagSlugs.join(',')}` : ''
@@ -104,6 +105,8 @@ export default function Archive() {
         setExpandedEpisodeId(expandedEpisodeId === episodeId ? null : episodeId)
     }
 
+    const devMode = useDevMode()
+
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -116,7 +119,7 @@ export default function Archive() {
     }
 
     return (
-        <div className="min-h-screen">
+        <div className={`min-h-screen ${devMode ? 'border border-red-500' : ''}`}>
             {/* Control Header */}
             <div className="pt-6 pb-2">
                 <ArchiveControlHeader 

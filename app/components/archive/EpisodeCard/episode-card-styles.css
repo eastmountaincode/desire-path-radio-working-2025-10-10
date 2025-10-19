@@ -121,4 +121,39 @@
   letter-spacing: 0em;
 }
 
+/* Episode link in expanded state */
+.episode-card-expanded a {
+  color: var(--color-grey6);
+}
 
+.dark .episode-card-expanded a {
+  color: var(--color-grey1);
+}
+
+.episode-card-expanded-state a {
+  color: var(--color-grey1);
+}
+
+.dark .episode-card-expanded-state a {
+  color: var(--color-grey6);
+}
+
+.episode-card:hover a {
+  color: var(--color-grey1);
+}
+
+.dark .episode-card:hover a {
+  color: var(--color-grey6);
+}
+
+.episode-card-expanded a:hover {
+  color: var(--color-brand-dpr-orange);
+}
+
+.episode-card-expanded-state a:hover {
+  color: var(--color-brand-dpr-orange);
+}
+
+.episode-card:hover a:hover {
+  color: var(--color-brand-dpr-orange);
+}

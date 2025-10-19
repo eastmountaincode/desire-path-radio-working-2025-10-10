@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { DevModeProvider } from "./components/DevModeProvider";
+import { AudioPlayerProvider } from "./components/AudioPlayer/AudioPlayerProvider";
+import { MobileMenuProvider } from "./components/MobileMenuProvider";
 
 export const metadata: Metadata = {
   title: "DPR",
@@ -18,7 +20,11 @@ export default function RootLayout({
       <body className="antialiased">
         <DevModeProvider>
           <ThemeProvider>
-            {children}
+            <MobileMenuProvider>
+              <AudioPlayerProvider>
+                {children}
+              </AudioPlayerProvider>
+            </MobileMenuProvider>
           </ThemeProvider>
         </DevModeProvider>
       </body>

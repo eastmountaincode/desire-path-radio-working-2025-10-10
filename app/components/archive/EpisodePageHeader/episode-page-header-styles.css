@@ -1,0 +1,12 @@
+.episode-page-header-back {
+    color: var(--color-grey6);
+}
+
+.dark .episode-page-header-back {
+    color: var(--color-grey1);
+}
+
+.episode-page-header-back:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
