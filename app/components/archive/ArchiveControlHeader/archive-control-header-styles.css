@@ -23,4 +23,3 @@
 .dark .archive-control-button.active {
     background-color: var(--color-grey5);
 }
-/* Filter Modal Styles - moved to Tailwind classes in component */

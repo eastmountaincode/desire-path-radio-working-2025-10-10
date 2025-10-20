@@ -5,6 +5,7 @@ import Link from 'next/link'
 
 import './episode-card-styles.css'
 import { useDevMode } from '../../DevModeProvider'
+import Tag from '../../Tag/Tag'
 
 interface EpisodeCardProps {
     episode: {
@@ -106,17 +107,10 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
                 {/* Tags Column - desktop only */}
                 <div className={`hidden md:flex align-start md:col-span-2 lg:col-span-3 flex-wrap gap-1 episode-card-tags ${devMode ? 'border-green-500 border' : ''}`}>
                     {episode.tags.slice(0, 2).map(tag => (
-                        <span
-                            key={tag.id}
-                            className={`episode-card-tag ${devMode ? 'bborder-green-500 border' : ''}`}>
-                        
-                            {tag.name}
-                        </span>
+                        <Tag key={tag.id} name={tag.name} />
                     ))}
                     {episode.tags.length > 2 && (
-                        <span className={`episode-card-tag ${devMode ? 'border-green-500 border' : ''}`}>
-                            +{episode.tags.length - 2}
-                        </span>
+                        <Tag name={`+${episode.tags.length - 2}`} />
                     )}
                 </div>
             </div>

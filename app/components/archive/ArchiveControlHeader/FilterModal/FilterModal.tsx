@@ -18,18 +18,25 @@ interface GroupedTags {
     TOPIC: Tag[]
 }
 
+export interface SelectedTag {
+    id: number
+    name: string
+    slug: string
+}
+
 interface FilterModalProps {
     isOpen: boolean
     onClose: () => void
-    onApply: (tagSlugs: string[]) => void
+    onApply: (tags: SelectedTag[]) => void
+    currentSelectedTags: SelectedTag[]
 }
 
-export default function FilterModal({ isOpen, onClose, onApply }: FilterModalProps) {
+export default function FilterModal({ isOpen, onClose, onApply, currentSelectedTags }: FilterModalProps) {
     const [openSections, setOpenSections] = useState({
-        channel: true,
+        channel: false,
         format: false,
         genre: false,
-        topic: true
+        topic: false
     })
 
     const [tags, setTags] = useState<GroupedTags>({
@@ -60,6 +67,12 @@ export default function FilterModal({ isOpen, onClose, onApply }: FilterModalPro
         fetchTags()
     }, [])
 
+    // Sync internal state with prop when it changes
+    useEffect(() => {
+        const tagIds = new Set(currentSelectedTags.map(tag => tag.id))
+        setSelectedTags(tagIds)
+    }, [currentSelectedTags])
+
     const toggleSection = (section: keyof typeof openSections) => {
         setOpenSections(prev => ({
             ...prev,
@@ -80,15 +93,19 @@ export default function FilterModal({ isOpen, onClose, onApply }: FilterModalPro
     }
 
     const handleApply = () => {
-        // Convert selected tag IDs to slugs
-        const selectedSlugs: string[] = []
+        // Convert selected tag IDs to tag objects
+        const selectedTagObjects: SelectedTag[] = []
         Array.from(selectedTags).forEach(tagId => {
             const tag = Object.values(tags).flat().find(t => t.id === tagId)
             if (tag) {
-                selectedSlugs.push(tag.slug)
+                selectedTagObjects.push({
+                    id: tag.id,
+                    name: tag.name,
+                    slug: tag.slug
+                })
             }
         })
-        onApply(selectedSlugs)
+        onApply(selectedTagObjects)
         onClose()
     }
 
@@ -107,7 +124,7 @@ export default function FilterModal({ isOpen, onClose, onApply }: FilterModalPro
             <div className={`p-4 min-w-72`}>
                 <div className={`filter-modal-header mb-4 ${devMode ? 'border border-red-500' : ''}`}>
                     <h3 className={`mb-1 pb-2 ${devMode ? 'border border-red-500' : ''}`}>
-                        filter tags
+                        filter by tags
                     </h3>
                 </div>
 

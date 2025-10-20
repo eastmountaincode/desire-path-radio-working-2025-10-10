@@ -1,0 +1,26 @@
+.tag {
+    border-color: var(--color-grey2);
+    color: var(--color-grey5);
+}
+
+.dark .tag {
+    border-color: var(--color-grey5);
+    color: var(--color-grey2);
+}
+
+.tag-remove-icon {
+    background-color: var(--color-grey5);
+    mask: url(/images/icons/flaticon/cross-small.svg) no-repeat center;
+    mask-size: contain;
+    -webkit-mask: url(/images/icons/flaticon/cross-small.svg) no-repeat center;
+    -webkit-mask-size: contain;
+}
+
+.tag-remove-icon:hover {
+    background-color: var(--color-brand-dpr-orange);
+}
+
+.dark .tag-remove-icon {
+    background-color: var(--color-grey2);
+}
+

@@ -5,6 +5,7 @@ import EpisodeCard from '@/app/components/archive/EpisodeCard/EpisodeCard'
 import ArchiveTableHeader from '@/app/components/archive/ArchiveTableHeader/ArchiveTableHeader'
 import ArchiveControlHeader from '@/app/components/archive/ArchiveControlHeader/ArchiveControlHeader'
 import { useDevMode } from '@/app/components/DevModeProvider'
+import type { SelectedTag } from '@/app/components/archive/ArchiveControlHeader/FilterModal/FilterModal'
 
 interface Episode {
     id: number
@@ -51,7 +52,7 @@ export default function Archive() {
     const [error, setError] = useState<string | null>(null)
     const [offset, setOffset] = useState(0)
     const [hasMore, setHasMore] = useState(false)
-    const [selectedTagSlugs, setSelectedTagSlugs] = useState<string[]>([])
+    const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([])
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
     const [expandedEpisodeId, setExpandedEpisodeId] = useState<number | null>(null)
 
@@ -94,15 +95,17 @@ export default function Archive() {
         // Reset offset immediately when sort or filter changes
         setOffset(0)
         setEpisodes([])
+        const selectedTagSlugs = selectedTags.map(tag => tag.slug)
         fetchEpisodes(0, selectedTagSlugs, sortOrder)
-    }, [selectedTagSlugs, sortOrder])
+    }, [selectedTags, sortOrder])
 
     const loadMore = () => {
+        const selectedTagSlugs = selectedTags.map(tag => tag.slug)
         fetchEpisodes(offset, selectedTagSlugs, sortOrder)
     }
 
-    const handleFilterApply = (tagSlugs: string[]) => {
-        setSelectedTagSlugs(tagSlugs)
+    const handleFilterApply = (tags: SelectedTag[]) => {
+        setSelectedTags(tags)
     }
 
     const handleSortApply = (order: 'asc' | 'desc') => {
@@ -134,6 +137,7 @@ export default function Archive() {
                     onFilterApply={handleFilterApply}
                     onSortApply={handleSortApply}
                     currentSortOrder={sortOrder}
+                    selectedTags={selectedTags}
                 />
             </div>
 
