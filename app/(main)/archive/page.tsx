@@ -166,13 +166,14 @@ export default function Archive() {
 
                         {/* Load More Button */}
                         {hasMore && (
-                            <div className="text-center">
+                            <div className="text-center py-8">
                                 <button
                                     onClick={loadMore}
                                     disabled={loading}
-                                    className="px-6 py-2 bg-brand-dpr-orange text-grey1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex flex-col items-center gap-1 mx-auto hover:text-brand-dpr-orange disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {loading ? 'Loading...' : 'Show More'}
+                                    <span className="text-sm">{loading ? 'loading...' : 'show more'}</span>
+                                    <i className="fi fi-tr-angle-down"></i>
                                 </button>
                             </div>
                         )}

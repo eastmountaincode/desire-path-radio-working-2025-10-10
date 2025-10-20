@@ -60,7 +60,7 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
             className={`p-6 md:p-6 episode-card ${!isLast ? 'episode-card-dotted' : ''} ${isExpanded ? 'episode-card-expanded-state' : ''} ${devMode ? 'border-red-500 border-2' : ''}`}
         >
             <div 
-                className={`cursor-pointer grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-26 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border-2' : ''}`}
+                className={`cursor-pointer grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-22 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border-2' : ''}`}
                 onClick={onToggle}
             >
                 {/* Date Column */}
@@ -70,11 +70,11 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
 
                 {/* Title Column - includes host on mobile */}
                 <div className={`col-span-5 md:col-span-4 lg:col-span-5 ${devMode ? 'border-green-500 border' : ''}`}>
-                    <div className="episode-card-title -mt-1.5">
+                    <div className="episode-card-title text-[17px] md:text-[20px] -mt-1.5 line-clamp-2 md:line-clamp-none">
                         {episode.title}
                     </div>
                     {/* Host shown under title on mobile only */}
-                    <div className={`md:hidden episode-card-host mt-1 ${devMode ? 'border-green-500 border' : ''}`}>
+                    <div className={`md:hidden episode-card-host mt-1 truncate ${devMode ? 'border-green-500 border' : ''}`}>
                         {episode.hosts.length > 0 ? (
                             <>
                                 {episode.hosts[0]?.name}

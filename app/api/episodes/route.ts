@@ -204,13 +204,13 @@ export async function GET(request: NextRequest) {
 
     const { data: episodes, error } = await query
 
-    console.log('API RESULT', {
-        offset,
-        limit,
-        orderBy,
-        order,
-        ids: (episodes || []).map((e: any) => e.id),
-      })
+    // console.log('API RESULT', {
+    //     offset,
+    //     limit,
+    //     orderBy,
+    //     order,
+    //     ids: (episodes || []).map((e: any) => e.id),
+    //   })
 
     if (error) {
       console.error('Database query error:', error)
