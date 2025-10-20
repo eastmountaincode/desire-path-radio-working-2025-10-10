@@ -119,6 +119,7 @@
   font-size: 14px;
   line-height: 1.6;
   letter-spacing: 0em;
+  white-space: pre-line;
 }
 
 /* Episode link in expanded state */

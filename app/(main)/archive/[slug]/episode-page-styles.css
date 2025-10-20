@@ -28,6 +28,7 @@
 
 .episode-page-description {
     color: var(--color-grey6);
+    white-space: pre-line;
 }
 
 .dark .episode-page-description {
