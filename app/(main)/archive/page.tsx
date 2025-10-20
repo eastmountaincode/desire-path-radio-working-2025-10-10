@@ -42,6 +42,9 @@ interface ApiResponse {
     }
 }
 
+// Notes
+// When filter or sort changes, offset gets reset to 0.
+
 export default function Archive() {
     const [episodes, setEpisodes] = useState<Episode[]>([])
     const [loading, setLoading] = useState(true)
@@ -56,6 +59,7 @@ export default function Archive() {
 
     const fetchEpisodes = async (currentOffset: number = 0, tagSlugs: string[] = [], order: 'asc' | 'desc' = 'desc') => {        
         try {
+            console.log('fetchEpisodes', currentOffset, tagSlugs, order)
             setLoading(true)
             const tagParams = tagSlugs.length > 0 ? `&tags=${tagSlugs.join(',')}` : ''
             const response = await fetch(`/api/episodes?limit=${limit}&offset=${currentOffset}&orderBy=aired_on&order=${order}&includeTest=true&testTypes=none,manual${tagParams}`)
@@ -73,9 +77,7 @@ export default function Archive() {
             } else {
                 // Append more episodes, but deduplicate
                 setEpisodes(prev => {
-                    const existingIds = new Set(prev.map(ep => ep.id))
-                    const newEpisodes = data.episodes.filter(ep => !existingIds.has(ep.id))
-                    return [...prev, ...newEpisodes]
+                    return [...prev, ...data.episodes]
                 })
                 setOffset(prev => prev + limit)
             }
@@ -117,7 +119,6 @@ export default function Archive() {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold text-brand-dpr-orange mb-4">Archive</h1>
                     <p className="text-brand-dpr-orange">Error: {error}</p>
                 </div>
             </div>
@@ -140,11 +141,11 @@ export default function Archive() {
             <div>
                 {loading && episodes.length === 0 ? (
                     <div className="flex justify-center py-12">
-                        <div className="text-grey5">Loading episodes...</div>
+                        <div>Loading episodes...</div>
                     </div>
                 ) : episodes.length === 0 ? (
                     <div className="text-center py-12">
-                        <p className="text-grey5">No episodes found.</p>
+                        <p>No episodes found.</p>
                     </div>
                 ) : (
                     <>

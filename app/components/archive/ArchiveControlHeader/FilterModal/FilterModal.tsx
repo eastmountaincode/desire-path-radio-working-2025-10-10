@@ -92,6 +92,12 @@ export default function FilterModal({ isOpen, onClose, onApply }: FilterModalPro
         onClose()
     }
 
+    const handleClear = () => {
+        setSelectedTags(new Set())
+        onApply([])
+        onClose()
+    }
+
     const devMode = useDevMode()
 
     if (!isOpen) return null
@@ -235,12 +241,18 @@ export default function FilterModal({ isOpen, onClose, onApply }: FilterModalPro
                     </div>
                 </div>
 
-                <div className="pt-3">
+                <div className="pt-3 space-y-2">
                     <button 
                         className="filter-modal-apply-button w-full py-2 px-4 rounded"
                         onClick={handleApply}
                     >
                         apply
+                    </button>
+                    <button 
+                        className="filter-modal-apply-button w-full py-2 px-4 rounded"
+                        onClick={handleClear}
+                    >
+                        clear
                     </button>
                 </div>
             </div>

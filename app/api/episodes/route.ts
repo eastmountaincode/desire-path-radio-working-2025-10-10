@@ -195,11 +195,22 @@ export async function GET(request: NextRequest) {
       query = query.in('id', episodeIds)
     }
     
+    // first sort by aired_on, the by id
+    // if multiple epidoes have the same data, break ties by id
     query = query
       .order(orderBy, { ascending: order === 'asc' })
+      .order('id', { ascending: order === 'asc' })
       .range(offset, offset + limit - 1)
 
     const { data: episodes, error } = await query
+
+    console.log('API RESULT', {
+        offset,
+        limit,
+        orderBy,
+        order,
+        ids: (episodes || []).map((e: any) => e.id),
+      })
 
     if (error) {
       console.error('Database query error:', error)
