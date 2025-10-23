@@ -1,0 +1,66 @@
+'use client'
+
+import { useState } from 'react'
+import { useDevMode } from '../../DevModeProvider'
+import { useLiveChannelToggle } from '../../LiveChannelToggleProvider'
+import LiveChannel from './LiveChannel'
+import LiveChannelToggle, { type ChannelState } from '../../AudioPlayer/AudioPlayerDevControls'
+import './home-live-radio-styles.css'
+
+export default function HomeLiveRadio() {
+    const devMode = useDevMode()
+    const { showToggles } = useLiveChannelToggle()
+    const [ch1State, setCh1State] = useState<ChannelState>('live')
+    const [ch2State, setCh2State] = useState<ChannelState>('live')
+
+    // Station slug for Evenings.fm API
+    const stationSlug = 'desire-path-radio-test-ab'
+
+    // Cycle through states: offline -> live -> mock -> offline
+    const cycleState = (currentState: ChannelState): ChannelState => {
+        switch (currentState) {
+            case 'offline':
+                return 'live'
+            case 'live':
+                return 'mock'
+            case 'mock':
+                return 'offline'
+        }
+    }
+
+    return (
+        <section className={`${devMode ? 'border border-yellow-500' : ''}`}>
+            <div className={`max-w-5xl mx-auto ${devMode ? 'border border-blue-500' : ''}`}>
+                {showToggles && (
+                    <div className={`mb-4 flex gap-4 ${devMode ? 'border border-red-500' : ''}`}>
+                        <LiveChannelToggle
+                            state={ch1State}
+                            onToggle={() => setCh1State(cycleState(ch1State))}
+                        />
+                        <LiveChannelToggle
+                            state={ch2State}
+                            onToggle={() => setCh2State(cycleState(ch2State))}
+                        />
+                    </div>
+                )}
+
+                {/* Two channel grid */}
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${devMode ? 'border border-red-500' : ''}`}>
+                    <LiveChannel
+                        channelNumber="ch1"
+                        channelType="music"
+                        devState={ch1State}
+                        stationSlug={stationSlug}
+                    />
+                    <LiveChannel
+                        channelNumber="ch2"
+                        channelType="talks"
+                        devState={ch2State}
+                        stationSlug={stationSlug}
+                    />
+                </div>
+            </div>
+        </section>
+    )
+}
+

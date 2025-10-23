@@ -1,5 +1,6 @@
 .episode-card {
     cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .episode-card:hover {
@@ -22,22 +23,26 @@
   color: var(--color-grey6);
 }
 
-.episode-card:hover .episode-card-tag {
+.episode-card .tag {
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.episode-card:hover .tag {
   border-color: var(--color-grey1);
   color: var(--color-grey1);
 }
 
-.dark .episode-card:hover .episode-card-tag {
+.dark .episode-card:hover .tag {
   border-color: var(--color-grey6);
   color: var(--color-grey6);
 }
 
-.episode-card-expanded-state .episode-card-tag {
+.episode-card-expanded-state .tag {
   border-color: var(--color-grey1);
   color: var(--color-grey1);
 }
 
-.dark .episode-card-expanded-state .episode-card-tag {
+.dark .episode-card-expanded-state .tag {
   border-color: var(--color-grey6);
   color: var(--color-grey6);
 }
@@ -108,39 +113,49 @@
   white-space: pre-line;
 }
 
-/* Episode link in expanded state */
-.episode-card-expanded a {
+/* Episode link styling */
+.episode-card-link {
   color: var(--color-grey6);
 }
 
-.dark .episode-card-expanded a {
+.dark .episode-card-link {
   color: var(--color-grey1);
 }
 
-.episode-card-expanded-state a {
+.episode-card-expanded-state .episode-card-link {
   color: var(--color-grey1);
 }
 
-.dark .episode-card-expanded-state a {
+.dark .episode-card-expanded-state .episode-card-link {
   color: var(--color-grey6);
 }
 
-.episode-card:hover a {
+.episode-card:hover .episode-card-link {
   color: var(--color-grey1);
 }
 
-.dark .episode-card:hover a {
+.dark .episode-card:hover .episode-card-link {
   color: var(--color-grey6);
 }
 
-.episode-card-expanded a:hover {
+.episode-card-link:hover {
   color: var(--color-brand-dpr-orange);
 }
 
-.episode-card-expanded-state a:hover {
+.episode-card:hover .episode-card-link:hover {
   color: var(--color-brand-dpr-orange);
 }
 
-.episode-card:hover a:hover {
+.episode-card-expanded-state .episode-card-link:hover {
   color: var(--color-brand-dpr-orange);
+}
+
+.episode-card-link-arrow {
+  transform: translateY(2.5px);
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.episode-card-link:hover .episode-card-link-arrow {
+  transform: translateY(2.5px) translateX(2px);
 }

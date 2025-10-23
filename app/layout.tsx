@@ -4,6 +4,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { DevModeProvider } from "./components/DevModeProvider";
 import { AudioPlayerProvider } from "./components/AudioPlayer/AudioPlayerProvider";
 import { MobileMenuProvider } from "./components/MobileMenuProvider";
+import { LiveChannelToggleProvider } from "./components/LiveChannelToggleProvider";
 
 export const metadata: Metadata = {
   title: "DPR",
@@ -22,7 +23,9 @@ export default function RootLayout({
           <ThemeProvider>
             <MobileMenuProvider>
               <AudioPlayerProvider>
-                {children}
+                <LiveChannelToggleProvider>
+                  {children}
+                </LiveChannelToggleProvider>
               </AudioPlayerProvider>
             </MobileMenuProvider>
           </ThemeProvider>

@@ -57,12 +57,12 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
     }
 
     return (
-        <div 
+        <div
             className={`p-6 md:p-6 episode-card ${!isLast ? 'episode-card-dotted' : ''} ${isExpanded ? 'episode-card-expanded-state' : ''} ${devMode ? 'border-red-500 border-2' : ''}`}
+            onClick={onToggle}
         >
-            <div 
-                className={`cursor-pointer grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-22 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border-2' : ''}`}
-                onClick={onToggle}
+            <div
+                className={`select-none grid grid-cols-7 md:grid-cols-10 lg:grid-cols-15 gap-4 h-22 md:h-24 items-start md:items-center ${devMode ? 'border-blue-500 border-2' : ''}`}
             >
                 {/* Date Column */}
                 <div className={`col-span-2 pe-4 md:col-span-2 episode-card-date ${devMode ? 'border-green-500 border' : ''}`}>
@@ -139,14 +139,12 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
                         {/* Description and Episode Link */}
                         <div className={`flex flex-col md:flex-col ${episode.image_url ? 'md:col-span-8' : 'md:col-span-12'} ${devMode ? 'border-yellow-500 border' : ''}`}>
                             {/* Episode Link */}
-                            <Link 
+                            <Link
                                 href={`/archive/${episode.slug}`}
-                                className={`flex items-center gap-2 mb-4 md:order-2 md:mt-4 font-mono ${devMode ? 'border-pink-500 border' : ''}`}
+                                className={`flex items-center gap-1 mb-4 md:order-2 md:mt-4 font-mono episode-card-link ${devMode ? 'border-pink-500 border' : ''}`}
                             >
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                    <path d="M3 8L10 8M10 8L7 5M10 8L7 11" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                                view episode
+                                <span>view episode</span>
+                                <i className="fi fi-ts-arrow-small-right episode-card-link-arrow"></i>
                             </Link>
                             
                             {episode.description && (

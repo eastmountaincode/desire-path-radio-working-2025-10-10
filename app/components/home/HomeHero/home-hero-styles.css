@@ -1,0 +1,41 @@
+/* Dark mode color overrides */
+.home-hero-about-text {
+    color: var(--color-grey5);
+}
+
+.dark .home-hero-about-text {
+    color: var(--color-grey3);
+}
+
+.home-hero-link {
+    color: var(--color-grey6);
+}
+
+.dark .home-hero-link {
+    color: var(--color-grey1);
+}
+
+.dpr-logo {
+    filter: none;
+}
+
+.dark .dpr-logo {
+    filter: invert(1);
+}
+
+.home-hero-link:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.home-hero-link-arrow {
+    transform: translateY(2.5px);
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.home-hero-link:hover .home-hero-link-arrow {
+    transform: translateY(2.5px) translateX(2px);
+}
+
+
+

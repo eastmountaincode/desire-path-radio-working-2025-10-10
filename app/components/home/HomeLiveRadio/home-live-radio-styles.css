@@ -1,0 +1,92 @@
+/* Live Channel Styles */
+
+.live-channel-container {
+    background: radial-gradient(circle at center, #ADADAD, var(--color-grey1));
+}
+
+.dark .live-channel-container {
+    background: radial-gradient(circle at center, var(--color-grey5), var(--color-grey6));
+}
+
+.live-channel-container.live-active {
+    background: var(--color-grey6);
+    color: var(--color-grey1);
+}
+
+.dark .live-channel-container.live-active {
+    background: var(--color-grey1);
+    color: var(--color-grey6);
+}
+
+.live-channel-inactive-icon,
+.live-channel-inactive-text {
+    color: var(--color-grey4);
+}
+
+.dark .live-channel-inactive-icon,
+.dark .live-channel-inactive-text {
+    color: var(--color-grey3);
+}
+
+.live-indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-brand-dpr-orange);
+}
+
+.live-show-title {
+    font-family: var(--font-monument-wide);
+    font-size: 24px;
+    line-height: 1.4;
+}
+
+.live-show-info {
+    font-family: var(--font-monument);
+    letter-spacing: 0em;
+}
+
+.live-channel-play-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-grey6);
+    flex-shrink: 0;
+    font-family: ui-monospace, monospace;
+}
+
+.dark .live-channel-play-button {
+    color: var(--color-grey1);
+}
+
+.live-channel-container.live-active .live-channel-play-button {
+    color: var(--color-grey1);
+}
+
+.dark .live-channel-container.live-active .live-channel-play-button {
+    color: var(--color-grey6);
+}
+
+.live-channel-play-button:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.live-channel-container.live-active .live-channel-play-button:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.dark .live-channel-container.live-active .live-channel-play-button:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.live-channel-play-text {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.5;
+}
+

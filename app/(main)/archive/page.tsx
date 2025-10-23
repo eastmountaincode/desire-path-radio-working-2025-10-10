@@ -131,7 +131,7 @@ export default function Archive() {
     return (
         <div className={`min-h-screen ${devMode ? 'border border-red-500' : ''}`}>
             {/* Control Header */}
-            <div className="pt-6 pb-2">
+            <div className="pb-2">
                 <ArchiveControlHeader 
                     episodeCount={episodes.length}
                     onFilterApply={handleFilterApply}

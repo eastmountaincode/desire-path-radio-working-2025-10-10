@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { ThemeToggle } from "../ThemeToggle"
 import { useDevMode } from "../DevModeProvider"
 import { useMobileMenu } from "../MobileMenuProvider"
+import { useLiveChannelToggle } from "../LiveChannelToggleProvider"
 import { useRef, useEffect } from "react"
 
 import "./header-style.css"
@@ -12,6 +13,7 @@ import "./header-style.css"
 export default function Header() {
     const pathname = usePathname()
     const { isMobileMenuOpen, setIsMobileMenuOpen, setHeaderHeight } = useMobileMenu()
+    const { showToggles, setShowToggles } = useLiveChannelToggle()
     const devMode = useDevMode()
     const headerRef = useRef<HTMLElement>(null)
 
@@ -86,6 +88,14 @@ export default function Header() {
                 </div>
 
                 <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => setShowToggles(!showToggles)}
+                        className="text-sm border px-2 py-1 rounded"
+                        title={showToggles ? "Hide toggles" : "Show toggles"}
+                    >
+                        {showToggles ? "Hide" : "Show"}
+                    </button>
+
                     <ThemeToggle />
 
                     {/* Hamburger menu button - mobile only */}

@@ -19,3 +19,4 @@ return <div className={`p-4 ${devMode ? 'border border-red-500' : ''}`}>...</div
 
 Press 'B' to toggle dev mode on/off. A console message will confirm the state change.
 
+any dark color conditions need to be handled in css

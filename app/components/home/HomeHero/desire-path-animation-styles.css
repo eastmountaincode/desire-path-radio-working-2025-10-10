@@ -1,0 +1,8 @@
+/* Dark mode color overrides for desire path animation */
+.desire-path-image {
+    filter: none;
+}
+
+.dark .desire-path-image {
+    filter: invert(1);
+}
