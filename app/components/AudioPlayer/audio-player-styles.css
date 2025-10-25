@@ -69,6 +69,14 @@
     color: var(--color-brand-dpr-orange);
 }
 
+.audio-player-control-button img {
+    filter: none;
+}
+
+.dark .audio-player-control-button img {
+    filter: invert(1) brightness(1.1);
+}
+
 .audio-player-close-button {
     display: flex;
     align-items: center;
@@ -99,12 +107,58 @@
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
+    max-width: 250px;
     text-decoration: none;
     cursor: pointer;
 }
 
+/* When title contains marquee, ensure proper overflow */
+.audio-player-title:has(.audio-player-title-marquee-wrapper) {
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+/* Mobile: remove max-width constraint since layout has more space */
+@media (max-width: 767px) {
+    .audio-player-title {
+        max-width: none;
+    }
+}
+
+/* Desktop: remove max-width constraints to let title grow naturally */
+@media (min-width: 768px) {
+    .audio-player-title {
+        max-width: none;
+    }
+}
+
 .dark .audio-player-title {
     color: var(--color-grey1);
+}
+
+/* Marquee scroll for truncated titles */
+.audio-player-title-marquee-wrapper {
+    overflow: hidden;
+    width: 100%;
+}
+
+.audio-player-title-marquee-content {
+    display: inline-flex;
+    white-space: nowrap;
+    animation: marquee-scroll 15s linear infinite;
+}
+
+.audio-player-title-marquee-content span {
+    padding-right: 2rem;
+}
+
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .audio-player-time {
@@ -119,11 +173,31 @@
 }
 
 .audio-player-progress-container {
-    flex: 1;
-    min-width: 0;
-    max-width: 600px;
+    flex: 1 1 auto;
+    min-width: 250px;
+    max-width: 700px;
     cursor: pointer;
     padding: 0.5rem 0;
+}
+
+/* Mobile: remove min-width constraint */
+@media (max-width: 767px) {
+    .audio-player-progress-container {
+        min-width: 0;
+    }
+}
+
+/* Allow progress bar to grow more on larger screens */
+@media (min-width: 1280px) {
+    .audio-player-progress-container {
+        max-width: 900px;
+    }
+}
+
+@media (min-width: 1536px) {
+    .audio-player-progress-container {
+        max-width: 1100px;
+    }
 }
 
 .audio-player-progress-track {

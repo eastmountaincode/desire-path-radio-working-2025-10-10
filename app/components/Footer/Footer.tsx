@@ -25,6 +25,14 @@ export default function Footer() {
                     submit show proposal
                 </Link>
                 <a
+                    href="https://www.gofundme.com/f/desire-path-radio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`footer-link ${devMode ? 'border border-green-500' : ''}`}
+                >
+                    donate
+                </a>
+                <a
                     href="https://instagram.com"
                     target="_blank"
                     rel="noopener noreferrer"

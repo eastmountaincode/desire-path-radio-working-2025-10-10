@@ -3,7 +3,7 @@
 import { useAudioPlayer } from './AudioPlayerProvider'
 import { useDevMode } from '../DevModeProvider'
 import { useMobileMenu } from '../MobileMenuProvider'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Link from 'next/link'
 import PlayPauseButton from '../PlayPauseButton/PlayPauseButton'
 import './audio-player-styles.css'
@@ -28,6 +28,9 @@ export default function AudioPlayer() {
     const devMode = useDevMode()
     const { headerHeight, setAudioPlayerHeight } = useMobileMenu()
     const playerRef = useRef<HTMLDivElement>(null)
+    const [desktopTitleElement, setDesktopTitleElement] = useState<HTMLElement | null>(null)
+    const [mobileTitleElement, setMobileTitleElement] = useState<HTMLElement | null>(null)
+    const [isTruncated, setIsTruncated] = useState(false)
 
     // Measure audio player height and update context
     useEffect(() => {
@@ -55,6 +58,96 @@ export default function AudioPlayer() {
             setAudioPlayerHeight(0)
         }
     }, [setAudioPlayerHeight, currentEpisode, liveChannel])
+
+    // Check if title is truncated
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout
+
+        const checkTruncation = () => {
+            // Debounce to prevent rapid state changes
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(() => {
+                // Check which element is visible (desktop or mobile)
+                let visibleElement: HTMLElement | null = null
+
+                if (desktopTitleElement && window.getComputedStyle(desktopTitleElement).display !== 'none') {
+                    // Check if parent container is visible
+                    const parent = desktopTitleElement.closest('.audio-player-container')
+                    if (parent && window.getComputedStyle(parent).display !== 'none') {
+                        visibleElement = desktopTitleElement
+                    }
+                }
+
+                if (!visibleElement && mobileTitleElement && window.getComputedStyle(mobileTitleElement).display !== 'none') {
+                    visibleElement = mobileTitleElement
+                }
+
+                if (visibleElement) {
+                    // If the element contains marquee wrapper, we need to check differently
+                    const hasMarquee = visibleElement.querySelector('.audio-player-title-marquee-wrapper')
+
+                    // Get the actual text content
+                    const isLive = mode === 'live'
+                    const channelText = liveChannel
+                        ? `${liveChannel.channelNumber.toUpperCase()}: ${liveChannel.channelType.charAt(0).toUpperCase() + liveChannel.channelType.slice(1)}`
+                        : ''
+                    const textContent = isLive ? `LIVE • ${channelText}` : currentEpisode?.title || ''
+
+                    if (hasMarquee) {
+                        // Element is already in marquee mode, measure the original text width
+                        const tempSpan = document.createElement('span')
+                        tempSpan.style.cssText = window.getComputedStyle(visibleElement).cssText
+                        tempSpan.style.position = 'absolute'
+                        tempSpan.style.visibility = 'hidden'
+                        tempSpan.style.width = 'auto'
+                        tempSpan.style.maxWidth = 'none'
+                        tempSpan.textContent = textContent
+
+                        document.body.appendChild(tempSpan)
+                        const fullWidth = tempSpan.offsetWidth
+                        document.body.removeChild(tempSpan)
+
+                        const containerWidth = visibleElement.clientWidth
+                        setIsTruncated(fullWidth > containerWidth)
+                    } else {
+                        // Normal mode, just check scrollWidth vs clientWidth
+                        const hasOverflow = visibleElement.scrollWidth > visibleElement.clientWidth
+                        setIsTruncated(hasOverflow)
+                    }
+                }
+            }, 100) // 100ms debounce
+        }
+
+        // Check on mount and window resize
+        checkTruncation()
+
+        // Use ResizeObserver on parent containers instead of title elements
+        const resizeObserver = new ResizeObserver(() => {
+            checkTruncation()
+        })
+
+        // Observe the parent containers, not the title elements themselves
+        if (desktopTitleElement) {
+            const parent = desktopTitleElement.closest('.audio-player-container')
+            if (parent) {
+                resizeObserver.observe(parent as HTMLElement)
+            }
+        }
+        if (mobileTitleElement) {
+            const mobileContainer = mobileTitleElement.closest('.md\\:hidden')
+            if (mobileContainer) {
+                resizeObserver.observe(mobileContainer as HTMLElement)
+            }
+        }
+
+        window.addEventListener('resize', checkTruncation)
+
+        return () => {
+            clearTimeout(timeoutId)
+            resizeObserver.disconnect()
+            window.removeEventListener('resize', checkTruncation)
+        }
+    }, [desktopTitleElement, mobileTitleElement, currentEpisode, liveChannel, mode])
 
     // Don't render if nothing is loaded
     if (!currentEpisode && !liveChannel) return null
@@ -108,7 +201,7 @@ export default function AudioPlayer() {
                     {/* Play/Pause Button */}
                     <button
                         onClick={isPlaying ? pause : resume}
-                        className={`audio-player-play-button ${devMode ? 'border border-pink-500' : ''}`}
+                        className={`audio-player-play-button group ${devMode ? 'border border-pink-500' : ''}`}
                         aria-label={isLoading ? 'Loading' : (isPlaying ? 'Pause' : 'Play')}
                         disabled={isLoading}
                     >
@@ -128,32 +221,54 @@ export default function AudioPlayer() {
                     {isLiveMode ? (
                         <div className={`flex items-center gap-2 min-w-0 ${devMode ? 'border border-cyan-500' : ''}`}>
                             <div className="live-indicator-dot"></div>
-                            <div className="audio-player-title">
-                                LIVE • {channelLabel}
+                            <div
+                                ref={setDesktopTitleElement}
+                                className={`audio-player-title ${isTruncated ? 'text-blue-500' : ''}`}
+                            >
+                                {isTruncated ? (
+                                    <div className="audio-player-title-marquee-wrapper">
+                                        <div className="audio-player-title-marquee-content">
+                                            <span>LIVE • {channelLabel}</span>
+                                            <span>LIVE • {channelLabel}</span>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    `LIVE • ${channelLabel}`
+                                )}
                             </div>
                         </div>
                     ) : (
                         <Link
                             href={`/archive/${currentEpisode?.slug}`}
-                            className={`audio-player-title hover:text-brand-dpr-orange ${devMode ? 'border border-cyan-500' : ''}`}
+                            ref={setDesktopTitleElement}
+                            className={`audio-player-title hover:text-brand-dpr-orange ${isTruncated ? 'text-blue-500' : ''} ${devMode ? 'border border-cyan-500' : ''}`}
                         >
-                            {currentEpisode?.title}
+                            {isTruncated ? (
+                                <div className="audio-player-title-marquee-wrapper">
+                                    <div className="audio-player-title-marquee-content">
+                                        <span>{currentEpisode?.title}</span>
+                                        <span>{currentEpisode?.title}</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                currentEpisode?.title
+                            )}
                         </Link>
                     )}
                 </div>
 
                 {/* Center section - Time and Progress (hidden in live mode) */}
-                <div className={`flex items-center gap-3 flex-1 min-w-0 ${devMode ? 'border border-blue-500' : ''}`}>
+                <div className={`flex items-center gap-3 flex-shrink-0 ${devMode ? 'border border-green-500' : ''}`}>
                     {!isLiveMode && (
                         <>
                             {/* Current Time */}
-                            <div className={`audio-player-time w-14 text-right ${devMode ? 'border border-red-500' : ''}`}>
+                            <div className={`audio-player-time w-14 text-right flex-shrink-0 ${devMode ? 'border border-red-500' : ''}`}>
                                 {formatTime(currentTime)}
                             </div>
 
                             {/* Progress Bar */}
                             <div
-                                className={`audio-player-progress-container ${devMode ? 'border border-purple-500' : ''}`}
+                                className={`audio-player-progress-container flex-shrink-0 ${devMode ? 'border border-purple-500' : ''}`}
                                 onClick={handleProgressClick}
                             >
                                 <div className="audio-player-progress-track">
@@ -165,14 +280,14 @@ export default function AudioPlayer() {
                             </div>
 
                             {/* Duration */}
-                            <div className={`audio-player-time w-14 text-right ${devMode ? 'border border-red-500' : ''}`}>
+                            <div className={`audio-player-time w-14 text-right flex-shrink-0 ${devMode ? 'border border-red-500' : ''}`}>
                                 {formatTime(duration)}
                             </div>
                         </>
                     )}
 
                     {/* Additional controls (desktop only) */}
-                    <div className={`flex ${isLiveMode ? '' : 'ml-2'} items-center gap-4 ${devMode ? 'border border-indigo-500' : ''}`}>
+                    <div className={`flex ${isLiveMode ? '' : 'ml-2'} items-center gap-4 flex-shrink-0 ${devMode ? 'border border-indigo-500' : ''}`}>
                         {/* Seek buttons (only in archive mode) */}
                         {!isLiveMode && (
                             <>
@@ -218,7 +333,7 @@ export default function AudioPlayer() {
                 </div>
 
                 {/* Right section - Close button */}
-                <div className={`flex items-center ${devMode ? 'border border-indigo-500' : ''}`}>
+                <div className={`flex items-center flex-shrink-0 ml-auto ${devMode ? 'border border-indigo-500' : ''}`}>
                     <button
                         onClick={stop}
                         className={`audio-player-close-button ${devMode ? 'border border-pink-500' : ''}`}
@@ -236,7 +351,7 @@ export default function AudioPlayer() {
                 {/* Left Column - Play Button */}
                 <button
                     onClick={isPlaying ? pause : resume}
-                    className={`audio-player-play-button ${devMode ? 'border border-pink-500' : ''}`}
+                    className={`audio-player-play-button group ${devMode ? 'border border-pink-500' : ''}`}
                     aria-label={isLoading ? 'Loading' : (isPlaying ? 'Pause' : 'Play')}
                     disabled={isLoading}
                 >
@@ -253,21 +368,43 @@ export default function AudioPlayer() {
                 </button>
 
                 {/* Center Column - Title and Progress (stacked) */}
-                <div className={`flex flex-col gap-0 min-w-0 px-4 ${devMode ? 'border border-green-500' : ''}`}>
+                <div className={`flex flex-col gap-0 min-w-0 px-0 ${devMode ? 'border border-green-500' : ''}`}>
                     {/* Title - Episode or Live Channel */}
                     {isLiveMode ? (
                         <div className={`flex items-center gap-2 min-w-0 ${devMode ? 'border border-cyan-500' : ''}`}>
                             <div className="live-indicator-dot"></div>
-                            <div className="audio-player-title">
-                                LIVE • {channelLabel}
+                            <div
+                                ref={setMobileTitleElement}
+                                className={`audio-player-title ${isTruncated ? 'text-blue-500' : ''}`}
+                            >
+                                {isTruncated ? (
+                                    <div className="audio-player-title-marquee-wrapper">
+                                        <div className="audio-player-title-marquee-content">
+                                            <span>LIVE • {channelLabel}</span>
+                                            <span>LIVE • {channelLabel}</span>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    `LIVE • ${channelLabel}`
+                                )}
                             </div>
                         </div>
                     ) : (
                         <Link
                             href={`/archive/${currentEpisode?.slug}`}
-                            className={`audio-player-title hover:text-brand-dpr-orange ${devMode ? 'border border-cyan-500' : ''}`}
+                            ref={setMobileTitleElement}
+                            className={`audio-player-title hover:text-brand-dpr-orange ${isTruncated ? 'text-blue-500' : ''} ${devMode ? 'border border-cyan-500' : ''}`}
                         >
-                            {currentEpisode?.title}
+                            {isTruncated ? (
+                                <div className="audio-player-title-marquee-wrapper">
+                                    <div className="audio-player-title-marquee-content">
+                                        <span>{currentEpisode?.title}</span>
+                                        <span>{currentEpisode?.title}</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                currentEpisode?.title
+                            )}
                         </Link>
                     )}
 

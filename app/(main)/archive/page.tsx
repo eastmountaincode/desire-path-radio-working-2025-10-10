@@ -56,7 +56,7 @@ export default function Archive() {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
     const [expandedEpisodeId, setExpandedEpisodeId] = useState<number | null>(null)
 
-    const limit = 3
+    const limit = 10
 
     const fetchEpisodes = async (currentOffset: number = 0, tagSlugs: string[] = [], order: 'asc' | 'desc' = 'desc') => {        
         try {

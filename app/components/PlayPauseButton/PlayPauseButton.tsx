@@ -1,7 +1,6 @@
 'use client'
 
 import Image from 'next/image'
-import { useTheme } from 'next-themes'
 
 interface PlayPauseButtonProps {
     isPlaying: boolean
@@ -9,11 +8,13 @@ interface PlayPauseButtonProps {
 }
 
 export default function PlayPauseButton({ isPlaying, size = 10 }: PlayPauseButtonProps) {
-    const { theme } = useTheme()
+    const regularSrc = isPlaying
+        ? '/images/audio-buttons/pause_regular.svg'
+        : '/images/audio-buttons/play_regular.svg'
 
-    const imageSrc = isPlaying
-        ? (theme === 'dark' ? '/images/audio-buttons/pause_dark.svg' : '/images/audio-buttons/pause_regular.svg')
-        : (theme === 'dark' ? '/images/audio-buttons/play_dark.svg' : '/images/audio-buttons/play_regular.svg')
+    const hoverSrc = isPlaying
+        ? '/images/audio-buttons/pause_dark.svg'
+        : '/images/audio-buttons/play_dark.svg'
 
     const alt = isPlaying ? 'Pause' : 'Play'
 
@@ -21,11 +22,23 @@ export default function PlayPauseButton({ isPlaying, size = 10 }: PlayPauseButto
     const pixelSize = size * 4
 
     return (
-        <Image
-            src={imageSrc}
-            alt={alt}
-            width={pixelSize}
-            height={pixelSize}
-        />
+        <div className="relative inline-block group translate-y-1">
+            {/* Regular state - visible by default, hidden on hover */}
+            <Image
+                src={regularSrc}
+                alt={alt}
+                width={pixelSize}
+                height={pixelSize}
+                className="group-hover:opacity-0"
+            />
+            {/* Hover state - hidden by default, visible on hover */}
+            <Image
+                src={hoverSrc}
+                alt={alt}
+                width={pixelSize}
+                height={pixelSize}
+                className="absolute top-0 left-0 opacity-0 group-hover:opacity-100"
+            />
+        </div>
     )
 }

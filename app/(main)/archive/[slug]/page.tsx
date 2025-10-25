@@ -125,7 +125,7 @@ export default function EpisodePage() {
                                     })
                                 }
                             }}
-                            className={`episode-page-play-button bg-transparent border-none p-0 cursor-pointer w-fit ${devMode ? 'border border-pink-500' : ''}`}
+                            className={`episode-page-play-button group bg-transparent border-none p-0 cursor-pointer w-fit ${devMode ? 'border border-pink-500' : ''}`}
                             aria-label={currentEpisode?.id === episode.id && isPlaying ? 'Pause' : 'Play'}
                         >
                             <div className={devMode ? 'border border-red-500' : ''}>

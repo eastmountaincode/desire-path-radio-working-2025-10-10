@@ -68,7 +68,11 @@ function pointsToSVGPath(points: { x: number; y: number }[]) {
     return path
 }
 
-function DynamicDesirePath() {
+interface DynamicDesirePathProps {
+    size?: 'default' | 'compact'
+}
+
+function DynamicDesirePath({ size = 'default' }: DynamicDesirePathProps) {
     const [offset, setOffset] = useState(0)
     const [mounted, setMounted] = useState(false)
     const [height, setHeight] = useState(284)
@@ -78,17 +82,21 @@ function DynamicDesirePath() {
     const [pathPoints, setPathPoints] = useState<{ x: number; y: number }[]>([])
 
     useEffect(() => {
-        // Determine height based on viewport width
+        // Determine height based on viewport width and size variant
         const updateHeight = () => {
             const isMobile = window.innerWidth < 768 // md breakpoint
-            setHeight(isMobile ? 216 : 284)
+            if (size === 'compact') {
+                setHeight(isMobile ? 120 : 160)
+            } else {
+                setHeight(isMobile ? 216 : 284)
+            }
         }
 
         updateHeight()
         window.addEventListener('resize', updateHeight)
 
         return () => window.removeEventListener('resize', updateHeight)
-    }, [])
+    }, [size])
 
     useEffect(() => {
         if (!height) return
@@ -127,13 +135,17 @@ function DynamicDesirePath() {
 
     const pathData = useMemo(() => pointsToSVGPath(pathPoints), [pathPoints])
 
+    const containerClass = size === 'compact'
+        ? 'relative overflow-hidden h-[120px] md:h-[160px]'
+        : 'relative overflow-hidden h-[216px] md:h-[284px]'
+
     // Don't render until mounted to avoid hydration mismatch
     if (!mounted) {
-        return <div className="relative overflow-hidden h-[216px] md:h-[284px]" />
+        return <div className={containerClass} />
     }
 
     return (
-        <div className="relative overflow-hidden h-[216px] md:h-[284px]">
+        <div className={containerClass}>
             <svg
                 className="absolute top-0 left-0 w-full h-full"
                 style={{ minHeight: height }}
@@ -151,7 +163,15 @@ function DynamicDesirePath() {
     )
 }
 
-function StaticDesirePath() {
+interface StaticDesirePathProps {
+    size?: 'default' | 'compact'
+}
+
+function StaticDesirePath({ size = 'default' }: StaticDesirePathProps) {
+    const heightClass = size === 'compact'
+        ? 'h-[120px] md:h-[160px]'
+        : 'h-[216px] md:h-[284px]'
+
     return (
         <motion.div
             className="flex"
@@ -169,7 +189,7 @@ function StaticDesirePath() {
                 <img
                     src="/images/header-animation-stuff/Vector 2.png"
                     alt="Desire Path"
-                    className="h-[216px] md:h-[284px] w-auto object-contain desire-path-image"
+                    className={`${heightClass} w-auto object-contain desire-path-image`}
                     style={{ minWidth: '200px' }}
                 />
             </div>
@@ -178,7 +198,7 @@ function StaticDesirePath() {
                 <img
                     src="/images/header-animation-stuff/Vector 2.png"
                     alt="Desire Path"
-                    className="h-[216px] md:h-[284px] w-auto object-contain desire-path-image"
+                    className={`${heightClass} w-auto object-contain desire-path-image`}
                     style={{ minWidth: '200px' }}
                 />
             </div>
@@ -186,7 +206,11 @@ function StaticDesirePath() {
     )
 }
 
-export default function DesirePathAnimation() {
+interface DesirePathAnimationProps {
+    size?: 'default' | 'compact'
+}
+
+export default function DesirePathAnimation({ size = 'default' }: DesirePathAnimationProps) {
     const devMode = useDevMode()
     const { showToggles } = useLiveChannelToggle()
     const [useDynamic, setUseDynamic] = useState(true)
@@ -203,7 +227,7 @@ export default function DesirePathAnimation() {
                 </button>
             )}
 
-            {useDynamic ? <DynamicDesirePath /> : <StaticDesirePath />}
+            {useDynamic ? <DynamicDesirePath size={size} /> : <StaticDesirePath size={size} />}
         </div>
     )
 }

@@ -78,23 +78,25 @@ export default function Header() {
                         >
                             <span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>[</span>schedule<span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>]</span>
                         </Link>
-                        <Link
-                            href="/shop"
-                            className={`group ${isActive("/shop") ? "text-brand-dpr-orange" : ""}`}
+                        <a
+                            href="https://vmgkdp-0h.myshopify.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group"
                         >
-                            <span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>[</span>shop<span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>]</span>
-                        </Link>
+                            <span className="invisible group-hover:visible">[</span>shop<span className="invisible group-hover:visible">]</span>
+                        </a>
                     </nav>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <button
+                    {/* <button
                         onClick={() => setShowToggles(!showToggles)}
                         className="text-sm border px-2 py-1 rounded"
                         title={showToggles ? "Hide toggles" : "Show toggles"}
                     >
                         {showToggles ? "Hide" : "Show"}
-                    </button>
+                    </button> */}
 
                     <ThemeToggle />
 
@@ -143,13 +145,15 @@ export default function Header() {
                     >
                         <span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>[</span>schedule<span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
-                    <Link
-                        href="/shop"
-                        className={`group ${isActive("/shop") ? "text-brand-dpr-orange" : ""}`}
+                    <a
+                        href="https://vmgkdp-0h.myshopify.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group"
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
-                        <span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>[</span>shop<span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>]</span>
-                    </Link>
+                        <span className="invisible group-hover:visible">[</span>shop<span className="invisible group-hover:visible">]</span>
+                    </a>
                 </nav>
             )}
         </header>
