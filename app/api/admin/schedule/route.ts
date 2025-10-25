@@ -165,6 +165,7 @@ export async function POST(request: NextRequest) {
       // Update existing row
       const { error: updateError } = await supabase
         .from('schedule_image')
+        // @ts-expect-error - Supabase type inference issue with update
         .update({
           image_url: publicUrl,
           image_key: key,
