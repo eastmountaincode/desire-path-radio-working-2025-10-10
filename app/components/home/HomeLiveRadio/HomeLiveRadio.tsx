@@ -13,8 +13,9 @@ export default function HomeLiveRadio() {
     const [ch1State, setCh1State] = useState<ChannelState>('live')
     const [ch2State, setCh2State] = useState<ChannelState>('live')
 
-    // Station slug for Evenings.fm API
-    const stationSlug = 'desire-path-radio-test-ab'
+    // Station slugs for Evenings.fm API
+    const ch1StationSlug = 'desire-path-radio-test-ab'
+    const ch2StationSlug = 'desire-path-radio-channel-2'
 
     // Cycle through states: offline -> live -> mock -> offline
     const cycleState = (currentState: ChannelState): ChannelState => {
@@ -45,18 +46,18 @@ export default function HomeLiveRadio() {
                 )}
 
                 {/* Two channel grid */}
-                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${devMode ? 'border border-red-500' : ''}`}>
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${devMode ? 'border border-red-500' : ''}`}>
                     <LiveChannel
                         channelNumber="ch1"
                         channelType="music"
                         devState={ch1State}
-                        stationSlug={stationSlug}
+                        stationSlug={ch1StationSlug}
                     />
                     <LiveChannel
                         channelNumber="ch2"
                         channelType="talks"
                         devState={ch2State}
-                        stationSlug={stationSlug}
+                        stationSlug={ch2StationSlug}
                     />
                 </div>
             </div>

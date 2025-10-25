@@ -1,0 +1,33 @@
+/* Footer Styles */
+
+.footer-container {
+    background-color: var(--color-grey6);
+    color: var(--color-grey1);
+}
+
+.dark .footer-container {
+    background-color: var(--color-grey1);
+    color: var(--color-grey6);
+}
+
+.footer-link:hover {
+    color: var(--color-brand-dpr-orange);
+}
+
+.footer-external-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.footer-bottom-text {
+    font-size: 13px;
+}
+
+.footer-logo {
+    filter: invert(1);
+}
+
+.dark .footer-logo {
+    filter: invert(0);
+}

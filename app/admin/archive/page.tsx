@@ -1,122 +1,49 @@
 'use client'
 
 import { useState } from 'react'
+import { useDevMode } from '../../components/DevModeProvider'
+import EpisodesManagement from '../../components/admin/EpisodesManagement/EpisodesManagement'
+import HighlightsOrdering from '../../components/admin/HighlightsOrdering/HighlightsOrdering'
 
-// Force dynamic rendering to check authentication on every request
+type Tab = 'episodes' | 'highlights'
+
 export default function ArchiveManagementPage() {
-    const [loadingStates, setLoadingStates] = useState({
-        episodes: false,
-        hosts: false,
-        tags: false
-    })
-    const [message, setMessage] = useState<string | null>(null)
-    const [error, setError] = useState<string | null>(null)
+  const devMode = useDevMode()
+  const [activeTab, setActiveTab] = useState<Tab>('episodes')
 
-    const clearDatabase = async (table: string) => {
-        const tableNames = {
-            episodes: 'ALL episodes and related data',
-            hosts: 'ALL hosts',
-            tags: 'ALL tags'
-        }
+  return (
+    <div className={`p-6 ${devMode ? 'border border-purple-500' : ''}`}>
+      <h1 className="text-2xl mb-6">Archive Management</h1>
 
-        if (!confirm(`Are you sure you want to delete ${tableNames[table as keyof typeof tableNames]}? This action cannot be undone.`)) {
-            return
-        }
+      {/* Tab Navigation */}
+      <div className="flex gap-4 mb-6 border-b border-current">
+        <button
+          onClick={() => setActiveTab('episodes')}
+          className={`pb-2 px-4 -mb-px transition-colors ${
+            activeTab === 'episodes'
+              ? 'border-b-2 border-current font-medium'
+              : 'opacity-50 hover:opacity-100'
+          }`}
+        >
+          Episodes
+        </button>
+        <button
+          onClick={() => setActiveTab('highlights')}
+          className={`pb-2 px-4 -mb-px transition-colors ${
+            activeTab === 'highlights'
+              ? 'border-b-2 border-current font-medium'
+              : 'opacity-50 hover:opacity-100'
+          }`}
+        >
+          Highlights
+        </button>
+      </div>
 
-        // Set loading state for this specific table
-        setLoadingStates(prev => ({ ...prev, [table]: true }))
-        setError(null)
-        setMessage(null)
-
-        try {
-            const response = await fetch(`/api/admin/episodes?table=${table}`, {
-                method: 'DELETE',
-            })
-
-            const data = await response.json()
-
-            if (response.ok) {
-                setMessage(data.message)
-            } else {
-                setError(data.error || 'Failed to clear database')
-            }
-        } catch (error) {
-            setError(error instanceof Error ? error.message : 'Network error occurred')
-        } finally {
-            // Clear loading state for this specific table
-            setLoadingStates(prev => ({ ...prev, [table]: false }))
-        }
-    }
-
-    return (
-        <div className="p-6 border border-purple-500">
-            <h1 className="text-2xl mb-4">Archive Management</h1>
-
-            <div className="space-y-4">
-                <div className="p-4 border border-red-500">
-                    <h2 className="text-lg font-semibold mb-2 text-red-600">Danger Zone</h2>
-                    <p className="text-sm text-gray-600 mb-4">
-                        These actions will permanently delete data from the database.
-                        The CASCADE DELETE constraints will automatically clean up related records.
-                    </p>
-
-                    <div className="flex flex-col gap-4">
-                        <button
-                            onClick={() => clearDatabase('episodes')}
-                            disabled={loadingStates.episodes}
-                            className={`
-                                w-auto px-6 py-2 rounded font-medium text-sm self-start
-                                ${loadingStates.episodes
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-red-600 hover:bg-red-700 text-white'
-                                }
-                            `}
-                        >
-                            {loadingStates.episodes ? 'Clearing Episodes...' : 'Clear All Episodes'}
-                        </button>
-
-                        <button
-                            onClick={() => clearDatabase('hosts')}
-                            disabled={loadingStates.hosts}
-                            className={`
-                                w-auto px-6 py-2 rounded font-medium text-sm self-start
-                                ${loadingStates.hosts
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-orange-600 hover:bg-orange-700 text-white'
-                                }
-                            `}
-                        >
-                            {loadingStates.hosts ? 'Clearing Hosts...' : 'Clear All Hosts'}
-                        </button>
-
-                        <button
-                            onClick={() => clearDatabase('tags')}
-                            disabled={loadingStates.tags}
-                            className={`
-                                w-auto px-6 py-2 rounded font-medium text-sm self-start
-                                ${loadingStates.tags
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                                }
-                            `}
-                        >
-                            {loadingStates.tags ? 'Clearing Tags...' : 'Clear All Tags'}
-                        </button>
-                    </div>
-                </div>
-
-                {message && (
-                    <div className="p-3 bg-green-100 border border-green-300 rounded text-green-700">
-                        {message}
-                    </div>
-                )}
-
-                {error && (
-                    <div className="p-3 bg-red-100 border border-red-300 rounded text-red-700">
-                        {error}
-                    </div>
-                )}
-            </div>
-        </div>
-    )
+      {/* Tab Content */}
+      <div>
+        {activeTab === 'episodes' && <EpisodesManagement />}
+        {activeTab === 'highlights' && <HighlightsOrdering />}
+      </div>
+    </div>
+  )
 }

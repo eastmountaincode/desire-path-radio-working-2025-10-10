@@ -28,8 +28,8 @@ export default function HomeHero() {
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-start ${devMode ? 'border border-yellow-500' : ''}`}>
                     <div className="space-y-6">
                         <p className="home-hero-about-text">
-                            In today's internet radio landscape, the definition of "radio" has expanded beyond
-                            the technology and practice of transmitting sound over airwaves. "Radio" has
+                            In today&apos;s internet radio landscape, the definition of &ldquo;radio&rdquo; has expanded beyond
+                            the technology and practice of transmitting sound over airwaves. &ldquo;Radio&rdquo; has
                             become a stand-in for curation, community, and discourse.
                         </p>
                         <div className={`flex flex-col gap-1 ${devMode ? 'border border-purple-500' : ''}`}>

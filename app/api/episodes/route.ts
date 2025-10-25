@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
         })
       }
       
-      const tagIds = tags.map((t: any) => t.id)
+      const tagIds = tags.map((t: { id: number }) => t.id)
       
       // Get episode IDs that have ALL of these tags (AND logic)
       const { data: episodeTags, error: episodeTagsError } = await supabase
@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
 
       // Group by episode_id and count tags per episode
       const episodeTagCounts = new Map<number, Set<number>>()
-      episodeTags?.forEach((et: any) => {
+      episodeTags?.forEach((et: { episode_id: number; tag_id: number }) => {
         if (!episodeTagCounts.has(et.episode_id)) {
           episodeTagCounts.set(et.episode_id, new Set())
         }
@@ -136,8 +136,8 @@ export async function GET(request: NextRequest) {
 
       // Only include episodes that have ALL requested tags
       episodeIds = Array.from(episodeTagCounts.entries())
-        .filter(([_, tagSet]) => tagSet.size === tagIds.length)
-        .map(([episodeId, _]) => episodeId)
+        .filter(([, tagSet]) => tagSet.size === tagIds.length)
+        .map(([episodeId]) => episodeId)
 
       if (episodeIds.length === 0) {
         // No episodes with ALL these tags
@@ -221,7 +221,19 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the data to flatten the nested structure
-    const transformedEpisodes: EpisodeWithRelations[] = (episodes || []).map((episode: any) => ({
+    const transformedEpisodes: EpisodeWithRelations[] = (episodes || []).map((episode: {
+      id: number;
+      title: string;
+      slug: string;
+      description: string | null;
+      aired_on: string;
+      audio_url: string;
+      image_url: string | null;
+      duration_seconds: number | null;
+      created_at: string;
+      episode_hosts?: Array<{ hosts: { id: number; name: string; organization: string | null } }>;
+      episode_tags?: Array<{ tags: { id: number; name: string; slug: string; type: string } }>;
+    }) => ({
       id: episode.id,
       title: episode.title,
       slug: episode.slug,
@@ -231,8 +243,8 @@ export async function GET(request: NextRequest) {
       image_url: episode.image_url,
       duration_seconds: episode.duration_seconds,
       created_at: episode.created_at,
-      hosts: episode.episode_hosts?.map((eh: any) => eh.hosts) || [],
-      tags: episode.episode_tags?.map((et: any) => et.tags) || []
+      hosts: episode.episode_hosts?.map((eh: { hosts: { id: number; name: string; organization: string | null } }) => eh.hosts) || [],
+      tags: episode.episode_tags?.map((et: { tags: { id: number; name: string; slug: string; type: string } }) => et.tags) || []
     }))
 
     // Get total count for pagination info (with filters)

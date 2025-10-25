@@ -11,6 +11,7 @@ export interface Episode {
   audio_url: string
   image_url: string | null
   duration_seconds: number | null
+  location: string | null
   test_type: TestType
   created_at: string
 }
@@ -36,6 +37,25 @@ export interface EpisodeHost {
 export interface EpisodeTag {
   episode_id: number
   tag_id: number
+}
+
+export interface ComingUpText {
+  id: number
+  content: string
+}
+
+export interface EpisodeHighlight {
+  id: number
+  episode_id: number
+  display_order: number
+  created_at: string
+}
+
+export interface ScheduleImage {
+  id: number
+  image_url: string
+  image_key: string
+  uploaded_at: string
 }
 
 export interface Database {
@@ -65,6 +85,21 @@ export interface Database {
         Row: EpisodeTag
         Insert: EpisodeTag
         Update: Partial<EpisodeTag>
+      }
+      coming_up_text: {
+        Row: ComingUpText
+        Insert: Omit<ComingUpText, 'id'>
+        Update: Partial<Omit<ComingUpText, 'id'>>
+      }
+      episode_highlights: {
+        Row: EpisodeHighlight
+        Insert: Omit<EpisodeHighlight, 'id' | 'created_at'>
+        Update: Partial<Omit<EpisodeHighlight, 'id' | 'created_at'>>
+      }
+      schedule_image: {
+        Row: ScheduleImage
+        Insert: Omit<ScheduleImage, 'id' | 'uploaded_at'>
+        Update: Partial<Omit<ScheduleImage, 'id' | 'uploaded_at'>>
       }
     }
   }

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import EpisodePageHeader from '@/app/components/archive/EpisodePageHeader/EpisodePageHeader'
 import { useDevMode } from '@/app/components/DevModeProvider'
 import { useAudioPlayer } from '@/app/components/AudioPlayer/AudioPlayerProvider'
+import PlayPauseButton from '@/app/components/PlayPauseButton/PlayPauseButton'
 import './episode-page-styles.css'
 
 interface Episode {
@@ -14,6 +15,7 @@ interface Episode {
     slug: string
     description: string | null
     aired_on: string
+    location: string | null
     audio_url: string
     image_url: string | null
     duration_seconds: number | null
@@ -98,11 +100,11 @@ export default function EpisodePage() {
             
             <div className={`px-6 pb-12 md:pb-16 max-w-6xl mx-auto ${devMode ? 'border border-purple-500' : ''}`}>
                 {/* Two Column Layout */}
-                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 ${devMode ? 'border border-blue-500' : ''}`}>
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 md:items-center ${devMode ? 'border border-blue-500' : ''}`}>
                     {/* Left Column */}
-                    <div className={`flex flex-col gap-6 order-2 md:order-1 ${devMode ? 'border border-green-500' : ''}`}>
+                    <div className={`flex flex-col gap-4 order-2 md:order-1 ${devMode ? 'border border-green-500' : ''}`}>
                         {/* Play Button */}
-                        <button 
+                        <button
                             onClick={() => {
                                 if (currentEpisode?.id === episode.id) {
                                     // Same episode - toggle play/pause
@@ -123,24 +125,12 @@ export default function EpisodePage() {
                                     })
                                 }
                             }}
-                            className={`episode-page-play-button flex items-center gap-2 text-[15px] leading-[1.5] tracking-[-0.045em] bg-transparent border-none p-0 cursor-pointer w-fit ${devMode ? 'border border-pink-500' : ''}`}
+                            className={`episode-page-play-button bg-transparent border-none p-0 cursor-pointer w-fit ${devMode ? 'border border-pink-500' : ''}`}
+                            aria-label={currentEpisode?.id === episode.id && isPlaying ? 'Pause' : 'Play'}
                         >
-                            {currentEpisode?.id === episode.id && isPlaying ? (
-                                <>
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                        <rect x="3" y="2" width="4" height="12" />
-                                        <rect x="9" y="2" width="4" height="12" />
-                                    </svg>
-                                    pause
-                                </>
-                            ) : (
-                                <>
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                        <path d="M3 2L13 8L3 14V2Z" />
-                                    </svg>
-                                    play
-                                </>
-                            )}
+                            <div className={devMode ? 'border border-red-500' : ''}>
+                                <PlayPauseButton isPlaying={currentEpisode?.id === episode.id && isPlaying} />
+                            </div>
                         </button>
 
                         {/* Title */}
@@ -148,15 +138,23 @@ export default function EpisodePage() {
                             {episode.title}
                         </h1>
 
-                        {/* Subtitle (Host and Date) */}
+                        {/* Subtitle (Host, Location and Date) */}
                         <div className={`episode-page-subtitle font-[family-name:var(--font-monument)] text-[15px] leading-[1.5] tracking-[0em] ${devMode ? 'border border-cyan-500' : ''}`}>
                             {episode.hosts.length > 0 && (
-                                <span>
-                                    {episode.hosts[0]?.name}
-                                    {episode.hosts[0]?.organization && `, ${episode.hosts[0].organization}`}
-                                </span>
+                                <>
+                                    <span>
+                                        {episode.hosts[0]?.name}
+                                        {episode.hosts[0]?.organization && `, ${episode.hosts[0].organization}`}
+                                    </span>
+                                    <span> • </span>
+                                </>
                             )}
-                            {episode.hosts.length > 0 && ' • '}
+                            {episode.location && (
+                                <>
+                                    <span>{episode.location}</span>
+                                    <span> • </span>
+                                </>
+                            )}
                             {formatDate(episode.aired_on)}
                         </div>
 

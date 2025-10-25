@@ -14,7 +14,7 @@ export default async function AdminDashboard() {
   }
 
   return (
-    <div className="p-6 border border-green-500">
+    <div className="p-6">
       <h1 className="text-2xl mb-4">Dashboard</h1>
       <p className="mb-4">Welcome to the admin dashboard</p>
       <ClearCookieButton />

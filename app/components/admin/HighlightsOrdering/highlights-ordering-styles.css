@@ -1,0 +1,23 @@
+.highlights-ordering-item {
+    border: 1px solid var(--color-grey6);
+}
+
+.dark .highlights-ordering-item {
+    border: 1px solid var(--color-grey1);
+}
+
+.highlights-ordering-remove-button {
+    border: 1px solid var(--color-grey6);
+}
+
+.dark .highlights-ordering-remove-button {
+    border: 1px solid var(--color-grey1);
+}
+
+.highlights-ordering-button {
+    border: 1px solid var(--color-grey6);
+}
+
+.dark .highlights-ordering-button {
+    border: 1px solid var(--color-grey1);
+}

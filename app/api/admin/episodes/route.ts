@@ -3,7 +3,6 @@ import { cookies } from 'next/headers'
 import { createServerSupabase } from '@/lib/supabase'
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import type { Database } from '@/types/database'
 
 // Configure R2 client
 const r2Client = new S3Client({
@@ -30,6 +29,7 @@ interface EpisodeData {
   slug: string
   description: string
   aired_on: string
+  location: string
   audio_url?: string | null
   image_url?: string | null
   duration_seconds: number | null
@@ -179,30 +179,40 @@ export async function POST(request: NextRequest) {
       const hostIds: number[] = []
 
       for (const host of episodeData.hosts) {
-        // Try to find existing host by name
-        const { data: existingHost, error: findError } = await supabase
+        // Try to find existing host by name AND organization (both must match)
+        let query = supabase
           .from('hosts')
           .select('id')
           .eq('name', host.name)
-          .maybeSingle() as { data: { id: number } | null, error: any }
+
+        // Add organization filter - handle both null and string values
+        if (host.organization) {
+          query = query.eq('organization', host.organization)
+        } else {
+          query = query.is('organization', null)
+        }
+
+        const { data: existingHost, error: findError } = await query
+          .maybeSingle() as { data: { id: number } | null; error: { code?: string; message: string } | null }
 
         if (findError && findError.code !== 'PGRST116') {
           throw new Error(`Failed to search for host: ${findError.message}`)
         }
 
         if (existingHost) {
+          // Found exact match (same name and organization)
           hostIds.push(existingHost.id)
         } else {
-          // Create new host
+          // Create new host (different name or different organization)
           const { data: newHost, error: createError } = await supabase
             .from('hosts')
-            // @ts-ignore - Supabase type inference issue
+            // @ts-expect-error - Supabase type inference issue with insert
             .insert({
               name: host.name,
               organization: host.organization || null
             })
             .select('id')
-            .single() as { data: { id: number } | null, error: any }
+            .single() as { data: { id: number } | null; error: { message: string } | null }
 
           if (createError) {
             throw new Error(`Failed to create host: ${createError.message}`)
@@ -223,19 +233,20 @@ export async function POST(request: NextRequest) {
       while (true) {
         const { data: episode, error: episodeError } = await supabase
           .from('episodes')
-          // @ts-ignore - Supabase type inference issue
+          // @ts-expect-error - Supabase type inference issue with insert
           .insert({
             title: episodeData.title,
             slug: episodeSlug,
             description: episodeData.description || null,
             aired_on: episodeData.aired_on,
+            location: episodeData.location || null,
             audio_url: audioUrl,
             image_url: imageUrl,
             duration_seconds: episodeData.duration_seconds,
             test_type: episodeData.test_type
           })
           .select('id')
-          .single() as { data: { id: number } | null, error: any }
+          .single() as { data: { id: number } | null; error: { code?: string; message: string } | null }
 
         if (episodeError) {
           // Check if it's a duplicate slug error
@@ -262,7 +273,7 @@ export async function POST(request: NextRequest) {
 
         const { error: hostsLinkError } = await supabase
           .from('episode_hosts')
-          // @ts-ignore - Supabase type inference issue
+          // @ts-expect-error - Supabase type inference issue with insert
           .insert(episodeHosts)
 
         if (hostsLinkError) {
@@ -286,7 +297,7 @@ export async function POST(request: NextRequest) {
           .select('id, name, type, slug')
           .eq('type', tagType)
           .eq('name', normalizedTagName)
-          .maybeSingle() as { data: { id: number, name: string, type: string, slug: string } | null, error: any }
+          .maybeSingle() as { data: { id: number; name: string; type: string; slug: string } | null; error: { code?: string; message: string } | null }
 
         console.log('Tag lookup result:', { existingTag, findError })
 
@@ -304,14 +315,14 @@ export async function POST(request: NextRequest) {
           // Create new tag
           const { data: newTag, error: createError } = await supabase
             .from('tags')
-            // @ts-ignore - Supabase type inference issue
+            // @ts-expect-error - Supabase type inference issue with insert
             .insert({
               name: normalizedTagName,
               slug: tagSlug,
               type: tagType
             })
             .select('id')
-            .single() as { data: { id: number } | null, error: any }
+            .single() as { data: { id: number } | null; error: { message: string } | null }
 
           if (createError) {
             console.error('Tag creation error:', createError)
@@ -335,7 +346,7 @@ export async function POST(request: NextRequest) {
 
         const { error: tagsLinkError } = await supabase
           .from('episode_tags')
-          // @ts-ignore - Supabase type inference issue
+          // @ts-expect-error - Supabase type inference issue with insert
           .insert(episodeTags)
 
         if (tagsLinkError) {

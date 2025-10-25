@@ -13,6 +13,7 @@ interface MediaFilesProps {
     imageUrl: string | null
     duration: number | null
   }) => void
+  onImagePreviewChange?: (previewUrl: string | null) => void
 }
 
 export default function MediaFiles({
@@ -21,7 +22,8 @@ export default function MediaFiles({
   duration,
   audioFileRef,
   imageFileRef,
-  onChange
+  onChange,
+  onImagePreviewChange
 }: MediaFilesProps) {
   const [audioError, setAudioError] = useState<string | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
@@ -137,6 +139,11 @@ export default function MediaFiles({
     // Create preview URL for the selected image
     const previewUrl = window.URL.createObjectURL(file)
     setImagePreview(previewUrl)
+
+    // Notify parent component about preview URL change
+    if (onImagePreviewChange) {
+      onImagePreviewChange(previewUrl)
+    }
 
     // Store file in ref for form submission
     imageFileRef.current = file

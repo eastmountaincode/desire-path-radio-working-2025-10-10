@@ -1,6 +1,7 @@
 'use client'
 
 import Header from "../components/Header/Header";
+import Footer from "../components/Footer/Footer";
 import AudioPlayer from "../components/AudioPlayer/AudioPlayer";
 import { useAudioPlayer } from "../components/AudioPlayer/AudioPlayerProvider";
 import { useMobileMenu } from "../components/MobileMenuProvider";
@@ -43,6 +44,7 @@ export default function MainLayout({
           {children}
         </div>
       </main>
+      <Footer />
     </>
   )
 }

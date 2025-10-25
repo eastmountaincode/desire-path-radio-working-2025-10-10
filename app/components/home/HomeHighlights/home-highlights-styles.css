@@ -1,2 +1,22 @@
-/* Dark mode color overrides for HomeHighlights */
+/* Link styling */
+.home-highlights-link {
+  color: var(--color-grey6);
+}
 
+.dark .home-highlights-link {
+  color: var(--color-grey1);
+}
+
+.home-highlights-link:hover {
+  color: var(--color-brand-dpr-orange);
+}
+
+.home-highlights-link-arrow {
+  transform: translateY(2.5px);
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.home-highlights-link:hover .home-highlights-link-arrow {
+  transform: translateY(2.5px) translateX(2px);
+}

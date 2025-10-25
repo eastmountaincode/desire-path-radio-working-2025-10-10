@@ -36,14 +36,22 @@
   --color-grey4: #898989;
   --color-grey5: #626262;
   --color-grey6: #111111;
-  
+
   --color-brand-dpr-orange: #FF4F00;
   --color-brand-dpr-green: #2B5A37;
   --color-brand-dpr-gray: #DADADA;
-  
+
   --font-mono: 'FraktionMono', monospace;
   --font-monument: 'Monument', sans-serif;
   --font-monument-wide: 'Monument Wide', sans-serif;
+}
+
+html {
+  background: var(--color-grey6);
+}
+
+.dark html {
+  background: var(--color-grey1);
 }
 
 body {

@@ -13,7 +13,7 @@ export default async function SettingsPage() {
     }
 
     return (
-        <div className="p-6 border border-purple-500">
+        <div className="p-6">
             <h1 className="text-2xl mb-4">Settings</h1>
         </div>
     )

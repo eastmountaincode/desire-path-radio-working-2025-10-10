@@ -6,3 +6,16 @@
 .dark .desire-path-image {
     filter: invert(1);
 }
+
+/* Dynamic desire path SVG styles */
+.desire-path-svg-line {
+    stroke: var(--color-grey6);
+    stroke-width: 1.5;
+    stroke-dasharray: 3 4;
+    fill: none;
+    opacity: 0.8;
+}
+
+.dark .desire-path-svg-line {
+    stroke: var(--color-grey1);
+}

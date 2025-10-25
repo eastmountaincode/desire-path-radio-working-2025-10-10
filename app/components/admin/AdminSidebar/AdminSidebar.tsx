@@ -10,6 +10,8 @@ const navItems = [
     { href: "/admin/upload", label: "upload", icon: "↑" },
     { href: "/admin/analytics", label: "analytics", icon: "⌗" },
     { href: "/admin/archive", label: "archive", icon: "๏" },
+    { href: "/admin/coming-up", label: "coming up", icon: "಄" },
+    { href: "/admin/schedule", label: "schedule", icon: "◷" },
     { href: "/admin/settings", label: "settings", icon: "⚙" },
 ]
 

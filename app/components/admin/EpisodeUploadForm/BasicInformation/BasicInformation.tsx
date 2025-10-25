@@ -7,11 +7,13 @@ interface BasicInformationProps {
   slug: string
   description: string
   airedOn: string
+  location: string
   onChange: (data: {
     title: string
     slug: string
     description: string
     airedOn: string
+    location: string
   }) => void
 }
 
@@ -20,6 +22,7 @@ export default function BasicInformation({
   slug,
   description,
   airedOn,
+  location,
   onChange
 }: BasicInformationProps) {
   const handleTitleChange = (newTitle: string) => {
@@ -27,12 +30,13 @@ export default function BasicInformation({
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '')
-    
+
     onChange({
       title: newTitle,
       slug: newSlug,
       description,
-      airedOn
+      airedOn,
+      location
     })
   }
   return (
@@ -62,7 +66,7 @@ export default function BasicInformation({
                 i
               </span>
               <span className="slug-info-tooltip absolute right-0 bottom-6 w-64 p-2 text-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none z-10">
-                A slug is a URL-friendly version of the title. It contains only lowercase letters, numbers, and hyphens. Example: "my-episode-title". You don't need to enter this manually.
+                A slug is a URL-friendly version of the title. It contains only lowercase letters, numbers, and hyphens. Example: &ldquo;my-episode-title&rdquo;. You don&apos;t need to enter this manually.
               </span>
             </span>
           </span>
@@ -84,7 +88,7 @@ export default function BasicInformation({
         <textarea
           id="description"
           value={description}
-          onChange={(e) => onChange({ title, slug, description: e.target.value, airedOn })}
+          onChange={(e) => onChange({ title, slug, description: e.target.value, airedOn, location })}
           rows={4}
           className="w-full p-2 border border-grey5"
         />
@@ -98,8 +102,22 @@ export default function BasicInformation({
           type="date"
           id="aired_on"
           value={airedOn}
-          onChange={(e) => onChange({ title, slug, description, airedOn: e.target.value })}
+          onChange={(e) => onChange({ title, slug, description, airedOn: e.target.value, location })}
           required
+          className="w-full p-2 border border-grey5"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="location" className="block mb-2">
+          Location
+        </label>
+        <input
+          type="text"
+          id="location"
+          value={location}
+          onChange={(e) => onChange({ title, slug, description, airedOn, location: e.target.value })}
+          placeholder="e.g., Brooklyn, NY"
           className="w-full p-2 border border-grey5"
         />
       </div>

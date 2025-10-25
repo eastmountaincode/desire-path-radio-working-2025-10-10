@@ -7,6 +7,7 @@ interface EpisodeWithRelations {
   slug: string
   description: string | null
   aired_on: string
+  location: string | null
   audio_url: string
   image_url: string | null
   duration_seconds: number | null
@@ -41,6 +42,7 @@ export async function GET(
         slug,
         description,
         aired_on,
+        location,
         audio_url,
         image_url,
         duration_seconds,
@@ -86,12 +88,13 @@ export async function GET(
       slug: episodes[0].slug,
       description: episodes[0].description,
       aired_on: episodes[0].aired_on,
+      location: episodes[0].location,
       audio_url: episodes[0].audio_url,
       image_url: episodes[0].image_url,
       duration_seconds: episodes[0].duration_seconds,
       created_at: episodes[0].created_at,
-      hosts: episodes[0].episode_hosts?.map((eh: any) => eh.hosts) || [],
-      tags: episodes[0].episode_tags?.map((et: any) => et.tags) || []
+      hosts: episodes[0].episode_hosts?.map((eh: { hosts: { id: number; name: string; organization: string | null } }) => eh.hosts) || [],
+      tags: episodes[0].episode_tags?.map((et: { tags: { id: number; name: string; slug: string; type: string } }) => et.tags) || []
     }
 
     return NextResponse.json({ episode })

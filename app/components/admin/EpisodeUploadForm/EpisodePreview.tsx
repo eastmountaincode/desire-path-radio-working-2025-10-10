@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import EpisodeCard from '@/app/components/archive/EpisodeCard/EpisodeCard'
 
 interface EpisodePreviewProps {
@@ -18,9 +19,11 @@ interface EpisodePreviewProps {
             value: string
         }>
     }
+    imagePreviewUrl: string | null
 }
 
-export default function EpisodePreview({ formData }: EpisodePreviewProps) {
+export default function EpisodePreview({ formData, imagePreviewUrl }: EpisodePreviewProps) {
+    const [isExpanded, setIsExpanded] = useState(false)
     // Transform form data into episode structure expected by EpisodeCard
     const previewEpisode = {
         id: 0, // Preview ID
@@ -29,7 +32,7 @@ export default function EpisodePreview({ formData }: EpisodePreviewProps) {
         description: formData.description || null,
         aired_on: formData.aired_on || new Date().toISOString().split('T')[0],
         audio_url: '/placeholder-audio.mp3', // Placeholder since we don't have the actual URL yet
-        image_url: null, // Placeholder
+        image_url: imagePreviewUrl, // Use the preview URL from selected file
         duration_seconds: formData.duration_seconds,
         hosts: formData.hosts.map((host, index) => ({
             id: index + 1, // Mock IDs for preview
@@ -48,7 +51,13 @@ export default function EpisodePreview({ formData }: EpisodePreviewProps) {
         <div className="space-y-2">
             <h2 className="text-xl font-bold">Episode Preview</h2>
             <div className="border border-grey5 p-4 bg-grey1">
-                <EpisodeCard episode={previewEpisode} isLast={true} />
+                <EpisodeCard
+                    episode={previewEpisode}
+                    isLast={true}
+                    isExpanded={isExpanded}
+                    onToggle={() => setIsExpanded(!isExpanded)}
+                    showLink={false}
+                />
             </div>
         </div>
     )

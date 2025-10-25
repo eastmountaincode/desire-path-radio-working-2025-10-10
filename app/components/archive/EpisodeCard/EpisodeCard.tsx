@@ -32,9 +32,10 @@ interface EpisodeCardProps {
     isLast?: boolean
     isExpanded: boolean
     onToggle: () => void
+    showLink?: boolean
 }
 
-export default function EpisodeCard({ episode, isLast = false, isExpanded, onToggle }: EpisodeCardProps) {
+export default function EpisodeCard({ episode, isLast = false, isExpanded, onToggle, showLink = true }: EpisodeCardProps) {
     const devMode = useDevMode()
     
     const formatDuration = (seconds: number | null) => {
@@ -139,14 +140,16 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
                         {/* Description and Episode Link */}
                         <div className={`flex flex-col md:flex-col ${episode.image_url ? 'md:col-span-8' : 'md:col-span-12'} ${devMode ? 'border-yellow-500 border' : ''}`}>
                             {/* Episode Link */}
-                            <Link
-                                href={`/archive/${episode.slug}`}
-                                className={`flex items-center gap-1 mb-4 md:order-2 md:mt-4 font-mono episode-card-link ${devMode ? 'border-pink-500 border' : ''}`}
-                            >
-                                <span>view episode</span>
-                                <i className="fi fi-ts-arrow-small-right episode-card-link-arrow"></i>
-                            </Link>
-                            
+                            {showLink && (
+                                <Link
+                                    href={`/archive/${episode.slug}`}
+                                    className={`flex items-center gap-1 mb-4 md:order-2 md:mt-4 font-mono episode-card-link ${devMode ? 'border-pink-500 border' : ''}`}
+                                >
+                                    <span>view episode</span>
+                                    <i className="fi fi-ts-arrow-small-right episode-card-link-arrow"></i>
+                                </Link>
+                            )}
+
                             {episode.description && (
                                 <p className={`episode-card-description md:order-1 ${devMode ? 'border-cyan-500 border' : ''}`}>
                                     {episode.description}

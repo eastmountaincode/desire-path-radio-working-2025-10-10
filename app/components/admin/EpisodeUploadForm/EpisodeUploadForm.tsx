@@ -16,6 +16,7 @@ interface FormData {
     slug: string
     description: string
     aired_on: string
+    location: string
     audio_url: string | null
     image_url: string | null
     duration_seconds: number | null
@@ -31,6 +32,7 @@ export default function EpisodeUploadForm() {
         slug: '',
         description: '',
         aired_on: '',
+        location: '',
         audio_url: null,
         image_url: null,
         duration_seconds: null,
@@ -42,6 +44,7 @@ export default function EpisodeUploadForm() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
+    const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null)
     const [uploadSteps, setUploadSteps] = useState<{
         audio: 'pending' | 'uploading' | 'completed' | 'error' | 'skipped'
         image: 'pending' | 'uploading' | 'completed' | 'error' | 'skipped'
@@ -95,6 +98,7 @@ export default function EpisodeUploadForm() {
                 slug: formData.slug,
                 description: formData.description,
                 aired_on: formData.aired_on,
+                location: formData.location,
                 duration_seconds: formData.duration_seconds,
                 hosts: formData.hosts,
                 tags: formData.tags,
@@ -151,6 +155,7 @@ export default function EpisodeUploadForm() {
                     slug: '',
                     description: '',
                     aired_on: '',
+                    location: '',
                     audio_url: null,
                     image_url: null,
                     duration_seconds: null,
@@ -163,9 +168,10 @@ export default function EpisodeUploadForm() {
                     image: 'pending',
                     database: 'pending'
                 })
-                // Reset file refs
+                // Reset file refs and preview
                 audioFileRef.current = null
                 imageFileRef.current = null
+                setImagePreviewUrl(null)
             }, 1500)
 
         } catch (err) {
@@ -193,12 +199,14 @@ export default function EpisodeUploadForm() {
                 slug={formData.slug}
                 description={formData.description}
                 airedOn={formData.aired_on}
+                location={formData.location}
                 onChange={(data) => setFormData(prev => ({
                     ...prev,
                     title: data.title,
                     slug: data.slug,
                     description: data.description,
-                    aired_on: data.airedOn
+                    aired_on: data.airedOn,
+                    location: data.location
                 }))}
             />
 
@@ -214,6 +222,7 @@ export default function EpisodeUploadForm() {
                     image_url: data.imageUrl,
                     duration_seconds: data.duration
                 }))}
+                onImagePreviewChange={setImagePreviewUrl}
             />
 
             <HostsSection
@@ -232,7 +241,7 @@ export default function EpisodeUploadForm() {
             />
 
             {/* Episode Preview */}
-            <EpisodePreview formData={formData} />
+            <EpisodePreview formData={formData} imagePreviewUrl={imagePreviewUrl} />
 
             {/* Upload Progress */}
             <UploadProgress

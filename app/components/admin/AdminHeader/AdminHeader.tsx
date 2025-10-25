@@ -25,7 +25,7 @@ export default function AdminHeader() {
       <div className="flex items-center justify-between h-12">
         <div className="flex items-center gap-12">
           <div className="font-mono">
-            desire path radio
+            desire path radio admin interface
           </div>
           
           {/* Desktop nav */}

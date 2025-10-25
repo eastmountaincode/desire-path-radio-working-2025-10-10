@@ -28,11 +28,21 @@
     color: var(--color-grey3);
 }
 
+@keyframes slow-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
 .live-indicator-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: var(--color-brand-dpr-orange);
+    background-color: red;
+    animation: slow-pulse 2.5s ease-in-out infinite;
 }
 
 .live-show-title {
