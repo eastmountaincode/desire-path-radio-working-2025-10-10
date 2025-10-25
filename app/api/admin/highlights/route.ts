@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerSupabase } from '@/lib/supabase'
+import type { PostgrestError } from '@supabase/supabase-js'
 
 const MAX_HIGHLIGHTS = 5
 
@@ -109,11 +110,11 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Reorder remaining highlights a
+      // Reorder remaining highlights
       const { data: remaining, error: fetchError } = await supabase
         .from('episode_highlights')
         .select('id')
-        .order('display_order', { ascending: true }) as { data: { id: number }[] | null, error: unknown }
+        .order('display_order', { ascending: true }) as { data: { id: number }[] | null, error: PostgrestError | null }
 
       if (!fetchError && remaining) {
         for (let i = 0; i < remaining.length; i++) {

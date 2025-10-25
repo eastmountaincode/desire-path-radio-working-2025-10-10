@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { createServerSupabase } from '@/lib/supabase'
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import type { PostgrestError } from '@supabase/supabase-js'
 
 // Configure R2 client
 const r2Client = new S3Client({
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
       .from('schedule_image')
       .select('*')
       .limit(1)
-      .maybeSingle()
+      .maybeSingle() as { data: { id: number; image_url: string; image_key: string; uploaded_at: string } | null; error: PostgrestError | null }
 
     // Step 2: Upload new image to R2
     const { publicUrl, key } = await uploadToR2(imageFile, scheduleBucket, imageFile.name)
@@ -159,7 +160,7 @@ export async function POST(request: NextRequest) {
       .from('schedule_image')
       .select('id')
       .eq('id', 1)
-      .maybeSingle()
+      .maybeSingle() as { data: { id: number } | null; error: PostgrestError | null }
 
     if (existingRow) {
       // Update existing row
@@ -243,7 +244,7 @@ export async function DELETE(request: NextRequest) {
       .from('schedule_image')
       .select('*')
       .limit(1)
-      .maybeSingle()
+      .maybeSingle() as { data: { id: number; image_url: string; image_key: string; uploaded_at: string } | null; error: PostgrestError | null }
 
     if (fetchError) {
       throw new Error(`Failed to fetch schedule: ${fetchError.message}`)
