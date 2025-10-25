@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerSupabase } from '@/lib/supabase'
 import type { ComingUpText } from '@/types/database'
+import type { PostgrestError } from '@supabase/supabase-js'
 
 // GET - Fetch coming up text
 export async function GET() {
@@ -13,7 +14,7 @@ export async function GET() {
       .from('coming_up_text')
       .select('content')
       .limit(1)
-      .maybeSingle() as { data: Pick<ComingUpText, 'content'> | null, error: any }
+      .maybeSingle() as { data: Pick<ComingUpText, 'content'> | null, error: PostgrestError | null }
 
     if (error) {
       console.error('Failed to fetch coming up text:', error)
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
       .from('coming_up_text')
       .select('id')
       .limit(1)
-      .maybeSingle() as { data: Pick<ComingUpText, 'id'> | null, error: any }
+      .maybeSingle() as { data: Pick<ComingUpText, 'id'> | null, error: PostgrestError | null }
 
     if (fetchError) {
       console.error('Failed to check for existing text:', fetchError)
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
       // Update existing record
       const { error: updateError } = await supabase
         .from('coming_up_text')
-        // @ts-ignore - Type inference issue with coming_up_text table
+        // @ts-expect-error - Type inference issue with coming_up_text table
         .update({ content: text })
         .eq('id', existing.id)
 
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
       // Insert new record
       const { error: insertError } = await supabase
         .from('coming_up_text')
-        // @ts-ignore - Type inference issue with coming_up_text table
+        // @ts-expect-error - Type inference issue with coming_up_text table
         .insert({ content: text })
 
       if (insertError) {

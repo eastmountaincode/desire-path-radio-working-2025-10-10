@@ -1,6 +1,38 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabase } from '@/lib/supabase'
 
+interface HighlightData {
+  episode_id: number
+  display_order: number
+  episodes: {
+    id: number
+    title: string
+    slug: string
+    description: string | null
+    aired_on: string
+    audio_url: string
+    image_url: string | null
+    duration_seconds: number | null
+  }
+}
+
+interface HostData {
+  hosts: {
+    id: number
+    name: string
+    organization: string | null
+  }
+}
+
+interface TagData {
+  tags: {
+    id: number
+    name: string
+    slug: string
+    type: string
+  }
+}
+
 // GET - Fetch highlighted episodes for public display
 export async function GET() {
   try {
@@ -36,7 +68,7 @@ export async function GET() {
 
     // Fetch hosts and tags for each episode
     const episodesWithDetails = await Promise.all(
-      (highlights || []).map(async (highlight: any) => {
+      (highlights || []).map(async (highlight: HighlightData) => {
         const episode = highlight.episodes
 
         // Fetch hosts
@@ -66,8 +98,8 @@ export async function GET() {
 
         return {
           ...episode,
-          hosts: hostsData?.map((h: any) => h.hosts) || [],
-          tags: tagsData?.map((t: any) => t.tags) || []
+          hosts: (hostsData as HostData[] | null)?.map((h) => h.hosts) || [],
+          tags: (tagsData as TagData[] | null)?.map((t) => t.tags) || []
         }
       })
     )

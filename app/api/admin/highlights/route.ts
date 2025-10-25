@@ -119,6 +119,7 @@ export async function POST(request: NextRequest) {
         for (let i = 0; i < remaining.length; i++) {
           await supabase
             .from('episode_highlights')
+            // @ts-expect-error - Type inference issue
             .update({ display_order: i + 1 })
             .eq('id', remaining[i].id)
         }
@@ -156,7 +157,7 @@ export async function POST(request: NextRequest) {
 
       const { error: insertError } = await supabase
         .from('episode_highlights')
-        // @ts-ignore - Type inference issue
+        // @ts-expect-error - Type inference issue
         .insert({
           episode_id,
           display_order: nextOrder
@@ -223,7 +224,7 @@ export async function PUT(request: NextRequest) {
     for (let i = 0; i < episode_ids.length; i++) {
       const { error: updateError } = await supabase
         .from('episode_highlights')
-        // @ts-ignore - Type inference issue
+        // @ts-expect-error - Type inference issue
         .update({ display_order: i + 1 })
         .eq('episode_id', episode_ids[i])
 

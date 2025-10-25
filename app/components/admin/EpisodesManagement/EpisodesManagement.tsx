@@ -78,7 +78,7 @@ export default function EpisodesManagement() {
       const response = await fetch('/api/admin/highlights')
       if (response.ok) {
         const data = await response.json()
-        const ids = new Set(data.highlights.map((h: any) => h.episode_id))
+        const ids = new Set(data.highlights.map((h: { episode_id: number }) => h.episode_id))
         setHighlightedEpisodeIds(ids)
       }
     } catch (error) {

@@ -43,7 +43,7 @@ export default function About() {
           <h2 className="text-2xl font-bold mb-4">[why radio]</h2>
           <div className="space-y-4">
             <p>
-              The contemporary definition of "radio" has evolved, expanding beyond the technology and practice of transmitting sound via electromagnetic waves. Especially in independent spaces, "radio" encompasses a shared culture and community.
+              The contemporary definition of &ldquo;radio&rdquo; has evolved, expanding beyond the technology and practice of transmitting sound via electromagnetic waves. Especially in independent spaces, &ldquo;radio&rdquo; encompasses a shared culture and community.
             </p>
             <p>
               Desire Path Radio celebrates radio broadcast as an accessible tool for discourse, entertainment, and world-building.
