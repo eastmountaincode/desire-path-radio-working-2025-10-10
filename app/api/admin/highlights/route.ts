@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Reorder remaining highlights
+      // Reorder remaining highlights a
       const { data: remaining, error: fetchError } = await supabase
         .from('episode_highlights')
         .select('id')
