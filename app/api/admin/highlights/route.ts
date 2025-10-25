@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       const { data: remaining, error: fetchError } = await supabase
         .from('episode_highlights')
         .select('id')
-        .order('display_order', { ascending: true })
+        .order('display_order', { ascending: true }) as { data: { id: number }[] | null, error: unknown }
 
       if (!fetchError && remaining) {
         for (let i = 0; i < remaining.length; i++) {
