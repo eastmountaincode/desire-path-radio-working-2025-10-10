@@ -25,6 +25,34 @@ interface EpisodeWithRelations {
   created_at: string
 }
 
+interface EpisodeQueryResult {
+  id: number
+  title: string
+  slug: string
+  description: string | null
+  aired_on: string
+  location: string | null
+  audio_url: string
+  image_url: string | null
+  duration_seconds: number | null
+  created_at: string
+  episode_hosts?: Array<{
+    hosts: {
+      id: number
+      name: string
+      organization: string | null
+    }
+  }>
+  episode_tags?: Array<{
+    tags: {
+      id: number
+      name: string
+      slug: string
+      type: string
+    }
+  }>
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -64,7 +92,7 @@ export async function GET(
         )
       `)
       .eq('slug', slug)
-      .limit(1)
+      .limit(1) as { data: EpisodeQueryResult[] | null, error: unknown }
 
     if (error) {
       console.error('Database query error:', error)
@@ -93,8 +121,8 @@ export async function GET(
       image_url: episodes[0].image_url,
       duration_seconds: episodes[0].duration_seconds,
       created_at: episodes[0].created_at,
-      hosts: episodes[0].episode_hosts?.map((eh: { hosts: { id: number; name: string; organization: string | null } }) => eh.hosts) || [],
-      tags: episodes[0].episode_tags?.map((et: { tags: { id: number; name: string; slug: string; type: string } }) => et.tags) || []
+      hosts: episodes[0].episode_hosts?.map((eh) => eh.hosts) || [],
+      tags: episodes[0].episode_tags?.map((et) => et.tags) || []
     }
 
     return NextResponse.json({ episode })
