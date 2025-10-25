@@ -33,10 +33,10 @@ export default function HomeHero() {
                             become a stand-in for curation, community, and discourse.
                         </p>
                         <div className={`flex flex-col gap-1 ${devMode ? 'border border-purple-500' : ''}`}>
-                            <a href="#" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
+                            <a href="/about" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>about us</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
                             </a>
-                            <a href="#" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
+                            <a href="/schedule" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>schedule</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
                             </a>
                             <a href="https://www.instagram.com/desirepath.radio/" target="_blank" rel="noopener noreferrer" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
