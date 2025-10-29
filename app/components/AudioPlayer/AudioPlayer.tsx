@@ -4,8 +4,12 @@ import { useAudioPlayer } from './AudioPlayerProvider'
 import { useDevMode } from '../DevModeProvider'
 import { useMobileMenu } from '../MobileMenuProvider'
 import { useRef, useEffect, useState } from 'react'
-import Link from 'next/link'
-import PlayPauseButton from '../PlayPauseButton/PlayPauseButton'
+import AudioPlayerPlayPauseButton from './AudioPlayerPlayPauseButton'
+import AudioPlayerTitleDisplay from './AudioPlayerTitleDisplay'
+import AudioPlayerTimeDisplay from './AudioPlayerTimeDisplay'
+import AudioPlayerProgressBar from './AudioPlayerProgressBar'
+import AudioPlayerControlButton from './AudioPlayerControlButton'
+import AudioPlayerCloseButton from './AudioPlayerCloseButton'
 import './audio-player-styles.css'
 
 export default function AudioPlayer() {
@@ -31,6 +35,8 @@ export default function AudioPlayer() {
     const [desktopTitleElement, setDesktopTitleElement] = useState<HTMLElement | null>(null)
     const [mobileTitleElement, setMobileTitleElement] = useState<HTMLElement | null>(null)
     const [isTruncated, setIsTruncated] = useState(false)
+    const [isDragging, setIsDragging] = useState(false)
+    const [draggingPercentage, setDraggingPercentage] = useState(0)
 
     // Measure audio player height and update context
     useEffect(() => {
@@ -158,19 +164,69 @@ export default function AudioPlayer() {
         ? `${liveChannel.channelNumber.toUpperCase()}: ${liveChannel.channelType.charAt(0).toUpperCase() + liveChannel.channelType.slice(1)}`
         : ''
 
-    const formatTime = (seconds: number) => {
-        if (isNaN(seconds) || !isFinite(seconds)) return '0:00:00'
-        const hours = Math.floor(seconds / 3600)
-        const mins = Math.floor((seconds % 3600) / 60)
-        const secs = Math.floor(seconds % 60)
-        return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-    }
-
     const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        // Don't handle clicks if we're dragging
+        if (isDragging) return
+
         const rect = e.currentTarget.getBoundingClientRect()
         const x = e.clientX - rect.left
         const percentage = x / rect.width
         seek(percentage * duration)
+    }
+
+    const handleThumbDrag = (e: React.MouseEvent<HTMLDivElement>, progressRef: React.RefObject<HTMLDivElement | null>) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        if (!progressRef.current) return
+
+        setIsDragging(true)
+
+        // Set initial position
+        const rect = progressRef.current.getBoundingClientRect()
+        const initialX = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
+        const initialPercentage = (initialX / rect.width) * 100
+        setDraggingPercentage(initialPercentage)
+        seek((initialPercentage / 100) * duration)
+
+        // Throttle seek calls to every 100ms
+        let lastSeekTime = Date.now()
+        let pendingSeek: number | null = null
+
+        const handleMouseMove = (moveEvent: MouseEvent) => {
+            if (!progressRef.current) return
+
+            const rect = progressRef.current.getBoundingClientRect()
+            const x = Math.max(0, Math.min(moveEvent.clientX - rect.left, rect.width))
+            const percentage = (x / rect.width) * 100
+
+            // Always update visual position immediately
+            setDraggingPercentage(percentage)
+
+            // Throttle seek calls
+            const now = Date.now()
+            if (now - lastSeekTime >= 100) {
+                seek((percentage / 100) * duration)
+                lastSeekTime = now
+                pendingSeek = null
+            } else {
+                // Store pending seek to call on mouseup
+                pendingSeek = percentage
+            }
+        }
+
+        const handleMouseUp = () => {
+            setIsDragging(false)
+            // Execute any pending seek
+            if (pendingSeek !== null) {
+                seek((pendingSeek / 100) * duration)
+            }
+            document.removeEventListener('mousemove', handleMouseMove)
+            document.removeEventListener('mouseup', handleMouseUp)
+        }
+
+        document.addEventListener('mousemove', handleMouseMove)
+        document.addEventListener('mouseup', handleMouseUp)
     }
 
     const handleSeekBack = () => {
@@ -186,6 +242,7 @@ export default function AudioPlayer() {
     }
 
     const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0
+    const displayPercentage = isDragging ? draggingPercentage : progressPercentage
     const isMuted = volume === 0
 
     return (
@@ -195,94 +252,39 @@ export default function AudioPlayer() {
             style={{ top: `${headerHeight - 1}px` }}
         >
             {/* Desktop Layout */}
-            <div className={`audio-player-container hidden md:flex h-full ${devMode ? 'border border-yellow-500' : ''}`}>
+            <div className={`audio-player-container items-center gap-4 px-7 h-full max-w-full hidden md:flex ${devMode ? 'border border-yellow-500' : ''}`}>
                 {/* Left section - Controls and Info */}
                 <div className={`flex items-center gap-4 min-w-0 ${devMode ? 'border border-green-500' : ''}`}>
-                    {/* Play/Pause Button */}
-                    <button
-                        onClick={isPlaying ? pause : resume}
-                        className={`audio-player-play-button group ${devMode ? 'border border-pink-500' : ''}`}
-                        aria-label={isLoading ? 'Loading' : (isPlaying ? 'Pause' : 'Play')}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className={`animate-spin ${devMode ? 'border border-red-500' : ''}`}>
-                                <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.25" />
-                                <path d="M8 2 A6 6 0 0 1 14 8" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                            </svg>
-                        ) : (
-                            <div className={devMode ? 'border border-red-500' : ''}>
-                                <PlayPauseButton isPlaying={isPlaying} />
-                            </div>
-                        )}
-                    </button>
+                    <AudioPlayerPlayPauseButton
+                        isPlaying={isPlaying}
+                        isLoading={isLoading}
+                        onToggle={isPlaying ? pause : resume}
+                    />
 
-                    {/* Title - Episode or Live Channel */}
-                    {isLiveMode ? (
-                        <div className={`flex items-center gap-2 min-w-0 ${devMode ? 'border border-cyan-500' : ''}`}>
-                            <div className="live-indicator-dot"></div>
-                            <div
-                                ref={setDesktopTitleElement}
-                                className={`audio-player-title ${isTruncated ? 'text-blue-500' : ''}`}
-                            >
-                                {isTruncated ? (
-                                    <div className="audio-player-title-marquee-wrapper">
-                                        <div className="audio-player-title-marquee-content">
-                                            <span>LIVE • {channelLabel}</span>
-                                            <span>LIVE • {channelLabel}</span>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    `LIVE • ${channelLabel}`
-                                )}
-                            </div>
-                        </div>
-                    ) : (
-                        <Link
-                            href={`/archive/${currentEpisode?.slug}`}
-                            ref={setDesktopTitleElement}
-                            className={`audio-player-title hover:text-brand-dpr-orange ${isTruncated ? 'text-blue-500' : ''} ${devMode ? 'border border-cyan-500' : ''}`}
-                        >
-                            {isTruncated ? (
-                                <div className="audio-player-title-marquee-wrapper">
-                                    <div className="audio-player-title-marquee-content">
-                                        <span>{currentEpisode?.title}</span>
-                                        <span>{currentEpisode?.title}</span>
-                                    </div>
-                                </div>
-                            ) : (
-                                currentEpisode?.title
-                            )}
-                        </Link>
-                    )}
+                    <AudioPlayerTitleDisplay
+                        isLive={isLiveMode}
+                        title={isLiveMode ? `LIVE • ${channelLabel}` : currentEpisode?.title || ''}
+                        slug={currentEpisode?.slug}
+                        isTruncated={isTruncated}
+                        onRefCallback={setDesktopTitleElement}
+                    />
                 </div>
 
                 {/* Center section - Time and Progress (hidden in live mode) */}
                 <div className={`flex items-center gap-3 flex-shrink-0 ${devMode ? 'border border-green-500' : ''}`}>
                     {!isLiveMode && (
                         <>
-                            {/* Current Time */}
-                            <div className={`audio-player-time w-14 text-right flex-shrink-0 ${devMode ? 'border border-red-500' : ''}`}>
-                                {formatTime(currentTime)}
-                            </div>
+                            <AudioPlayerTimeDisplay time={currentTime} alignment="right" />
 
-                            {/* Progress Bar */}
-                            <div
-                                className={`audio-player-progress-container flex-shrink-0 ${devMode ? 'border border-purple-500' : ''}`}
-                                onClick={handleProgressClick}
-                            >
-                                <div className="audio-player-progress-track">
-                                    <div
-                                        className="audio-player-progress-fill"
-                                        style={{ width: `${progressPercentage}%` }}
-                                    />
-                                </div>
-                            </div>
+                            <AudioPlayerProgressBar
+                                displayPercentage={displayPercentage}
+                                isDragging={isDragging}
+                                onProgressClick={handleProgressClick}
+                                onThumbDrag={handleThumbDrag}
+                                className="flex-shrink-0"
+                            />
 
-                            {/* Duration */}
-                            <div className={`audio-player-time w-14 text-right flex-shrink-0 ${devMode ? 'border border-red-500' : ''}`}>
-                                {formatTime(duration)}
-                            </div>
+                            <AudioPlayerTimeDisplay time={duration} alignment="right" />
                         </>
                     )}
 
@@ -291,162 +293,96 @@ export default function AudioPlayer() {
                         {/* Seek buttons (only in archive mode) */}
                         {!isLiveMode && (
                             <>
-                                {/* Seek Back 15s */}
-                                <button
+                                <AudioPlayerControlButton
                                     onClick={handleSeekBack}
-                                    className={`audio-player-control-button group ${devMode ? 'border border-pink-500' : ''}`}
-                                    aria-label="Seek back 15 seconds"
+                                    ariaLabel="Seek back 15 seconds"
                                 >
-                                    <div className={devMode ? 'border border-cyan-500' : ''}>
-                                        <img src="/images/icons/skip-buttons/skip-15-seconds-back.svg" alt="Skip back 15 seconds" width="20" height="20" className="group-hover:brightness-0 group-hover:saturate-100 group-hover:[filter:invert(36%)_sepia(98%)_saturate(2738%)_hue-rotate(8deg)_brightness(102%)_contrast(107%)]" />
-                                    </div>
-                                </button>
+                                    <svg width="20" height="20" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill="currentColor" d="M.02,2.28h.74v3.12l.63-1.14C3.73.5,8.55-1.02,12.64.8c3.44,1.53,5.66,5.17,5.31,8.95h-.77c.16-1.2-.04-2.47-.46-3.6C15.41,2.59,11.75.37,7.97.85c-2.93.37-5.61,2.41-6.62,5.19h3.16v.74s-3.53,0-3.53,0c-.14,0-.52-.21-.63-.31-.16-.16-.24-.4-.33-.6v-3.58Z"/>
+                                        <path fill="currentColor" d="M13.49,18v-.74h2.33c.76,0,1.43-.79,1.42-1.52s-.68-1.49-1.42-1.49h-2.33v-2.98h4.11v.74h-3.32l-.05.05v1.46h1.77c.43,0,1.12.42,1.4.74,1.07,1.2.59,3.04-.88,3.62l-.51.14h-2.53Z"/>
+                                        <path fill="currentColor" d="M.02,9.02h.74c.02,1.52.43,2.99,1.21,4.28,1.46,2.4,4.06,3.88,6.87,3.97l.9-.04v.74s-.2,0-.2,0l-.08.04h-1.02c-.2-.05-.43-.05-.64-.08C3.84,17.4.61,14.18.09,10.22c-.03-.21-.02-.44-.08-.64v-.56Z"/>
+                                        <path fill="currentColor" d="M11.98,18h-.74v-5.51s-1.6,1.65-1.6,1.65l-.54-.51,2.14-2.25c.27-.25.67-.1.74.25v6.37Z"/>
+                                        <polygon fill="currentColor" points="9 4.14 9 9.75 4.12 9.75 4.12 9.02 8.26 9.02 8.26 4.14 9 4.14"/>
+                                    </svg>
+                                </AudioPlayerControlButton>
 
-                                {/* Seek Forward 15s */}
-                                <button
+                                <AudioPlayerControlButton
                                     onClick={handleSeekForward}
-                                    className={`audio-player-control-button group ${devMode ? 'border border-pink-500' : ''}`}
-                                    aria-label="Seek forward 15 seconds"
+                                    ariaLabel="Seek forward 15 seconds"
                                 >
-                                    <div className={devMode ? 'border border-cyan-500' : ''}>
-                                        <img src="/images/icons/skip-buttons/skip-15-seconds-forward.svg" alt="Skip forward 15 seconds" width="21" height="21" className="group-hover:brightness-0 group-hover:saturate-100 group-hover:[filter:invert(36%)_sepia(98%)_saturate(2738%)_hue-rotate(8deg)_brightness(102%)_contrast(107%)]" />
-                                    </div>
-                                </button>
+                                    <svg width="21" height="21" viewBox="0 0 19 18" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill="currentColor" d="M19,2.28h-.74s0,3.12,0,3.12l-.63-1.14C15.29.5,10.47-1.02,6.38.8,2.94,2.33.72,5.97,1.07,9.75h.77c-.16-1.2.04-2.47.46-3.6C3.61,2.59,7.26.37,11.05.85c2.93.37,5.61,2.41,6.62,5.19h-3.16s0,.74,0,.74h3.53c.14,0,.52-.21.63-.31.16-.16.24-.4.33-.6v-3.58Z"/>
+                                        <path fill="currentColor" d="M4.25,18v-.74h2.33c.76,0,1.43-.79,1.42-1.52s-.68-1.49-1.42-1.49h-2.33v-2.98h4.11v.74h-3.32l-.05.05v1.46h1.77c.43,0,1.12.42,1.4.74,1.07,1.2.59,3.04-.88,3.62l-.51.14h-2.53Z"/>
+                                        <path fill="currentColor" d="M19,9.02h-.74c-.02,1.52-.43,2.99-1.21,4.28-1.46,2.4-4.06,3.88-6.87,3.97l-.9-.04v.74s.2,0,.2,0l.08.04h1.02c.2-.05.43-.05.64-.08,3.95-.52,7.19-3.75,7.7-7.7.03-.21.02-.44.08-.64v-.56Z"/>
+                                        <path fill="currentColor" d="M2.75,18h-.74v-5.51s-1.6,1.65-1.6,1.65l-.54-.51,2.14-2.25c.27-.25.67-.1.74.25v6.37Z"/>
+                                        <polygon fill="currentColor" points="10.02 4.14 10.02 9.75 14.89 9.75 14.89 9.02 10.75 9.02 10.75 4.14 10.02 4.14"/>
+                                    </svg>
+                                </AudioPlayerControlButton>
                             </>
                         )}
 
-                        {/* Mute/Unmute */}
-                        <button
+                        <AudioPlayerControlButton
                             onClick={handleToggleMute}
-                            className={`audio-player-control-button group ${devMode ? 'border border-pink-500' : ''}`}
-                            aria-label={isMuted ? 'Unmute' : 'Mute'}
+                            ariaLabel={isMuted ? 'Unmute' : 'Mute'}
                         >
-                            <div className={devMode ? 'border border-cyan-500' : ''}>
-                                {isMuted ? (
-                                    <img src="/images/icons/volume-buttons/volume-mute.svg" alt="Unmute" width="20" height="20" className="group-hover:brightness-0 group-hover:saturate-100 group-hover:[filter:invert(36%)_sepia(98%)_saturate(2738%)_hue-rotate(8deg)_brightness(102%)_contrast(107%)]" />
-                                ) : (
-                                    <img src="/images/icons/volume-buttons/volume.svg" alt="Mute" width="20" height="20" className="group-hover:brightness-0 group-hover:saturate-100 group-hover:[filter:invert(36%)_sepia(98%)_saturate(2738%)_hue-rotate(8deg)_brightness(102%)_contrast(107%)]" />
-                                )}
-                            </div>
-                        </button>
+                            {isMuted ? (
+                                <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="currentColor" d="m19.732,12l4.146,4.146-.707.707-4.146-4.146-4.146,4.146-.707-.707,4.146-4.146-4.146-4.146.707-.707,4.146,4.146,4.146-4.146.707.707-4.146,4.146ZM5.323,6L12,.585v22.873l-6.678-5.458h-2.822c-1.378,0-2.5-1.122-2.5-2.5v-7c0-1.378,1.122-2.5,2.5-2.5h2.823Zm.354,1h-3.177c-.827,0-1.5.673-1.5,1.5v7c0,.827.673,1.5,1.5,1.5h3.178l5.322,4.35V2.684l-5.323,4.316Z"/>
+                                </svg>
+                            ) : (
+                                <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="currentColor" d="M2.5,6c-1.379,0-2.5,1.121-2.5,2.5v7c0,1.379,1.121,2.5,2.5,2.5h2.303l7.197,5.986V-.016L4.802,6H2.5ZM11,2.123V21.854l-5.836-4.854H2.5c-.827,0-1.5-.673-1.5-1.5v-7c0-.827,.673-1.5,1.5-1.5h2.665L11,2.123Zm13,9.877c0,4.963-4.037,9-9,9h-1v-1h1c4.411,0,8-3.589,8-8s-3.589-8-8-8h-1v-1h1c4.963,0,9,4.037,9,9Zm-9,5h-1v-1h1c2.206,0,4-1.794,4-4s-1.794-4-4-4h-1v-1h1c2.757,0,5,2.243,5,5s-2.243,5-5,5Z"/>
+                                </svg>
+                            )}
+                        </AudioPlayerControlButton>
                     </div>
                 </div>
 
                 {/* Right section - Close button */}
                 <div className={`flex items-center flex-shrink-0 ml-auto ${devMode ? 'border border-indigo-500' : ''}`}>
-                    <button
-                        onClick={stop}
-                        className={`audio-player-close-button ${devMode ? 'border border-pink-500' : ''}`}
-                        aria-label="Close player"
-                    >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" strokeWidth="2" />
-                        </svg>
-                    </button>
+                    <AudioPlayerCloseButton onClose={stop} />
                 </div>
             </div>
 
             {/* Mobile Layout - 3 Columns */}
             <div className={`md:hidden grid grid-cols-[auto_1fr_auto] gap-4 items-center px-7 h-full ${devMode ? 'border border-yellow-500' : ''}`}>
                 {/* Left Column - Play Button */}
-                <button
-                    onClick={isPlaying ? pause : resume}
-                    className={`audio-player-play-button group ${devMode ? 'border border-pink-500' : ''}`}
-                    aria-label={isLoading ? 'Loading' : (isPlaying ? 'Pause' : 'Play')}
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className={`animate-spin ${devMode ? 'border border-red-500' : ''}`}>
-                            <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.25" />
-                            <path d="M8 2 A6 6 0 0 1 14 8" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                        </svg>
-                    ) : (
-                        <div className={devMode ? 'border border-red-500' : ''}>
-                            <PlayPauseButton isPlaying={isPlaying} />
-                        </div>
-                    )}
-                </button>
+                <AudioPlayerPlayPauseButton
+                    isPlaying={isPlaying}
+                    isLoading={isLoading}
+                    onToggle={isPlaying ? pause : resume}
+                />
 
                 {/* Center Column - Title and Progress (stacked) */}
                 <div className={`flex flex-col gap-0 min-w-0 px-0 ${devMode ? 'border border-green-500' : ''}`}>
-                    {/* Title - Episode or Live Channel */}
-                    {isLiveMode ? (
-                        <div className={`flex items-center gap-2 min-w-0 ${devMode ? 'border border-cyan-500' : ''}`}>
-                            <div className="live-indicator-dot"></div>
-                            <div
-                                ref={setMobileTitleElement}
-                                className={`audio-player-title ${isTruncated ? 'text-blue-500' : ''}`}
-                            >
-                                {isTruncated ? (
-                                    <div className="audio-player-title-marquee-wrapper">
-                                        <div className="audio-player-title-marquee-content">
-                                            <span>LIVE • {channelLabel}</span>
-                                            <span>LIVE • {channelLabel}</span>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    `LIVE • ${channelLabel}`
-                                )}
-                            </div>
-                        </div>
-                    ) : (
-                        <Link
-                            href={`/archive/${currentEpisode?.slug}`}
-                            ref={setMobileTitleElement}
-                            className={`audio-player-title hover:text-brand-dpr-orange ${isTruncated ? 'text-blue-500' : ''} ${devMode ? 'border border-cyan-500' : ''}`}
-                        >
-                            {isTruncated ? (
-                                <div className="audio-player-title-marquee-wrapper">
-                                    <div className="audio-player-title-marquee-content">
-                                        <span>{currentEpisode?.title}</span>
-                                        <span>{currentEpisode?.title}</span>
-                                    </div>
-                                </div>
-                            ) : (
-                                currentEpisode?.title
-                            )}
-                        </Link>
-                    )}
+                    <AudioPlayerTitleDisplay
+                        isLive={isLiveMode}
+                        title={isLiveMode ? `LIVE • ${channelLabel}` : currentEpisode?.title || ''}
+                        slug={currentEpisode?.slug}
+                        isTruncated={isTruncated}
+                        onRefCallback={setMobileTitleElement}
+                    />
 
                     {/* Progress Bar with Timestamps (hidden in live mode) */}
                     {!isLiveMode && (
-                        <div className={`flex items-center gap-2 ${devMode ? 'border border-blue-500' : ''}`}>
-                            {/* Current Time */}
-                            <div className={`audio-player-time w-14 flex-shrink-0 ${devMode ? 'border border-red-500' : ''}`}>
-                                {formatTime(currentTime)}
-                            </div>
+                        <div className={`flex items-center gap-2 mt-1 ${devMode ? 'border border-blue-500' : ''}`}>
+                            <AudioPlayerTimeDisplay time={currentTime} alignment="left" />
 
-                            {/* Progress Bar */}
-                            <div
-                                className={`audio-player-progress-container flex-1 ${devMode ? 'border border-purple-500' : ''}`}
-                                onClick={handleProgressClick}
-                            >
-                                <div className="audio-player-progress-track">
-                                    <div
-                                        className="audio-player-progress-fill"
-                                        style={{ width: `${progressPercentage}%` }}
-                                    />
-                                </div>
-                            </div>
+                            <AudioPlayerProgressBar
+                                displayPercentage={displayPercentage}
+                                isDragging={isDragging}
+                                onProgressClick={handleProgressClick}
+                                onThumbDrag={handleThumbDrag}
+                                className="flex-1"
+                            />
 
-                            {/* Duration */}
-                            <div className={`audio-player-time w-14 flex-shrink-0 ${devMode ? 'border border-red-500' : ''}`}>
-                                {formatTime(duration)}
-                            </div>
+                            <AudioPlayerTimeDisplay time={duration} alignment="left" />
                         </div>
                     )}
                 </div>
 
                 {/* Right Column - Close Button */}
-                <button
-                    onClick={stop}
-                    className={`audio-player-close-button ${devMode ? 'border border-pink-500' : ''}`}
-                    aria-label="Close player"
-                >
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                </button>
+                <AudioPlayerCloseButton onClose={stop} />
             </div>
         </div>
     )

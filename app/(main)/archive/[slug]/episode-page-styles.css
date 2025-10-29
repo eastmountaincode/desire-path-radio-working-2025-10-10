@@ -45,3 +45,15 @@
     color: var(--color-grey2);
 }
 
+.share-button {
+    color: var(--color-grey6);
+}
+
+.dark .share-button {
+    color: var(--color-grey1);
+}
+
+.share-button:hover {
+    color: var(--color-brand-dpr-orange);
+}
+

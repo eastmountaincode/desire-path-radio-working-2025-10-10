@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useDevMode } from '../../DevModeProvider'
 import { useLiveChannelToggle } from '../../LiveChannelToggleProvider'
 import LiveChannel from './LiveChannel'
-import LiveChannelToggle, { type ChannelState } from '../../AudioPlayer/AudioPlayerDevControls'
+import LiveChannelToggle, { type ChannelState } from './LiveChannelToggle'
 import './home-live-radio-styles.css'
 
 export default function HomeLiveRadio() {

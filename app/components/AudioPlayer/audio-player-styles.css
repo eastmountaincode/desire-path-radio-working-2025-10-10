@@ -1,3 +1,7 @@
+/* =============================================================================
+   AUDIO PLAYER CONTAINER
+   ============================================================================= */
+
 .audio-player {
     position: fixed;
     top: 48px;
@@ -9,36 +13,24 @@
     border-bottom: 1px solid var(--color-grey6);
 }
 
-/* Mobile: taller height */
+.dark .audio-player {
+    background-color: var(--color-grey6);
+    border-bottom: 1px solid var(--color-grey1);
+}
+
 @media (max-width: 767px) {
     .audio-player {
         height: 80px;
     }
 }
 
-.dark .audio-player {
-    background-color: var(--color-grey6);
-    border-bottom: 1px solid var(--color-grey1);
-}
+/* =============================================================================
+   BUTTONS
+   ============================================================================= */
 
-.audio-player-container {
-    align-items: center;
-    gap: 1rem;
-    padding: 0 1.75rem;
-    height: 100%;
-    max-width: 100%;
-}
-
+/* Play/Pause Button */
 .audio-player-play-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
     color: var(--color-grey6);
-    flex-shrink: 0;
 }
 
 .dark .audio-player-play-button {
@@ -49,16 +41,9 @@
     color: var(--color-brand-dpr-orange);
 }
 
+/* Control Buttons (seek, mute) */
 .audio-player-control-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
     color: var(--color-grey6);
-    flex-shrink: 0;
 }
 
 .dark .audio-player-control-button {
@@ -69,24 +54,9 @@
     color: var(--color-brand-dpr-orange);
 }
 
-.audio-player-control-button img {
-    filter: none;
-}
-
-.dark .audio-player-control-button img {
-    filter: invert(1) brightness(1.1);
-}
-
+/* Close Button */
 .audio-player-close-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
     color: var(--color-grey6);
-    flex-shrink: 0;
 }
 
 .dark .audio-player-close-button {
@@ -97,43 +67,27 @@
     color: var(--color-brand-dpr-orange);
 }
 
+/* =============================================================================
+   TITLE & MARQUEE ANIMATION
+   ============================================================================= */
+
 .audio-player-title {
     font-family: var(--font-monument);
-    font-size: 16px;
-    line-height: 1.5;
-    letter-spacing: -0.025em;
     color: var(--color-grey6);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-    max-width: 250px;
-    text-decoration: none;
-    cursor: pointer;
+}
+
+.dark .audio-player-title {
+    color: var(--color-grey1);
+}
+
+.audio-player-title:hover {
+    color: var(--color-brand-dpr-orange);
 }
 
 /* When title contains marquee, ensure proper overflow */
 .audio-player-title:has(.audio-player-title-marquee-wrapper) {
     overflow: hidden;
     text-overflow: clip;
-}
-
-/* Mobile: remove max-width constraint since layout has more space */
-@media (max-width: 767px) {
-    .audio-player-title {
-        max-width: none;
-    }
-}
-
-/* Desktop: remove max-width constraints to let title grow naturally */
-@media (min-width: 768px) {
-    .audio-player-title {
-        max-width: none;
-    }
-}
-
-.dark .audio-player-title {
-    color: var(--color-grey1);
 }
 
 /* Marquee scroll for truncated titles */
@@ -161,33 +115,34 @@
     }
 }
 
-.audio-player-time {
-    font-size: 13px;
-    line-height: 1.5;
-    letter-spacing: -0.045em;
-    flex-shrink: 0;
-}
+/* =============================================================================
+   TIME DISPLAY
+   ============================================================================= */
 
 .dark .audio-player-time {
     color: var(--color-grey4);
 }
 
+/* =============================================================================
+   PROGRESS BAR
+   ============================================================================= */
+
+/* Progress Container */
 .audio-player-progress-container {
     flex: 1 1 auto;
     min-width: 250px;
     max-width: 700px;
     cursor: pointer;
     padding: 0.5rem 0;
+    position: relative;
 }
 
-/* Mobile: remove min-width constraint */
 @media (max-width: 767px) {
     .audio-player-progress-container {
         min-width: 0;
     }
 }
 
-/* Allow progress bar to grow more on larger screens */
 @media (min-width: 1280px) {
     .audio-player-progress-container {
         max-width: 900px;
@@ -200,6 +155,7 @@
     }
 }
 
+/* Progress Track */
 .audio-player-progress-track {
     height: 4px;
     background-color: var(--color-grey2);
@@ -212,9 +168,41 @@
     background-color: var(--color-grey5);
 }
 
+/* Progress Fill */
 .audio-player-progress-fill {
     height: 100%;
     background-color: var(--color-brand-dpr-orange);
     transition: width 0.1s linear;
 }
 
+.audio-player-progress-container.dragging .audio-player-progress-fill {
+    transition: none;
+}
+
+/* Progress Thumb */
+.audio-player-progress-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 23px;
+    background-color: white;
+    border: 1px solid var(--color-grey3);
+    border-radius: 2px;
+    cursor: grab;
+    transition: left 0.1s linear;
+    z-index: 1;
+}
+
+.dark .audio-player-progress-thumb {
+    background-color: var(--color-grey6);
+    border-color: var(--color-grey4);
+}
+
+.audio-player-progress-thumb:active {
+    cursor: grabbing;
+}
+
+.audio-player-progress-thumb.dragging {
+    transition: none;
+}

@@ -64,7 +64,7 @@ export default function HomeHighlights() {
         return (
             <section className={`pt-12 pb-12 ${devMode ? 'border border-red-500' : ''}`}>
                 <div className={devMode ? 'border border-blue-500' : ''}>
-                    <h2 className="mb-6 text-3xl">Highlights</h2>
+                    <h2 className="mb-6 text-3xl font-[family-name:var(--font-monument-wide)]">Highlights</h2>
                 </div>
             </section>
         )
@@ -77,17 +77,17 @@ export default function HomeHighlights() {
     return (
         <section className={`pt-12 pb-12 ${devMode ? 'border border-red-500' : ''}`}>
             <div className={devMode ? 'border border-blue-500' : ''}>
-                <h2 className="mb-6 text-3xl">Highlights</h2>
+                <h2 className="mb-6 text-3xl font-[family-name:var(--font-monument-wide)]">Highlights</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {episodes.map((episode) => (
                         <div
                             key={episode.id}
-                            className="border border-current p-4"
+                            className={`py-4 pb-8 relative ${devMode ? 'border border-purple-500' : ''}`}
                         >
                             {/* Image */}
                             {episode.image_url && (
-                                <div className="mb-4 aspect-square overflow-hidden">
+                                <div className={`mb-4 aspect-square overflow-hidden ${devMode ? 'border border-yellow-500' : ''}`}>
                                     <Image
                                         src={episode.image_url}
                                         alt={episode.title}
@@ -100,26 +100,18 @@ export default function HomeHighlights() {
                             )}
 
                             {/* Date */}
-                            <div className="text-sm opacity-70 mb-2">
+                            <div className={`text-sm mb-2 font-[family-name:var(--font-monument)] tracking-[0.003em] ${devMode ? 'border border-green-500' : ''}`}>
                                 {formatDate(episode.aired_on)}
                             </div>
 
                             {/* Title */}
-                            <h3 className="text-xl mb-2 line-clamp-2">
+                            <h3 className={`text-xl mb-2 line-clamp-2 font-[family-name:var(--font-monument)] ${devMode ? 'border border-cyan-500' : ''}`}>
                                 {episode.title}
                             </h3>
 
-                            {/* Host */}
-                            {episode.hosts.length > 0 && (
-                                <div className="text-sm opacity-70 mb-3">
-                                    {episode.hosts[0]?.name}
-                                    {episode.hosts[0]?.organization && `, ${episode.hosts[0].organization}`}
-                                </div>
-                            )}
-
                             {/* Tags */}
                             {episode.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mb-4">
+                                <div className={`flex flex-wrap gap-1 mb-4 ${devMode ? 'border border-orange-500' : ''}`}>
                                     {episode.tags.slice(0, 3).map(tag => (
                                         <Tag key={tag.id} name={tag.name} />
                                     ))}
@@ -132,7 +124,7 @@ export default function HomeHighlights() {
                             {/* View Episode Link */}
                             <Link
                                 href={`/archive/${episode.slug}`}
-                                className="home-highlights-link flex items-center gap-1 font-mono"
+                                className={`home-highlights-link flex items-center gap-1 font-mono absolute bottom-0 left-0 ${devMode ? 'border border-pink-500' : ''}`}
                             >
                                 <span>view episode</span>
                                 <i className="fi fi-ts-arrow-small-right home-highlights-link-arrow"></i>

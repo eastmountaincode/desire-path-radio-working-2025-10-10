@@ -9,7 +9,7 @@ export default function Footer() {
     const devMode = useDevMode()
 
     return (
-        <footer className={`footer-container border-t px-7 py-7 ${devMode ? 'border border-yellow-500' : ''}`}>
+        <footer className={`footer-container border-t px-6 py-7 ${devMode ? 'border border-yellow-500' : ''}`}>
             {/* Navigation Links */}
             <nav className={`flex flex-col gap-1 ${devMode ? 'border border-blue-500' : ''}`}>
                 <Link href="/about" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>

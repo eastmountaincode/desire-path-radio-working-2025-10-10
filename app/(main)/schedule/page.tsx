@@ -40,7 +40,7 @@ export default function Schedule() {
 
   return (
     <div className={`min-h-screen ${devMode ? 'border-2 border-green-500' : ''}`}>
-      <h1 className="text-3xl mb-6">Schedule</h1>
+      <h1 className="text-3xl mb-6 font-[family-name:var(--font-monument-wide)]">Schedule</h1>
 
       {isLoading && (
         <div className="">Loading schedule...</div>

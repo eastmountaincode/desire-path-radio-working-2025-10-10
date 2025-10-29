@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useDevMode } from '../../DevModeProvider'
 import { useAudioPlayer } from '../../AudioPlayer/AudioPlayerProvider'
 import { fetchStreamData, type EveningsStreamData } from '../../../../lib/evenings'
-import type { ChannelState } from '../../AudioPlayer/AudioPlayerDevControls'
+import type { ChannelState } from './LiveChannelToggle'
 import PlayPauseButton from '../../PlayPauseButton/PlayPauseButton'
 
 interface LiveChannelProps {

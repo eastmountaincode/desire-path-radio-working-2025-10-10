@@ -1,0 +1,93 @@
+/* Backdrop */
+.share-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+/* Modal Container */
+.share-modal {
+    background-color: var(--color-grey2);
+    min-width: 400px;
+    max-width: 600px;
+    border: 1px solid var(--color-grey6);
+}
+
+.dark .share-modal {
+    background-color: var(--color-grey5);
+    border-color: var(--color-grey1);
+}
+
+/* Header */
+.share-modal-header {
+    border: none;
+    border-bottom: 1px solid var(--color-grey6);
+    color: var(--color-grey6);
+}
+
+.dark .share-modal-header {
+    border-bottom-color: var(--color-grey1);
+    color: var(--color-grey1);
+}
+
+/* URL Container */
+.share-modal-url-container {
+    background-color: var(--color-grey3);
+    border: 1px solid var(--color-grey6);
+    font-family: monospace;
+    font-size: 14px;
+}
+
+.dark .share-modal-url-container {
+    background-color: var(--color-grey4);
+    border-color: var(--color-grey1);
+}
+
+/* Buttons */
+.share-modal-button {
+    cursor: pointer;
+}
+
+.share-modal-button-primary {
+    background-color: var(--color-grey6);
+    color: var(--color-grey1);
+}
+
+.share-modal-button-primary:hover {
+    background-color: var(--color-grey5);
+}
+
+.dark .share-modal-button-primary {
+    background-color: var(--color-grey1);
+    color: var(--color-grey6);
+}
+
+.dark .share-modal-button-primary:hover {
+    background-color: var(--color-grey2);
+}
+
+.share-modal-button-secondary {
+    background-color: transparent;
+    border: 1px solid var(--color-grey6);
+    color: var(--color-grey6);
+}
+
+.share-modal-button-secondary:hover {
+    background-color: var(--color-grey3);
+}
+
+.dark .share-modal-button-secondary {
+    border-color: var(--color-grey1);
+    color: var(--color-grey1);
+}
+
+.dark .share-modal-button-secondary:hover {
+    background-color: var(--color-grey4);
+}

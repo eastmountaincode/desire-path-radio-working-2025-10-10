@@ -59,7 +59,7 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
 
     return (
         <div
-            className={`p-6 md:p-6 episode-card ${!isLast ? 'episode-card-dotted' : ''} ${isExpanded ? 'episode-card-expanded-state' : ''} ${devMode ? 'border-red-500 border-2' : ''}`}
+            className={`p-4 episode-card ${!isLast ? 'episode-card-dotted' : ''} ${isExpanded ? 'episode-card-expanded-state' : ''} ${devMode ? 'border-red-500 border-2' : ''}`}
             onClick={onToggle}
         >
             <div
@@ -122,7 +122,7 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className={`episode-card-expanded-content ${devMode ? 'border-green-500 border' : ''}`}>
-                    <div className="md:pt-6 pb-2 grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div className="md:pt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
                         {/* Image - shown on mobile above description */}
                         {episode.image_url && (
                             <div className={`max-w-sm md:max-w-none md:col-span-4 ${devMode ? 'border border-yellow-500' : ''}`}>

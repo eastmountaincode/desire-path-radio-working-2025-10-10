@@ -30,7 +30,8 @@ export default function HomeHero() {
                         <p className="home-hero-about-text">
                             In today&apos;s internet radio landscape, the definition of &ldquo;radio&rdquo; has expanded beyond
                             the technology and practice of transmitting sound over airwaves. &ldquo;Radio&rdquo; has
-                            become a stand-in for curation, community, and discourse.
+                            evolved to encompass a shared culture and ethos. Desire Path Radio foregrounds a love for radio broadcast, marrying
+                            the traditional with the modern spirit of independent radio, DPR, etc. 
                         </p>
                         <div className={`flex flex-col gap-1 ${devMode ? 'border border-purple-500' : ''}`}>
                             <a href="/about" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>

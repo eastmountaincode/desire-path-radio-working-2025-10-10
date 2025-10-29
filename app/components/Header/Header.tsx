@@ -42,7 +42,7 @@ export default function Header() {
     }, [isMobileMenuOpen, setHeaderHeight])
 
     return (
-        <header ref={headerRef} className={`fixed border-b top-0 left-0 right-0 z-52 px-7 ${devMode ? 'border border-red-500' : ''}`}>
+        <header ref={headerRef} className={`fixed border-b top-0 left-0 right-0 z-52 px-6 ${devMode ? 'border border-red-500' : ''}`}>
             <div className={`flex items-center justify-between h-12 ${devMode ? 'border border-blue-500' : ''}`}>
                 <div className="flex items-center gap-12">
                     <Link 
