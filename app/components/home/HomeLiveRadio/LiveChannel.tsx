@@ -113,7 +113,7 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
     const showImage = devState === 'mock' ? mockShow.imageUrl : (streamData?.image || 'https://placehold.co/600x600/CCCCCC/666666?text=Show+Image')
 
     return (
-        <div className={`live-channel-container ${isStreamOnline ? 'live-active' : ''} h-[550px] md:h-[600px] w-full rounded-lg p-3 flex flex-col ${devMode ? 'border border-green-500' : ''}`}>
+        <div className={`live-channel-container ${isStreamOnline ? 'live-active' : ''} w-full min-h-[300px] rounded-lg p-3 flex flex-col ${devMode ? 'border border-green-500' : ''}`}>
             {/* Channel header */}
             <div className={`flex items-center gap-2 mb-2 ${devMode ? 'border border-yellow-500' : ''}`}>
                 {isStreamOnline && <div className="live-indicator-dot"></div>}
@@ -131,9 +131,9 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
                     </p>
                 </div>
             ) : (
-                <div className={`flex-1 flex flex-col gap-4 min-h-0 p-4 ${devMode ? 'border border-blue-500' : ''}`}>
-                    {/* Show image - square aspect, cropped to fit */}
-                    <div className={`relative w-full aspect-square overflow-hidden ${devMode ? 'border border-red-500' : ''}`}>
+                <div className={`flex-1 flex flex-col md:flex-row gap-4 min-h-0 p-3 ${devMode ? 'border border-blue-500' : ''}`}>
+                    {/* Show image - square aspect on mobile, fixed width on desktop */}
+                    <div className={`relative w-full md:w-48 md:flex-shrink-0 aspect-square overflow-hidden ${devMode ? 'border border-red-500' : ''}`}>
                         <img
                             src={showImage}
                             alt={showTitle}
@@ -141,36 +141,39 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
                         />
                     </div>
 
-                    {/* Show info */}
-                    <div className={`flex flex-col gap-1 flex-shrink-0 ${devMode ? 'border border-purple-500' : ''}`}>
-                        <h3 className="live-show-title text-lg">{showTitle}</h3>
-                        <p className="live-show-info text-sm">
-                            {showDescription}
-                        </p>
-                    </div>
+                    {/* Content container for title, description, and button */}
+                    <div className={`flex flex-col gap-4 flex-1 min-w-0 ${devMode ? 'border border-cyan-500' : ''}`}>
+                        {/* Show info */}
+                        <div className={`flex flex-col gap-1 flex-shrink-0 ${devMode ? 'border border-purple-500' : ''}`}>
+                            <h3 className="live-show-title text-lg">{showTitle}</h3>
+                            <p className="live-show-info text-sm">
+                                {showDescription}
+                            </p>
+                        </div>
 
-                    {/* Play/Pause Button */}
-                    <div className={`${devMode ? 'border border-orange-500' : ''}`}>
-                        <button
-                            onClick={togglePlay}
-                            className={`live-channel-play-button ${devMode ? 'border border-cyan-500' : ''}`}
-                            aria-label={isThisChannelLoading ? 'Loading' : (isThisChannelPlaying ? 'Pause' : 'Play')}
-                            disabled={isThisChannelLoading}
-                        >
-                            {isThisChannelLoading ? (
-                                <>
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className={`animate-spin ${devMode ? 'border border-red-500' : ''}`}>
-                                        <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.25" />
-                                        <path d="M8 2 A6 6 0 0 1 14 8" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                                    </svg>
-                                    <span className={`live-channel-play-text ${devMode ? 'border border-yellow-500' : ''}`}>Loading...</span>
-                                </>
-                            ) : (
-                                <div className={devMode ? 'border border-red-500' : ''}>
-                                    <PlayPauseButton isPlaying={isThisChannelPlaying} />
-                                </div>
-                            )}
-                        </button>
+                        {/* Play/Pause Button */}
+                        <div className={`${devMode ? 'border border-orange-500' : ''}`}>
+                            <button
+                                onClick={togglePlay}
+                                className={`live-channel-play-button ${devMode ? 'border border-cyan-500' : ''}`}
+                                aria-label={isThisChannelLoading ? 'Loading' : (isThisChannelPlaying ? 'Pause' : 'Play')}
+                                disabled={isThisChannelLoading}
+                            >
+                                {isThisChannelLoading ? (
+                                    <>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className={`animate-spin ${devMode ? 'border border-red-500' : ''}`}>
+                                            <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.25" />
+                                            <path d="M8 2 A6 6 0 0 1 14 8" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                                        </svg>
+                                        <span className={`live-channel-play-text ${devMode ? 'border border-yellow-500' : ''}`}>Loading...</span>
+                                    </>
+                                ) : (
+                                    <div className={devMode ? 'border border-red-500' : ''}>
+                                        <PlayPauseButton isPlaying={isThisChannelPlaying} />
+                                    </div>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

@@ -31,7 +31,7 @@ export default function HomeLiveRadio() {
 
     return (
         <section className={`${devMode ? 'border border-yellow-500' : ''}`}>
-            <div className={`max-w-5xl mx-auto ${devMode ? 'border border-blue-500' : ''}`}>
+            <div className={`${devMode ? 'border border-blue-500' : ''}`}>
                 {showToggles && (
                     <div className={`mb-4 flex gap-4 ${devMode ? 'border border-red-500' : ''}`}>
                         <LiveChannelToggle
@@ -46,7 +46,7 @@ export default function HomeLiveRadio() {
                 )}
 
                 {/* Two channel grid */}
-                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${devMode ? 'border border-red-500' : ''}`}>
+                <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 ${devMode ? 'border border-red-500' : ''}`}>
                     <LiveChannel
                         channelNumber="ch1"
                         channelType="music"
