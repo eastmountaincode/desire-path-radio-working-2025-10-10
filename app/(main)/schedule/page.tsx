@@ -53,14 +53,14 @@ export default function Schedule() {
       )}
 
       {scheduleImage && !isLoading && (
-        <div className={`max-w-7xl ${devMode ? 'border border-green-500' : ''}`}>
+        <div className={devMode ? 'border border-green-500' : ''}>
           <div className={`relative w-full ${devMode ? 'border border-cyan-500' : ''}`} style={{ aspectRatio: '16/9' }}>
             <Image
               src={scheduleImage}
               alt="Radio schedule"
               fill
-              className="object-contain object-left"
-              sizes="(max-width: 1536px) 100vw, 1536px"
+              className="object-cover"
+              sizes="100vw"
               unoptimized
               priority
             />

@@ -32,6 +32,8 @@ export default function HomeLiveRadio() {
     return (
         <section className={`${devMode ? 'border border-yellow-500' : ''}`}>
             <div className={`${devMode ? 'border border-blue-500' : ''}`}>
+                <h2 className="mb-6 text-3xl font-[family-name:var(--font-monument-wide)]">Now Playing</h2>
+
                 {showToggles && (
                     <div className={`mb-4 flex gap-4 ${devMode ? 'border border-red-500' : ''}`}>
                         <LiveChannelToggle

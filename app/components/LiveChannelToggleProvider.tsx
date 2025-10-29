@@ -8,7 +8,7 @@ const LiveChannelToggleContext = createContext<{
 } | undefined>(undefined)
 
 export function LiveChannelToggleProvider({ children }: { children: ReactNode }) {
-    const [showToggles, setShowToggles] = useState(true)
+    const [showToggles, setShowToggles] = useState(false)
 
     return (
         <LiveChannelToggleContext.Provider value={{ showToggles, setShowToggles }}>
