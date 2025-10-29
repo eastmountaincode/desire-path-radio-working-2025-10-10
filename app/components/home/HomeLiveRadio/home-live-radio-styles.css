@@ -9,12 +9,12 @@
 }
 
 .live-channel-container.live-active {
-    background: var(--color-grey6);
+    background: radial-gradient(circle at center, var(--color-grey5), var(--color-grey6));
     color: var(--color-grey1);
 }
 
 .dark .live-channel-container.live-active {
-    background: var(--color-grey1);
+    background: radial-gradient(circle at center, var(--color-grey2), var(--color-grey1));
     color: var(--color-grey6);
 }
 

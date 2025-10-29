@@ -80,7 +80,8 @@
     color: var(--color-grey1);
 }
 
-.audio-player-title:hover {
+/* Only apply hover effect to episode links, not live titles */
+.audio-player-title-link:hover {
     color: var(--color-brand-dpr-orange);
 }
 

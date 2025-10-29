@@ -33,7 +33,7 @@ export default function HomeHero() {
                             evolved to encompass a shared culture and ethos. Desire Path Radio foregrounds a love for radio broadcast, marrying
                             the traditional with the modern spirit of independent radio, DPR, etc. 
                         </p>
-                        <div className={`flex flex-col gap-1 ${devMode ? 'border border-purple-500' : ''}`}>
+                        <div className={`flex flex-col gap-1 items-start ${devMode ? 'border border-purple-500' : ''}`}>
                             <a href="/about" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>about us</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
                             </a>

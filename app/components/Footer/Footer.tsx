@@ -9,9 +9,9 @@ export default function Footer() {
     const devMode = useDevMode()
 
     return (
-        <footer className={`footer-container border-t px-6 py-7 ${devMode ? 'border border-yellow-500' : ''}`}>
+        <footer className={`footer-container border-t px-5 py-7 ${devMode ? 'border border-yellow-500' : ''}`}>
             {/* Navigation Links */}
-            <nav className={`flex flex-col gap-1 ${devMode ? 'border border-blue-500' : ''}`}>
+            <nav className={`flex flex-col gap-1 items-start ${devMode ? 'border border-blue-500' : ''}`}>
                 <Link href="/about" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
                     about
                 </Link>
@@ -59,7 +59,7 @@ export default function Footer() {
             {/* Bottom Row - Legal and Copyright */}
             <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 footer-bottom-text ${devMode ? 'border border-orange-500' : ''}`}>
                 {/* Privacy/Terms - hidden on mobile */}
-                <div className={`hidden md:flex gap-4 ${devMode ? 'border border-pink-500' : ''}`}>
+                <div className={`hidden md:flex gap-4 items-start ${devMode ? 'border border-pink-500' : ''}`}>
                     <Link href="/privacy-policy" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
                         privacy policy
                     </Link>

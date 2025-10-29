@@ -143,7 +143,7 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
                             {showLink && (
                                 <Link
                                     href={`/archive/${episode.slug}`}
-                                    className={`flex items-center gap-1 mb-4 md:order-2 md:mt-4 font-mono episode-card-link ${devMode ? 'border-pink-500 border' : ''}`}
+                                    className={`flex items-center gap-1 mb-4 md:order-2 md:mt-4 font-mono episode-card-link self-start ${devMode ? 'border-pink-500 border' : ''}`}
                                 >
                                     <span>view episode</span>
                                     <i className="fi fi-ts-arrow-small-right episode-card-link-arrow"></i>

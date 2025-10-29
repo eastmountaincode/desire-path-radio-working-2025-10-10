@@ -252,7 +252,7 @@ export default function AudioPlayer() {
             style={{ top: `${headerHeight - 1}px` }}
         >
             {/* Desktop Layout */}
-            <div className={`audio-player-container items-center gap-4 px-6 h-full max-w-full hidden md:flex ${devMode ? 'border border-yellow-500' : ''}`}>
+            <div className={`audio-player-container items-center gap-4 px-5 h-full max-w-full hidden md:flex ${devMode ? 'border border-yellow-500' : ''}`}>
                 {/* Left section - Controls and Info */}
                 <div className={`flex items-center gap-4 min-w-0 ${devMode ? 'border border-green-500' : ''}`}>
                     <AudioPlayerPlayPauseButton

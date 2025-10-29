@@ -18,7 +18,11 @@ export default function AudioPlayerTitleDisplay({
 }: AudioPlayerTitleDisplayProps) {
     const devMode = useDevMode()
 
-    const titleClasses = `audio-player-title text-base leading-[1.5] tracking-[-0.025em] whitespace-nowrap overflow-hidden text-ellipsis min-w-0 max-w-[250px] no-underline cursor-pointer ${isTruncated ? 'text-blue-500' : ''} ${devMode ? 'border border-cyan-500' : ''}`
+    // Base classes shared by both live and episode modes
+    const baseClasses = `audio-player-title text-base leading-[1.5] tracking-[-0.025em] whitespace-nowrap overflow-hidden text-ellipsis min-w-0 max-w-[250px] no-underline ${isTruncated ? 'text-blue-500' : ''} ${devMode ? 'border border-cyan-500' : ''}`
+
+    // Add interactive classes only for episodes (not live)
+    const titleClasses = isLive ? baseClasses : `${baseClasses} cursor-pointer audio-player-title-link`
 
     const titleContent = isTruncated ? (
         <div className="audio-player-title-marquee-wrapper">

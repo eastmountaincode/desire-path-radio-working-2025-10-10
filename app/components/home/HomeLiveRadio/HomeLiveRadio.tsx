@@ -46,7 +46,7 @@ export default function HomeLiveRadio() {
                 )}
 
                 {/* Two channel grid */}
-                <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 ${devMode ? 'border border-red-500' : ''}`}>
+                <div className={`grid grid-cols-1 lg:grid-cols-2 gap-5 ${devMode ? 'border border-red-500' : ''}`}>
                     <LiveChannel
                         channelNumber="ch1"
                         channelType="music"

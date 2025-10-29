@@ -37,7 +37,7 @@ export default function MainLayout({
       <Header />
       <AudioPlayer />
       <main
-        className="p-6"
+        className="p-5"
         style={{ paddingTop: `${topOffset + 2}px` }}
       >
         <div className="pt-6">

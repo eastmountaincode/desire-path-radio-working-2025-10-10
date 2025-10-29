@@ -39,27 +39,27 @@ export default function Schedule() {
   }
 
   return (
-    <div className={`min-h-screen ${devMode ? 'border-2 border-green-500' : ''}`}>
-      <h1 className="text-3xl mb-6 font-[family-name:var(--font-monument-wide)]">Schedule</h1>
+    <div className={`min-h-screen ${devMode ? 'border border-purple-500' : ''}`}>
+      <h1 className={`text-3xl mb-6 font-[family-name:var(--font-monument-wide)] ${devMode ? 'border border-blue-500' : ''}`}>Schedule</h1>
 
       {isLoading && (
-        <div className="">Loading schedule...</div>
+        <div className={devMode ? 'border border-yellow-500' : ''}>Loading schedule...</div>
       )}
 
       {error && !isLoading && (
-        <div className="p-4 border border-current">
+        <div className={`p-4 border border-current ${devMode ? 'border-red-500' : ''}`}>
           {error}
         </div>
       )}
 
       {scheduleImage && !isLoading && (
-        <div className="max-w-7xl">
-          <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+        <div className={`max-w-7xl ${devMode ? 'border border-green-500' : ''}`}>
+          <div className={`relative w-full ${devMode ? 'border border-cyan-500' : ''}`} style={{ aspectRatio: '16/9' }}>
             <Image
               src={scheduleImage}
               alt="Radio schedule"
               fill
-              className="object-contain"
+              className="object-contain object-left"
               sizes="(max-width: 1536px) 100vw, 1536px"
               unoptimized
               priority
