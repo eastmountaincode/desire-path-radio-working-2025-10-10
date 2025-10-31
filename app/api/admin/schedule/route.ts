@@ -63,7 +63,7 @@ async function uploadToR2(file: File, bucketName: string, fileName: string): Pro
   }
 
   // Construct public URL
-  const publicUrl = `${process.env.R2_SCHEDULE_PUBLIC_URL}/${key}`
+  const publicUrl = `${process.env.MEDIA_PROXY_SCHEDULE_URL}/${key}`
 
   return { publicUrl, key }
 }

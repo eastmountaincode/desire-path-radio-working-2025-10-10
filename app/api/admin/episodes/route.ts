@@ -99,9 +99,9 @@ async function uploadToR2(file: File, bucketName: string, fileName: string): Pro
   // Construct public URL based on bucket
   let publicUrl: string
   if (bucketName === process.env.R2_AUDIO_BUCKET_NAME) {
-    publicUrl = `${process.env.R2_AUDIO_PUBLIC_URL}/${key}`
+    publicUrl = `${process.env.MEDIA_PROXY_AUDIO_URL}/${key}`
   } else if (bucketName === process.env.R2_IMAGES_BUCKET_NAME) {
-    publicUrl = `${process.env.R2_IMAGES_PUBLIC_URL}/${key}`
+    publicUrl = `${process.env.MEDIA_PROXY_IMAGE_URL}/${key}`
   } else {
     throw new Error(`Unknown bucket: ${bucketName}`)
   }

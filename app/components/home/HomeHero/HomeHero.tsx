@@ -28,13 +28,13 @@ export default function HomeHero() {
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-start ${devMode ? 'border border-yellow-500' : ''}`}>
                     <div className="space-y-6">
                         <p className="home-hero-about-text">
-                            In today&apos;s internet radio landscape, the definition of &ldquo;radio&rdquo; has expanded beyond
-                            the technology and practice of transmitting sound over airwaves. &ldquo;Radio&rdquo; has
-                            evolved to encompass a shared culture and ethos. Desire Path Radio foregrounds a love for radio broadcast, marrying
-                            the traditional with the modern spirit of independent radio, DPR, etc. 
+                            Exploratory programming where nature meets culture, for the outdoor community and beyond. Based in New York, streaming earth-wide.
+                        </p>
+                        <p className="home-hero-about-text">
+                            Music from the underground + talk, educational, documentary, experimental, archival, research from the field.
                         </p>
                         <div className={`flex flex-col gap-1 items-start ${devMode ? 'border border-purple-500' : ''}`}>
-                            <a href="/about" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
+                            {/* <a href="/about" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>about us</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
                             </a>
                             <a href="/schedule" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
@@ -42,7 +42,7 @@ export default function HomeHero() {
                             </a>
                             <a href="https://www.instagram.com/desirepath.radio/" target="_blank" rel="noopener noreferrer" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>instagram</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
-                            </a>
+                            </a> */}
                             <a href="#" className={`md:hidden block flex gap-1 home-hero-link no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>submit a show proposal</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
                             </a>
