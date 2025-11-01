@@ -77,7 +77,7 @@ export default function PrivacyPolicy() {
         <ul className="list-disc pl-6 mb-4 space-y-2">
           <li>Access and request a copy of your personal data;</li>
           <li>Correct inaccurate information;</li>
-          <li>Request deletion ("right to be forgotten");</li>
+          <li>Request deletion (&ldquo;right to be forgotten&rdquo;);</li>
           <li>Withdraw consent to data processing;</li>
           <li>File a complaint with a relevant data protection authority.</li>
         </ul>
