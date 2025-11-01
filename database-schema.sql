@@ -18,6 +18,7 @@ CREATE TABLE episodes (
     image_url TEXT,
     duration_seconds INTEGER,
     test_type test_type_enum NOT NULL DEFAULT 'none',
+    location TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -50,5 +51,40 @@ CREATE TABLE episode_tags (
     episode_id INTEGER NOT NULL REFERENCES episodes(id) ON DELETE CASCADE,
     tag_id INTEGER NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     PRIMARY KEY (episode_id, tag_id)
+);
+
+-- Episode Highlights
+-- Tracks which episodes are highlighted on the homepage with display order
+CREATE TABLE episode_highlights (
+    id INTEGER PRIMARY KEY,
+    episode_id INTEGER NOT NULL REFERENCES episodes(id) ON DELETE CASCADE,
+    display_order INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Coming Up Text
+-- Stores the text content for the "coming up" section
+CREATE TABLE coming_up_text (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL
+);
+
+-- Schedule Images
+-- Stores uploaded schedule images
+CREATE TABLE schedule_image (
+    id SERIAL PRIMARY KEY,
+    image_url TEXT NOT NULL,
+    image_key TEXT NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Admin Logs
+-- Used to track system events like database keep-alive pings
+CREATE TABLE admin_logs (
+    id BIGSERIAL PRIMARY KEY,
+    event_type VARCHAR(50) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    message TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
