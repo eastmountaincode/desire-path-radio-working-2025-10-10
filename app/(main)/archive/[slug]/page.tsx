@@ -53,7 +53,11 @@ export default function EpisodePage() {
                 }
 
                 const data = await response.json()
+                console.log('Episode data:', data)
+                console.log('Episode audio URL:', data.episode.audio_url)
+
                 setEpisode(data.episode)
+
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An error occurred')
             } finally {

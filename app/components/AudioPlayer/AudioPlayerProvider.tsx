@@ -273,7 +273,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         >
             {children}
             {/* Hidden audio element */}
-            <audio ref={audioRef} />
+            <audio ref={audioRef} crossOrigin="anonymous" />
         </AudioPlayerContext.Provider>
     )
 }
