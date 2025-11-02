@@ -23,11 +23,67 @@ interface FormData {
     hosts: Host[]
     tags: Tag[]
     test_type: 'none' | 'jest' | 'manual'
+    status: 'draft' | 'published'
 }
 
-export default function EpisodeUploadForm() {
+interface EpisodeData {
+  id: number
+  title: string
+  slug: string
+  description: string | null
+  aired_on: string
+  location: string | null
+  audio_url: string
+  image_url: string | null
+  duration_seconds: number | null
+  status: 'draft' | 'published'
+  test_type: 'none' | 'jest' | 'manual'
+  hosts: Array<{
+    id: number
+    name: string
+    organization: string | null
+  }>
+  tags: Array<{
+    id: number
+    name: string
+    slug: string
+    type: string
+  }>
+}
+
+interface EpisodeUploadFormProps {
+  mode?: 'create' | 'edit'
+  episodeId?: number
+  initialData?: EpisodeData
+}
+
+export default function EpisodeUploadForm({
+  mode = 'create',
+  episodeId,
+  initialData
+}: EpisodeUploadFormProps) {
     const devMode = useDevMode()
-    const [formData, setFormData] = useState<FormData>({
+
+    // Initialize form data from initialData if in edit mode
+    const getInitialFormData = (): FormData => {
+      if (mode === 'edit' && initialData) {
+        return {
+          title: initialData.title,
+          slug: initialData.slug,
+          description: initialData.description || '',
+          aired_on: initialData.aired_on,
+          location: initialData.location || '',
+          audio_url: initialData.audio_url,
+          image_url: initialData.image_url,
+          duration_seconds: initialData.duration_seconds,
+          hosts: initialData.hosts.map(h => ({ name: h.name, organization: h.organization || '' })),
+          tags: initialData.tags.map(t => ({ type: t.type, value: t.name })),
+          test_type: initialData.test_type,
+          status: initialData.status
+        }
+      }
+
+      return {
         title: '',
         slug: '',
         description: '',
@@ -38,8 +94,12 @@ export default function EpisodeUploadForm() {
         duration_seconds: null,
         hosts: [],
         tags: [],
-        test_type: 'none' as const
-    })
+        test_type: 'none' as const,
+        status: 'published' as const
+      }
+    }
+
+    const [formData, setFormData] = useState<FormData>(getInitialFormData())
 
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -59,7 +119,7 @@ export default function EpisodeUploadForm() {
     const audioFileRef = useRef<File | null>(null)
     const imageFileRef = useRef<File | null>(null)
 
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent, status: 'draft' | 'published') => {
         e.preventDefault()
 
         // Validate required fields
@@ -68,8 +128,8 @@ export default function EpisodeUploadForm() {
             return
         }
 
-        // Check if we have at least an audio file
-        if (!audioFileRef.current) {
+        // Check if we have at least an audio file (only required in create mode)
+        if (mode === 'create' && !audioFileRef.current) {
             setError('Please select an audio file')
             return
         }
@@ -102,7 +162,8 @@ export default function EpisodeUploadForm() {
                 duration_seconds: formData.duration_seconds,
                 hosts: formData.hosts,
                 tags: formData.tags,
-                test_type: formData.test_type
+                test_type: formData.test_type,
+                status: status
             }))
 
             // Add files
@@ -118,14 +179,18 @@ export default function EpisodeUploadForm() {
                 setUploadSteps(prev => ({ ...prev, audio: 'uploading' }))
             }
 
-            const response = await fetch('/api/admin/episodes', {
-                method: 'POST',
+            const apiUrl = mode === 'edit' ? `/api/admin/episodes/${episodeId}` : '/api/admin/episodes'
+            const apiMethod = mode === 'edit' ? 'PUT' : 'POST'
+
+            const response = await fetch(apiUrl, {
+                method: apiMethod,
                 body: uploadFormData,
             })
 
             if (!response.ok) {
                 const data = await response.json()
-                throw new Error(data.error || 'Failed to create episode')
+                const errorMsg = mode === 'edit' ? 'Failed to update episode' : 'Failed to create episode'
+                throw new Error(data.error || errorMsg)
             }
 
             // Mark audio as completed if it was uploaded
@@ -148,31 +213,43 @@ export default function EpisodeUploadForm() {
 
             setSuccess(true)
 
-            // Reset form after a short delay to show success
-            setTimeout(() => {
-                setFormData({
-                    title: '',
-                    slug: '',
-                    description: '',
-                    aired_on: '',
-                    location: '',
-                    audio_url: null,
-                    image_url: null,
-                    duration_seconds: null,
-                    hosts: [],
-                    tags: [],
-                    test_type: 'none' as const
-                })
-                setUploadSteps({
-                    audio: 'pending',
-                    image: 'pending',
-                    database: 'pending'
-                })
-                // Reset file refs and preview
-                audioFileRef.current = null
-                imageFileRef.current = null
-                setImagePreviewUrl(null)
-            }, 1500)
+            // Only reset form in create mode
+            if (mode === 'create') {
+                setTimeout(() => {
+                    setFormData({
+                        title: '',
+                        slug: '',
+                        description: '',
+                        aired_on: '',
+                        location: '',
+                        audio_url: null,
+                        image_url: null,
+                        duration_seconds: null,
+                        hosts: [],
+                        tags: [],
+                        test_type: 'none' as const,
+                        status: 'published' as const
+                    })
+                    setUploadSteps({
+                        audio: 'pending',
+                        image: 'pending',
+                        database: 'pending'
+                    })
+                    // Reset file refs and preview
+                    audioFileRef.current = null
+                    imageFileRef.current = null
+                    setImagePreviewUrl(null)
+                }, 1500)
+            } else {
+                // In edit mode, just reset the upload steps after a delay
+                setTimeout(() => {
+                    setUploadSteps({
+                        audio: 'pending',
+                        image: 'pending',
+                        database: 'pending'
+                    })
+                }, 1500)
+            }
 
         } catch (err) {
             // Mark failed step as error
@@ -250,21 +327,43 @@ export default function EpisodeUploadForm() {
                 uploadSteps={uploadSteps}
             />
 
-            {/* Submit Button */}
-            <div className="pt-4">
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-6 py-3 bg-brand-dpr-orange text-grey1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {isSubmitting ? 'Creating Episode...' : 'Create Episode'}
-                </button>
+            {/* Submit Buttons */}
+            <div className="pt-4 flex gap-4">
+                {mode === 'create' ? (
+                    <>
+                        <button
+                            type="button"
+                            onClick={(e) => handleSubmit(e, 'draft')}
+                            disabled={isSubmitting}
+                            className="px-6 py-3 bg-gray-600 text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isSubmitting ? 'Saving...' : 'Save as Draft'}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={(e) => handleSubmit(e, 'published')}
+                            disabled={isSubmitting}
+                            className="px-6 py-3 bg-brand-dpr-orange text-grey1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isSubmitting ? 'Publishing...' : 'Publish Episode'}
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        type="button"
+                        onClick={(e) => handleSubmit(e, formData.status)}
+                        disabled={isSubmitting}
+                        className="px-6 py-3 bg-brand-dpr-orange text-grey1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    </button>
+                )}
             </div>
 
             {/* Success Message */}
             {success && (
                 <div className="p-4 bg-brand-dpr-green text-grey1">
-                    Episode created successfully!
+                    {mode === 'edit' ? 'Episode updated successfully!' : 'Episode created successfully!'}
                 </div>
             )}
 

@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import PlayCountAnalytics from '@/app/components/admin/PlayCountAnalytics/PlayCountAnalytics'
 
 // Force dynamic rendering to check authentication on every request
 export const dynamic = 'force-dynamic'
@@ -14,7 +15,8 @@ export default async function AnalyticsPage() {
 
     return (
         <div className="p-6">
-            <h1 className="text-2xl mb-4">Analytics</h1>
+            <h1 className="text-2xl mb-6">Analytics</h1>
+            <PlayCountAnalytics />
         </div>
     )
 }

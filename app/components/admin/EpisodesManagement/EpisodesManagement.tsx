@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import AdminEpisodeCard from '../AdminEpisodeCard/AdminEpisodeCard'
 import ArchiveTableHeader from '@/app/components/archive/ArchiveTableHeader/ArchiveTableHeader'
 import ArchiveControlHeader from '@/app/components/archive/ArchiveControlHeader/ArchiveControlHeader'
@@ -17,6 +18,7 @@ interface Episode {
   audio_url: string
   image_url: string | null
   duration_seconds: number | null
+  status?: 'draft' | 'published'
   hosts: Array<{
     id: number
     name: string
@@ -44,7 +46,12 @@ interface ApiResponse {
   }
 }
 
-export default function EpisodesManagement() {
+interface EpisodesManagementProps {
+  mode?: 'published' | 'draft'
+}
+
+export default function EpisodesManagement({ mode = 'published' }: EpisodesManagementProps) {
+  const router = useRouter()
   const [episodes, setEpisodes] = useState<Episode[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -94,8 +101,9 @@ export default function EpisodesManagement() {
     try {
       setLoading(true)
       const tagParams = tagSlugs.length > 0 ? `&tags=${tagSlugs.join(',')}` : ''
+      const statusParam = `&status=${mode}`
       const response = await fetch(
-        `/api/episodes?limit=${limit}&offset=${currentOffset}&orderBy=aired_on&order=${order}&includeTest=true&testTypes=none,manual${tagParams}`
+        `/api/episodes?limit=${limit}&offset=${currentOffset}&orderBy=aired_on&order=${order}&includeTest=true&testTypes=none,manual${tagParams}${statusParam}`
       )
 
       if (!response.ok) {
@@ -129,7 +137,7 @@ export default function EpisodesManagement() {
     setEpisodes([])
     const selectedTagSlugs = selectedTags.map((tag) => tag.slug)
     fetchEpisodes(0, selectedTagSlugs, sortOrder)
-  }, [selectedTags, sortOrder])
+  }, [selectedTags, sortOrder, mode])
 
   const loadMore = () => {
     const selectedTagSlugs = selectedTags.map((tag) => tag.slug)
@@ -178,13 +186,58 @@ export default function EpisodesManagement() {
   }
 
   const handleEdit = (episodeId: number) => {
-    // TODO: Navigate to edit page
-    console.log('Edit episode:', episodeId)
+    router.push(`/admin/archive/edit/${episodeId}`)
   }
 
   const handleDelete = (episodeId: number) => {
-    // TODO: Show delete confirmation
-    console.log('Delete episode:', episodeId)
+    const episode = episodes.find(ep => ep.id === episodeId)
+    const episodeTitle = episode?.title || 'this episode'
+
+    setModalState({
+      isOpen: true,
+      title: 'Delete Episode',
+      message: `Are you sure you want to delete "${episodeTitle}"? This action cannot be undone and will also delete the associated audio and image files.`,
+      variant: 'confirm',
+      onConfirm: async () => {
+        setModalState(prev => ({ ...prev, isOpen: false }))
+        
+        try {
+          const response = await fetch(`/api/admin/episodes/${episodeId}`, {
+            method: 'DELETE',
+          })
+
+          if (!response.ok) {
+            const data = await response.json()
+            throw new Error(data.error || 'Failed to delete episode')
+          }
+
+          // Success - refresh the episodes list
+          setModalState({
+            isOpen: true,
+            title: 'Success',
+            message: 'Episode deleted successfully',
+            variant: 'success',
+            onConfirm: () => {
+              setModalState(prev => ({ ...prev, isOpen: false }))
+              // Refresh episodes list
+              setOffset(0)
+              setEpisodes([])
+              const selectedTagSlugs = selectedTags.map((tag) => tag.slug)
+              fetchEpisodes(0, selectedTagSlugs, sortOrder)
+            }
+          })
+        } catch (error) {
+          console.error('Failed to delete episode:', error)
+          setModalState({
+            isOpen: true,
+            title: 'Error',
+            message: error instanceof Error ? error.message : 'Failed to delete episode',
+            variant: 'error',
+            onConfirm: () => setModalState(prev => ({ ...prev, isOpen: false }))
+          })
+        }
+      }
+    })
   }
 
   if (error) {
@@ -237,6 +290,12 @@ export default function EpisodesManagement() {
                   onHighlightToggle={handleHighlightToggle}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  onStatusChange={() => {
+                    setOffset(0)
+                    setEpisodes([])
+                    const selectedTagSlugs = selectedTags.map((tag) => tag.slug)
+                    fetchEpisodes(0, selectedTagSlugs, sortOrder)
+                  }}
                 />
               ))}
             </div>

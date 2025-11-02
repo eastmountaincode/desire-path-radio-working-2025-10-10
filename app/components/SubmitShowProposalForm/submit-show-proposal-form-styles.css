@@ -1,0 +1,127 @@
+/* Form Field Groups */
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Labels */
+.form-label {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-grey6);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dark .form-label {
+  color: var(--color-grey1);
+}
+
+.form-label-subtitle {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* Inputs and Textareas */
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: -0.045em;
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  border: 1px solid var(--color-grey6);
+  border-radius: 4px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.dark .form-input,
+.dark .form-textarea {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+  border-color: var(--color-grey1);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-grey5);
+}
+
+.dark .form-input:focus,
+.dark .form-textarea:focus {
+  border-color: var(--color-grey2);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--color-grey4);
+  opacity: 1;
+}
+
+.dark .form-input::placeholder,
+.dark .form-textarea::placeholder {
+  color: var(--color-grey5);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Submit Button */
+.form-submit-button {
+  width: 100%;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.form-submit-button:hover:not(:disabled) {
+  background-color: var(--color-grey5);
+}
+
+.form-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dark .form-submit-button {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+}
+
+.dark .form-submit-button:hover:not(:disabled) {
+  background-color: var(--color-grey2);
+}
+
+/* Status Messages */
+.submit-success-message {
+  padding: 1rem;
+  background-color: var(--color-brand-dpr-green);
+  color: var(--color-grey1);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.submit-error-message {
+  padding: 1rem;
+  background-color: var(--color-brand-dpr-orange);
+  color: var(--color-grey1);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 15px;
+}

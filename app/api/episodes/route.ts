@@ -10,6 +10,8 @@ interface EpisodeWithRelations {
   audio_url: string
   image_url: string | null
   duration_seconds: number | null
+  play_count: number
+  status: 'draft' | 'published'
   hosts: Array<{
     id: number
     name: string
@@ -42,6 +44,7 @@ export async function GET(request: NextRequest) {
     const tagSlugs = tagsParam ? tagsParam.split(',').map(t => t.trim()).filter(Boolean) : []
     const includeTest = searchParams.get('includeTest') === 'true' // Default to false (production only)
     const testTypes = searchParams.get('testTypes') ? searchParams.get('testTypes')!.split(',').map(t => t.trim()).filter(Boolean) : ['none']
+    const status = searchParams.get('status') as 'draft' | 'published' | null // Optional status filter for admin
 
     // Validate parameters
     if (limit < 1 || limit > 100) {
@@ -168,6 +171,8 @@ export async function GET(request: NextRequest) {
         audio_url,
         image_url,
         duration_seconds,
+        play_count,
+        status,
         created_at,
         episode_hosts (
           hosts (
@@ -190,11 +195,14 @@ export async function GET(request: NextRequest) {
     if (!includeTest) {
       query = query.in('test_type', testTypes) // Only show production episodes by default
     }
-    
+
+    // Filter by status - use provided status or default to published for public
+    query = query.eq('status', status || 'published')
+
     if (episodeIds !== null) {
       query = query.in('id', episodeIds)
     }
-    
+
     // first sort by aired_on, the by id
     // if multiple epidoes have the same data, break ties by id
     query = query
@@ -230,6 +238,8 @@ export async function GET(request: NextRequest) {
       audio_url: string;
       image_url: string | null;
       duration_seconds: number | null;
+      play_count: number;
+      status: 'draft' | 'published';
       created_at: string;
       episode_hosts?: Array<{ hosts: { id: number; name: string; organization: string | null } }>;
       episode_tags?: Array<{ tags: { id: number; name: string; slug: string; type: string } }>;
@@ -242,6 +252,8 @@ export async function GET(request: NextRequest) {
       audio_url: episode.audio_url,
       image_url: episode.image_url,
       duration_seconds: episode.duration_seconds,
+      play_count: episode.play_count || 0,
+      status: episode.status,
       created_at: episode.created_at,
       hosts: episode.episode_hosts?.map((eh: { hosts: { id: number; name: string; organization: string | null } }) => eh.hosts) || [],
       tags: episode.episode_tags?.map((et: { tags: { id: number; name: string; slug: string; type: string } }) => et.tags) || []
@@ -255,11 +267,14 @@ export async function GET(request: NextRequest) {
     if (!includeTest) {
       countQuery = countQuery.in('test_type', testTypes)
     }
-    
+
+    // Filter by status - use provided status or default to published for public
+    countQuery = countQuery.eq('status', status || 'published')
+
     if (episodeIds !== null) {
       countQuery = countQuery.in('id', episodeIds)
     }
-    
+
     const { count } = await countQuery
 
     return NextResponse.json({

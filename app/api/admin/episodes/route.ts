@@ -36,6 +36,7 @@ interface EpisodeData {
   hosts: Host[]
   tags: Tag[]
   test_type: 'none' | 'jest' | 'manual'
+  status?: 'draft' | 'published'
 }
 
 // Helper function to create a slug from a string
@@ -243,7 +244,8 @@ export async function POST(request: NextRequest) {
             audio_url: audioUrl,
             image_url: imageUrl,
             duration_seconds: episodeData.duration_seconds,
-            test_type: episodeData.test_type
+            test_type: episodeData.test_type,
+            status: episodeData.status || 'published'
           })
           .select('id')
           .single() as { data: { id: number } | null; error: { code?: string; message: string } | null }

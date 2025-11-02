@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabase } from '@/lib/supabase'
+import { cookies } from 'next/headers'
 
 interface EpisodeWithRelations {
   id: number
@@ -11,6 +12,8 @@ interface EpisodeWithRelations {
   audio_url: string
   image_url: string | null
   duration_seconds: number | null
+  play_count: number
+  status: 'draft' | 'published'
   hosts: Array<{
     id: number
     name: string
@@ -35,6 +38,8 @@ interface EpisodeQueryResult {
   audio_url: string
   image_url: string | null
   duration_seconds: number | null
+  play_count: number
+  status: 'draft' | 'published'
   created_at: string
   episode_hosts?: Array<{
     hosts: {
@@ -61,8 +66,12 @@ export async function GET(
     const { slug } = await params
     const supabase = await createServerSupabase()
 
+    // Check if user is admin
+    const cookieStore = await cookies()
+    const isAdmin = cookieStore.get('admin_authenticated')?.value === 'true'
+
     // Build the query with joins
-    const { data: episodes, error } = await supabase
+    let query = supabase
       .from('episodes')
       .select(`
         id,
@@ -74,6 +83,8 @@ export async function GET(
         audio_url,
         image_url,
         duration_seconds,
+        play_count,
+        status,
         created_at,
         episode_hosts (
           hosts (
@@ -92,7 +103,13 @@ export async function GET(
         )
       `)
       .eq('slug', slug)
-      .limit(1) as { data: EpisodeQueryResult[] | null, error: unknown }
+
+    // Only filter by published status if not admin
+    if (!isAdmin) {
+      query = query.eq('status', 'published')
+    }
+
+    const { data: episodes, error } = await query.limit(1) as { data: EpisodeQueryResult[] | null, error: unknown }
 
     if (error) {
       console.error('Database query error:', error)
@@ -120,6 +137,8 @@ export async function GET(
       audio_url: episodes[0].audio_url,
       image_url: episodes[0].image_url,
       duration_seconds: episodes[0].duration_seconds,
+      play_count: episodes[0].play_count || 0,
+      status: episodes[0].status,
       created_at: episodes[0].created_at,
       hosts: episodes[0].episode_hosts?.map((eh) => eh.hosts) || [],
       tags: episodes[0].episode_tags?.map((et) => et.tags) || []

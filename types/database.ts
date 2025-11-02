@@ -2,6 +2,8 @@ export type TagType = 'CHANNEL' | 'FORMAT' | 'GENRE' | 'TOPIC'
 
 export type TestType = 'none' | 'jest' | 'manual'
 
+export type EpisodeStatus = 'draft' | 'published'
+
 export interface Episode {
   id: number
   title: string
@@ -13,6 +15,7 @@ export interface Episode {
   duration_seconds: number | null
   location: string | null
   test_type: TestType
+  status: EpisodeStatus
   created_at: string
 }
 
@@ -63,7 +66,7 @@ export interface Database {
     Tables: {
       episodes: {
         Row: Episode
-        Insert: Omit<Episode, 'id' | 'created_at'> & { test_type?: TestType }
+        Insert: Omit<Episode, 'id' | 'created_at'> & { test_type?: TestType; status?: EpisodeStatus }
         Update: Partial<Omit<Episode, 'id' | 'created_at'>>
       }
       hosts: {

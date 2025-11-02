@@ -20,6 +20,7 @@ interface Episode {
     audio_url: string
     image_url: string | null
     duration_seconds: number | null
+    status?: 'draft' | 'published'
     hosts: Array<{
         id: number
         name: string
@@ -103,7 +104,22 @@ export default function EpisodePage() {
     return (
         <div className="min-h-screen">
             <EpisodePageHeader />
-            
+
+            {/* Draft Badge */}
+            {episode.status === 'draft' && (
+                <div className="max-w-6xl mx-auto mb-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                            <path d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm0,22A10,10,0,1,1,22,12,10.011,10.011,0,0,1,12,22Z"/>
+                            <path d="M12,6a1,1,0,0,0-1,1v5a1,1,0,0,0,2,0V7A1,1,0,0,0,12,6Z"/>
+                            <circle cx="12" cy="16" r="1"/>
+                        </svg>
+                        <span className="font-semibold">DRAFT EPISODE</span>
+                        <span className="opacity-80">- This episode is not visible to the public</span>
+                    </div>
+                </div>
+            )}
+
             <div className={`pb-12 md:pb-16 max-w-6xl mx-auto ${devMode ? 'border border-purple-500' : ''}`}>
                 {/* Two Column Layout */}
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:items-start ${devMode ? 'border border-blue-500' : ''}`}>

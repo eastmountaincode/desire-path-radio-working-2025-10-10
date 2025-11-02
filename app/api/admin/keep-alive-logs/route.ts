@@ -27,7 +27,7 @@ export async function GET() {
       .eq('event_type', 'database_keep_alive')
       .gte('created_at', ninetyDaysAgo.toISOString())
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(5)
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })

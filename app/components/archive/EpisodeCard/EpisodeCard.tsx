@@ -33,9 +33,10 @@ interface EpisodeCardProps {
     isExpanded: boolean
     onToggle: () => void
     showLink?: boolean
+    linkHref?: string
 }
 
-export default function EpisodeCard({ episode, isLast = false, isExpanded, onToggle, showLink = true }: EpisodeCardProps) {
+export default function EpisodeCard({ episode, isLast = false, isExpanded, onToggle, showLink = true, linkHref }: EpisodeCardProps) {
     const devMode = useDevMode()
     
     const formatDuration = (seconds: number | null) => {
@@ -142,7 +143,7 @@ export default function EpisodeCard({ episode, isLast = false, isExpanded, onTog
                             {/* Episode Link */}
                             {showLink && (
                                 <Link
-                                    href={`/archive/${episode.slug}`}
+                                    href={linkHref || `/archive/${episode.slug}`}
                                     className={`flex items-center gap-1 mb-4 md:order-2 md:mt-4 font-mono episode-card-link self-start ${devMode ? 'border-pink-500 border' : ''}`}
                                 >
                                     <span>view episode</span>

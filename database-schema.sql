@@ -7,6 +7,11 @@
 -- manual: created manually using the admin panel
 CREATE TYPE test_type_enum AS ENUM ('none', 'jest', 'manual');
 
+-- Episode status
+-- draft: saved but not published
+-- published: live and visible to public
+CREATE TYPE episode_status_enum AS ENUM ('draft', 'published');
+
 -- Episodes
 CREATE TABLE episodes (
     id SERIAL PRIMARY KEY,
@@ -18,7 +23,9 @@ CREATE TABLE episodes (
     image_url TEXT,
     duration_seconds INTEGER,
     test_type test_type_enum NOT NULL DEFAULT 'none',
+    status episode_status_enum NOT NULL DEFAULT 'published',
     location TEXT,
+    play_count INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT NOW()
 );
 

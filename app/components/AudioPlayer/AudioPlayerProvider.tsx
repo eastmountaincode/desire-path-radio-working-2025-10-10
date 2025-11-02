@@ -77,6 +77,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
 
     const audioRef = useRef<HTMLAudioElement>(null)
     const preloadedChannelRef = useRef<{ channelNumber: string; stationSlug: string; streamUrl: string } | null>(null)
+    const playCountTrackedRef = useRef<number | null>(null) // Track which episode ID has been counted
 
     // Play a new episode (archive mode)
     const play = (episode: AudioPlayerContextType['currentEpisode']) => {
@@ -247,6 +248,35 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
             audio.removeEventListener('ended', handleEnded)
         }
     }, [])
+
+    // Track play count after 20 seconds of playback
+    useEffect(() => {
+        // Only track for archive mode (not live streams)
+        if (mode !== 'archive' || !currentEpisode) return
+
+        // If we've already tracked this episode, don't track again
+        if (playCountTrackedRef.current === currentEpisode.id) return
+
+        // Check if we've played for X seconds
+        if (currentTime >= 30) {
+            // Track the play count
+            playCountTrackedRef.current = currentEpisode.id
+
+            // Fire-and-forget API call to increment play count
+            fetch(`/api/episodes/${currentEpisode.slug}/play`, {
+                method: 'POST',
+            }).catch((error) => {
+                console.error('Failed to track play count:', error)
+            })
+        }
+    }, [currentTime, mode, currentEpisode])
+
+    // Reset play count tracking when a new episode is played
+    useEffect(() => {
+        if (currentEpisode && playCountTrackedRef.current !== currentEpisode.id) {
+            playCountTrackedRef.current = null
+        }
+    }, [currentEpisode])
 
     return (
         <AudioPlayerContext.Provider

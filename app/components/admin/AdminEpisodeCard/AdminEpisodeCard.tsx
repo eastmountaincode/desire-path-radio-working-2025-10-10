@@ -15,6 +15,8 @@ interface AdminEpisodeCardProps {
     audio_url: string
     image_url: string | null
     duration_seconds: number | null
+    play_count?: number
+    status?: 'draft' | 'published'
     hosts: Array<{
       id: number
       name: string
@@ -34,6 +36,7 @@ interface AdminEpisodeCardProps {
   onHighlightToggle: (episodeId: number) => Promise<void>
   onEdit?: (episodeId: number) => void
   onDelete?: (episodeId: number) => void
+  onStatusChange?: () => void
 }
 
 export default function AdminEpisodeCard({
@@ -44,10 +47,12 @@ export default function AdminEpisodeCard({
   isHighlighted,
   onHighlightToggle,
   onEdit,
-  onDelete
+  onDelete,
+  onStatusChange
 }: AdminEpisodeCardProps) {
   const devMode = useDevMode()
   const [isTogglingHighlight, setIsTogglingHighlight] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
 
   const handleHighlightClick = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -73,6 +78,34 @@ export default function AdminEpisodeCard({
     }
   }
 
+  const handlePublishClick = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsPublishing(true)
+    try {
+      const response = await fetch(`/api/admin/episodes/${episode.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'published' }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to publish episode')
+      }
+
+      // Trigger a refresh
+      if (onStatusChange) {
+        onStatusChange()
+      }
+    } catch (error) {
+      console.error('Error publishing episode:', error)
+      alert('Failed to publish episode')
+    } finally {
+      setIsPublishing(false)
+    }
+  }
+
   return (
     <div className={devMode ? 'border border-orange-500' : ''}>
       {/* Existing Episode Card */}
@@ -81,6 +114,7 @@ export default function AdminEpisodeCard({
         isLast={false} // We'll handle border in the wrapper
         isExpanded={isExpanded}
         onToggle={onToggle}
+        linkHref={`/archive/${episode.slug}`} // Use regular episode page (works for both draft and published)
       />
 
       {/* Admin Action Buttons Below Card */}
@@ -102,25 +136,51 @@ export default function AdminEpisodeCard({
           Delete
         </button>
 
-        <button
-          onClick={handleHighlightClick}
-          disabled={isTogglingHighlight}
-          className={`admin-action-button px-3 py-1 ${isHighlighted ? 'highlighted' : ''}`}
-        >
-          {isTogglingHighlight ? (
-            '...'
-          ) : isHighlighted ? (
-            <>
-              <span className={`star-icon ${devMode ? 'border border-pink-500' : ''}`}>★</span>{' '}
-              <span className={devMode ? 'border border-cyan-500' : ''}>Highlighted</span>
-            </>
-          ) : (
-            <>
-              <span className={`star-icon ${devMode ? 'border border-pink-500' : ''}`}>☆</span>{' '}
-              <span className={devMode ? 'border border-cyan-500' : ''}>Highlight</span>
-            </>
+        {/* Only show Highlight button for published episodes */}
+        {episode.status !== 'draft' && (
+          <button
+            onClick={handleHighlightClick}
+            disabled={isTogglingHighlight}
+            className={`admin-action-button px-3 py-1 ${isHighlighted ? 'highlighted' : ''}`}
+          >
+            {isTogglingHighlight ? (
+              '...'
+            ) : isHighlighted ? (
+              <>
+                <span className={`star-icon ${devMode ? 'border border-pink-500' : ''}`}>★</span>{' '}
+                <span className={devMode ? 'border border-cyan-500' : ''}>Highlighted</span>
+              </>
+            ) : (
+              <>
+                <span className={`star-icon ${devMode ? 'border border-pink-500' : ''}`}>☆</span>{' '}
+                <span className={devMode ? 'border border-cyan-500' : ''}>Highlight</span>
+              </>
+            )}
+          </button>
+        )}
+
+        {/* Publish button for drafts */}
+        {episode.status === 'draft' && (
+          <button
+            onClick={handlePublishClick}
+            disabled={isPublishing}
+            className="admin-action-button px-3 py-1 bg-green-600 text-white hover:bg-green-700"
+          >
+            {isPublishing ? 'Publishing...' : 'Publish'}
+          </button>
+        )}
+
+        {/* Status badge and play count */}
+        <div className="ml-auto flex items-center gap-3">
+          {episode.status === 'draft' && (
+            <span className="px-2 py-1 text-xs bg-yellow-600 text-white rounded">
+              DRAFT
+            </span>
           )}
-        </button>
+          <span className="text-xs opacity-60">
+            {episode.play_count ?? 0} plays
+          </span>
+        </div>
       </div>
     </div>
   )
