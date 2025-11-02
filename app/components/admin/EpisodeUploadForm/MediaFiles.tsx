@@ -163,12 +163,23 @@ export default function MediaFiles({
       {/* Audio Upload */}
       <div className="space-y-2">
         <label htmlFor="audio" className="block">
-          Audio File *
+          Audio File {audioUrl ? '' : '*'}
         </label>
+
+        {/* Show existing audio file if available */}
+        {audioUrl && !audioFileRef.current && (
+          <div className="mb-2 p-3">
+            <p className="text-sm  mb-1">Current audio file:</p>
+            <p className="text-sm ">
+              {audioUrl.split('/').pop()}
+              {duration && ` • Duration: ${Math.floor(duration / 60)}:${(duration % 60).toString().padStart(2, '0')}`}
+            </p>
+          </div>
+        )}
 
         <div className="flex items-center gap-4">
           <label className="px-4 py-2 dpr-button">
-            Choose Audio File
+            {audioUrl && !audioFileRef.current ? 'Replace Audio File' : 'Choose Audio File'}
             <input
               ref={audioInputRef}
               type="file"
@@ -199,9 +210,19 @@ export default function MediaFiles({
           Episode Image
         </label>
 
+        {/* Show existing image file if available */}
+        {imageUrl && !imageFileRef.current && (
+          <div className="mb-2 p-3">
+            <p className="text-sm  mb-1">Current image file:</p>
+            <p className="text-sm ">
+              {imageUrl.split('/').pop()}
+            </p>
+          </div>
+        )}
+
         <div className="flex items-center gap-4">
           <label className="px-4 py-2 dpr-button">
-            Choose Image File
+            {imageUrl && !imageFileRef.current ? 'Replace Image File' : 'Choose Image File'}
             <input
               ref={imageInputRef}
               type="file"
@@ -226,7 +247,7 @@ export default function MediaFiles({
         {/* Show image preview - either selected file or uploaded URL */}
         {(imagePreview || imageUrl) && (
           <div className="space-y-2">
-            <p className="text-sm text-grey5">Preview:</p>
+            <p className="text-sm text-grey5">{imageFileRef.current ? 'New image preview:' : 'Current image:'}</p>
             <img
               src={imagePreview || imageUrl || ''}
               alt="Episode preview"
