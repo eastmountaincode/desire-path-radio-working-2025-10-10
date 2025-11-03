@@ -114,7 +114,7 @@ export default function PlayCountAnalytics() {
 
       {/* Top Episodes */}
       <div>
-        <h2 className="text-xl font-bold mb-4">Most Played Episodes</h2>
+        <h2 className="text-xl font-bold mb-4">Most Played Episodes (Top 10)</h2>
         <div className="space-y-2">
           {data.topEpisodes.length > 0 ? (
             data.topEpisodes.map((episode, index) => (
@@ -149,7 +149,7 @@ export default function PlayCountAnalytics() {
       {/* Least Played Episodes */}
       {data.leastPlayed.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold mb-4">Least Played Episodes</h2>
+          <h2 className="text-xl font-bold mb-4">Least Played Episodes (Bottom 10)</h2>
           <div className="space-y-2">
             {data.leastPlayed.map((episode, index) => (
               <Link

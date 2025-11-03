@@ -88,7 +88,7 @@ CREATE TABLE schedule_image (
 -- Admin Logs
 -- Used to track system events like database keep-alive pings
 CREATE TABLE admin_logs (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     event_type VARCHAR(50) NOT NULL,
     status VARCHAR(20) NOT NULL,
     message TEXT,

@@ -1,0 +1,7 @@
+.ai-analytics-table-header {
+    background-color: var(--color-grey1);
+}
+
+.dark .ai-analytics-table-header {
+    background-color: var(--color-grey6);
+}

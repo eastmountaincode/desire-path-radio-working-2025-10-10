@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useDevMode } from '../../DevModeProvider'
 import DesirePathAnimation from './DesirePathAnimation'
 import './home-hero-styles.css'
@@ -43,15 +44,15 @@ export default function HomeHero() {
                             <a href="https://www.instagram.com/desirepath.radio/" target="_blank" rel="noopener noreferrer" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>instagram</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
                             </a> */}
-                            <a href="/submit-show-proposal" className={`md:hidden block flex gap-1 home-hero-link no-underline ${devMode ? 'border border-red-500' : ''}`}>
+                            <Link href="/submit-show-proposal" className={`md:hidden block flex gap-1 home-hero-link no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>submit a show proposal</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                     <div className={`${devMode ? 'border border-purple-500' : ''} md:flex md:justify-end`}>
-                        <a href="/submit-show-proposal" className={`hidden md:block md:flex gap-1 home-hero-link no-underline md:text-right ${devMode ? 'border border-red-500' : ''}`}>
+                        <Link href="/submit-show-proposal" className={`hidden md:block md:flex gap-1 home-hero-link no-underline md:text-right ${devMode ? 'border border-red-500' : ''}`}>
                             <span className={devMode ? 'border border-green-500' : ''}>submit a show proposal</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
-                        </a>
+                        </Link>
                     </div>
                 </div>
 
