@@ -226,8 +226,8 @@ export async function PUT(
     const episodeData = await request.json()
 
     // Determine final URLs - use new ones if provided, otherwise keep existing
-    let audioUrl = episodeData.audio_url || (existingEpisode as { audio_url: string; image_url: string | null }).audio_url
-    let imageUrl = episodeData.image_url !== undefined ? episodeData.image_url : (existingEpisode as { audio_url: string; image_url: string | null }).image_url
+    const audioUrl = episodeData.audio_url || (existingEpisode as { audio_url: string; image_url: string | null }).audio_url
+    const imageUrl = episodeData.image_url !== undefined ? episodeData.image_url : (existingEpisode as { audio_url: string; image_url: string | null }).image_url
     
     // Track old files for cleanup if new ones were uploaded
     let oldAudioKey: string | null = null
