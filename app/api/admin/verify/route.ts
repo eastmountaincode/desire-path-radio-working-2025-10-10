@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
       cookieStore.set('admin_authenticated', 'true', {
         httpOnly: true, //javascript cannot read or modify the cookie
         secure: process.env.NODE_ENV === 'production', // only send cookie over https in production
-        sameSite: 'strict', 
+        sameSite: 'lax', // Changed from 'strict' to 'lax' to allow cookies to work on Vercel preview deployments
+        path: '/', // Explicitly set path to ensure cookie is available across all routes
         maxAge: 60 * 60 * 1 // 1 hour
       })
       

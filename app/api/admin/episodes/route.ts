@@ -62,6 +62,9 @@ async function uploadToR2(file: File, bucketName: string, fileName: string): Pro
 
   const presignedUrl = await getSignedUrl(r2Client, command, { expiresIn: 3600 })
 
+  // Convert File to ArrayBuffer for reliable upload
+  const fileBuffer = await file.arrayBuffer()
+
   // Upload file using presigned URL with retry logic
   let uploadResponse: Response
   const maxRetries = 3
@@ -73,9 +76,10 @@ async function uploadToR2(file: File, bucketName: string, fileName: string): Pro
     try {
       uploadResponse = await fetch(presignedUrl, {
         method: 'PUT',
-        body: file,
+        body: fileBuffer,
         headers: {
           'Content-Type': file.type,
+          'Content-Length': fileBuffer.byteLength.toString(),
         },
       })
 
