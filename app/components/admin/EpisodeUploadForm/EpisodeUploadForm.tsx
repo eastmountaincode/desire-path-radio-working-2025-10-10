@@ -149,11 +149,94 @@ export default function EpisodeUploadForm({
         })
 
         try {
-            // Create FormData for the orchestrated upload
-            const uploadFormData = new FormData()
+            // Upload files directly to R2 first
+            let audioUrl: string | null = null
+            let audioKey: string | null = null
+            let imageUrl: string | null = null
+            let imageKey: string | null = null
 
-            // Add episode data as JSON
-            uploadFormData.append('episodeData', JSON.stringify({
+            // Upload audio file to R2
+            if (hasAudio && audioFileRef.current) {
+                setUploadSteps(prev => ({ ...prev, audio: 'uploading' }))
+
+                // Get presigned URL for audio upload
+                const audioPresignedResponse = await fetch('/api/admin/episodes/presigned-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fileName: audioFileRef.current.name,
+                        fileType: audioFileRef.current.type,
+                        uploadType: 'audio'
+                    })
+                })
+
+                if (!audioPresignedResponse.ok) {
+                    throw new Error('Failed to get presigned URL for audio')
+                }
+
+                const audioPresignedData = await audioPresignedResponse.json()
+
+                // Upload directly to R2
+                const audioUploadResponse = await fetch(audioPresignedData.presignedUrl, {
+                    method: 'PUT',
+                    body: audioFileRef.current,
+                    headers: {
+                        'Content-Type': audioFileRef.current.type,
+                    }
+                })
+
+                if (!audioUploadResponse.ok) {
+                    throw new Error('Failed to upload audio to R2')
+                }
+
+                audioUrl = audioPresignedData.publicUrl
+                audioKey = audioPresignedData.key
+                setUploadSteps(prev => ({ ...prev, audio: 'completed', image: hasImage ? 'uploading' : 'skipped' }))
+            }
+
+            // Upload image file to R2
+            if (hasImage && imageFileRef.current) {
+                setUploadSteps(prev => ({ ...prev, image: 'uploading' }))
+
+                // Get presigned URL for image upload
+                const imagePresignedResponse = await fetch('/api/admin/episodes/presigned-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fileName: imageFileRef.current.name,
+                        fileType: imageFileRef.current.type,
+                        uploadType: 'image'
+                    })
+                })
+
+                if (!imagePresignedResponse.ok) {
+                    throw new Error('Failed to get presigned URL for image')
+                }
+
+                const imagePresignedData = await imagePresignedResponse.json()
+
+                // Upload directly to R2
+                const imageUploadResponse = await fetch(imagePresignedData.presignedUrl, {
+                    method: 'PUT',
+                    body: imageFileRef.current,
+                    headers: {
+                        'Content-Type': imageFileRef.current.type,
+                    }
+                })
+
+                if (!imageUploadResponse.ok) {
+                    throw new Error('Failed to upload image to R2')
+                }
+
+                imageUrl = imagePresignedData.publicUrl
+                imageKey = imagePresignedData.key
+                setUploadSteps(prev => ({ ...prev, image: 'completed' }))
+            }
+
+            // Now create/update the episode record with the uploaded file URLs
+            setUploadSteps(prev => ({ ...prev, database: 'processing' }))
+
+            const episodePayload = {
                 title: formData.title,
                 slug: formData.slug,
                 description: formData.description,
@@ -163,20 +246,12 @@ export default function EpisodeUploadForm({
                 hosts: formData.hosts,
                 tags: formData.tags,
                 test_type: formData.test_type,
-                status: status
-            }))
-
-            // Add files
-            if (audioFileRef.current) {
-                uploadFormData.append('audioFile', audioFileRef.current)
-            }
-            if (imageFileRef.current) {
-                uploadFormData.append('imageFile', imageFileRef.current)
-            }
-
-            // Update steps as we progress
-            if (hasAudio) {
-                setUploadSteps(prev => ({ ...prev, audio: 'uploading' }))
+                status: status,
+                // In edit mode, preserve existing URLs if no new files were uploaded
+                audio_url: audioUrl || (mode === 'edit' ? formData.audio_url : null),
+                audio_key: audioKey,
+                image_url: imageUrl !== null ? imageUrl : (mode === 'edit' ? formData.image_url : null),
+                image_key: imageKey
             }
 
             const apiUrl = mode === 'edit' ? `/api/admin/episodes/${episodeId}` : '/api/admin/episodes'
@@ -184,7 +259,8 @@ export default function EpisodeUploadForm({
 
             const response = await fetch(apiUrl, {
                 method: apiMethod,
-                body: uploadFormData,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(episodePayload),
             })
 
             if (!response.ok) {
@@ -192,19 +268,6 @@ export default function EpisodeUploadForm({
                 const errorMsg = mode === 'edit' ? 'Failed to update episode' : 'Failed to create episode'
                 throw new Error(data.error || errorMsg)
             }
-
-            // Mark audio as completed if it was uploaded
-            if (hasAudio) {
-                setUploadSteps(prev => ({ ...prev, audio: 'completed' }))
-            }
-
-            // Mark image as completed if it was uploaded
-            if (hasImage) {
-                setUploadSteps(prev => ({ ...prev, image: 'completed' }))
-            }
-
-            // Mark database as processing
-            setUploadSteps(prev => ({ ...prev, database: 'processing' }))
 
             await response.json()
 

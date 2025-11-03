@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerSupabase } from '@/lib/supabase'
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3'
 
 // Configure R2 client
 const r2Client = new S3Client({
@@ -31,7 +30,9 @@ interface EpisodeData {
   aired_on: string
   location: string
   audio_url?: string | null
+  audio_key?: string | null
   image_url?: string | null
+  image_key?: string | null
   duration_seconds: number | null
   hosts: Host[]
   tags: Tag[]
@@ -45,73 +46,6 @@ function createSlug(text: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-}
-
-// Helper function to upload file to R2 and return public URL
-async function uploadToR2(file: File, bucketName: string, fileName: string): Promise<{ publicUrl: string, key: string, attempts: number }> {
-  const timestamp = Date.now()
-  const sanitizedName = fileName.replace(/[^a-z0-9.-]/gi, '-')
-  const key = `${timestamp}-${sanitizedName}`
-
-  // Create presigned URL for upload
-  const command = new PutObjectCommand({
-    Bucket: bucketName,
-    Key: key,
-    ContentType: file.type,
-  })
-
-  const presignedUrl = await getSignedUrl(r2Client, command, { expiresIn: 3600 })
-
-  // Convert File to ArrayBuffer for reliable upload
-  const fileBuffer = await file.arrayBuffer()
-
-  // Upload file using presigned URL with retry logic
-  let uploadResponse: Response
-  const maxRetries = 3
-  let lastError: Error | null = null
-  let attempts = 0
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    attempts = attempt
-    try {
-      uploadResponse = await fetch(presignedUrl, {
-        method: 'PUT',
-        body: fileBuffer,
-        headers: {
-          'Content-Type': file.type,
-          'Content-Length': fileBuffer.byteLength.toString(),
-        },
-      })
-
-      if (uploadResponse.ok) {
-        break
-      } else {
-        throw new Error(`Upload failed with status ${uploadResponse.status}`)
-      }
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error('Unknown upload error')
-
-      // If this is the last attempt, throw the error
-      if (attempt === maxRetries) {
-        throw lastError
-      }
-
-      // Wait a bit before retrying (exponential backoff)
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100))
-    }
-  }
-
-  // Construct public URL based on bucket
-  let publicUrl: string
-  if (bucketName === process.env.R2_AUDIO_BUCKET_NAME) {
-    publicUrl = `${process.env.MEDIA_PROXY_AUDIO_URL}/${key}`
-  } else if (bucketName === process.env.R2_IMAGES_BUCKET_NAME) {
-    publicUrl = `${process.env.MEDIA_PROXY_IMAGE_URL}/${key}`
-  } else {
-    throw new Error(`Unknown bucket: ${bucketName}`)
-  }
-
-  return { publicUrl, key, attempts }
 }
 
 // Helper function to delete from R2
@@ -137,17 +71,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const formData = await request.formData()
+    const episodeData: EpisodeData = await request.json()
     const supabase = await createServerSupabase()
 
-    // Parse episode data from form
-    const episodeData: EpisodeData = JSON.parse(formData.get('episodeData') as string)
-
     console.log(episodeData)
-
-    // Get uploaded files
-    const audioFile = formData.get('audioFile') as File | null
-    const imageFile = formData.get('imageFile') as File | null
 
     // Track what we've created for rollback
     const createdR2Files: Array<{ bucket: string, key: string }> = []
@@ -155,29 +82,20 @@ export async function POST(request: NextRequest) {
     const createdTagIds: number[] = []
     let createdEpisodeId: number | null = null
 
-    // Track upload attempts
-    let audioAttempts = 0
-    let imageAttempts = 0
-
     try {
-      // Step 1: Upload audio file (if provided)
-      let audioUrl: string | null = null
-      if (audioFile) {
-        const audioBucket = process.env.R2_AUDIO_BUCKET_NAME!
-        const { publicUrl, key, attempts } = await uploadToR2(audioFile, audioBucket, audioFile.name)
-        audioUrl = publicUrl
-        audioAttempts = attempts
-        createdR2Files.push({ bucket: audioBucket, key })
+      // Files are already uploaded to R2 by the client
+      // We just need to track them for potential rollback
+      if (episodeData.audio_key) {
+        createdR2Files.push({ 
+          bucket: process.env.R2_AUDIO_BUCKET_NAME!, 
+          key: episodeData.audio_key 
+        })
       }
-
-      // Step 2: Upload image file (if provided)
-      let imageUrl: string | null = null
-      if (imageFile) {
-        const imageBucket = process.env.R2_IMAGES_BUCKET_NAME!
-        const { publicUrl, key, attempts } = await uploadToR2(imageFile, imageBucket, imageFile.name)
-        imageUrl = publicUrl
-        imageAttempts = attempts
-        createdR2Files.push({ bucket: imageBucket, key })
+      if (episodeData.image_key) {
+        createdR2Files.push({ 
+          bucket: process.env.R2_IMAGES_BUCKET_NAME!, 
+          key: episodeData.image_key 
+        })
       }
 
       // Step 3: Create hosts
@@ -230,7 +148,7 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Step 4: Create episode (with unique slug handling)
+      // Step 2: Create episode (with unique slug handling)
       let episodeSlug = episodeData.slug
       let slugSuffix = 1
 
@@ -245,8 +163,8 @@ export async function POST(request: NextRequest) {
             description: episodeData.description || null,
             aired_on: episodeData.aired_on,
             location: episodeData.location || null,
-            audio_url: audioUrl,
-            image_url: imageUrl,
+            audio_url: episodeData.audio_url || null,
+            image_url: episodeData.image_url || null,
             duration_seconds: episodeData.duration_seconds,
             test_type: episodeData.test_type,
             status: episodeData.status || 'published'
@@ -364,10 +282,6 @@ export async function POST(request: NextRequest) {
         success: true,
         episode_id: createdEpisodeId,
         episode_slug: episodeSlug,
-        upload_attempts: {
-          audio: audioAttempts || 0,
-          image: imageAttempts || 0
-        },
         message: 'Episode created successfully'
       })
 

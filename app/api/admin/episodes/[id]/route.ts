@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabase } from '@/lib/supabase'
 import { cookies } from 'next/headers'
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3'
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -210,7 +209,7 @@ export async function PUT(
 
     const supabase = await createServerSupabase()
 
-    // Fetch existing episode to get current file URLs
+    // Fetch existing episode to get current file URLs and keys
     const { data: existingEpisode, error: fetchError } = await supabase
       .from('episodes')
       .select('audio_url, image_url')
@@ -224,102 +223,25 @@ export async function PUT(
       )
     }
 
-    const formData = await request.formData()
-    const episodeDataStr = formData.get('episodeData') as string
-    const audioFile = formData.get('audioFile') as File | null
-    const imageFile = formData.get('imageFile') as File | null
+    const episodeData = await request.json()
 
-    if (!episodeDataStr) {
-      return NextResponse.json(
-        { error: 'Episode data is required' },
-        { status: 400 }
-      )
+    // Determine final URLs - use new ones if provided, otherwise keep existing
+    let audioUrl = episodeData.audio_url || (existingEpisode as { audio_url: string; image_url: string | null }).audio_url
+    let imageUrl = episodeData.image_url !== undefined ? episodeData.image_url : (existingEpisode as { audio_url: string; image_url: string | null }).image_url
+    
+    // Track old files for cleanup if new ones were uploaded
+    let oldAudioKey: string | null = null
+    let oldImageKey: string | null = null
+
+    // If new audio was uploaded, mark old one for deletion
+    if (episodeData.audio_url && episodeData.audio_url !== (existingEpisode as { audio_url: string; image_url: string | null }).audio_url) {
+      oldAudioKey = (existingEpisode as { audio_url: string; image_url: string | null }).audio_url.split('/').pop() || null
     }
 
-    const episodeData = JSON.parse(episodeDataStr)
-
-    let audioUrl = (existingEpisode as { audio_url: string; image_url: string | null }).audio_url
-    let imageUrl = (existingEpisode as { audio_url: string; image_url: string | null }).image_url
-    let oldAudioUrl = null
-    let oldImageUrl = null
-
-    // Upload new audio if provided
-    if (audioFile) {
-      const audioFileName = `${Date.now()}-${audioFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-
-      try {
-        const uploadCommand = new PutObjectCommand({
-          Bucket: process.env.R2_AUDIO_BUCKET_NAME!,
-          Key: audioFileName,
-          ContentType: audioFile.type,
-        })
-
-        const uploadUrl = await getSignedUrl(s3Client, uploadCommand, { expiresIn: 3600 })
-
-        const uploadResponse = await fetch(uploadUrl, {
-          method: 'PUT',
-          body: audioFile,
-          headers: {
-            'Content-Type': audioFile.type,
-          },
-        })
-
-        if (!uploadResponse.ok) {
-          throw new Error('Audio upload to R2 failed')
-        }
-
-        oldAudioUrl = (existingEpisode as { audio_url: string; image_url: string | null }).audio_url
-        audioUrl = `${process.env.MEDIA_PROXY_AUDIO_URL}/${audioFileName}`
-      } catch (error) {
-        console.error('Audio upload error:', error)
-        return NextResponse.json(
-          { error: 'Failed to upload audio file' },
-          { status: 500 }
-        )
-      }
-    }
-
-    // Upload new image if provided
-    if (imageFile) {
-      const imageFileName = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-
-      try {
-        const uploadCommand = new PutObjectCommand({
-          Bucket: process.env.R2_IMAGES_BUCKET_NAME!,
-          Key: imageFileName,
-          ContentType: imageFile.type,
-        })
-
-        const uploadUrl = await getSignedUrl(s3Client, uploadCommand, { expiresIn: 3600 })
-
-        const uploadResponse = await fetch(uploadUrl, {
-          method: 'PUT',
-          body: imageFile,
-          headers: {
-            'Content-Type': imageFile.type,
-          },
-        })
-
-        if (!uploadResponse.ok) {
-          throw new Error('Image upload to R2 failed')
-        }
-
-        oldImageUrl = (existingEpisode as { audio_url: string; image_url: string | null }).image_url
-        imageUrl = `${process.env.MEDIA_PROXY_IMAGE_URL}/${imageFileName}`
-      } catch (error) {
-        console.error('Image upload error:', error)
-        // Rollback: delete new audio if it was uploaded
-        if (oldAudioUrl) {
-          await s3Client.send(new DeleteObjectCommand({
-            Bucket: process.env.R2_AUDIO_BUCKET_NAME!,
-            Key: audioUrl.split('/').pop()!
-          })).catch(() => {})
-        }
-        return NextResponse.json(
-          { error: 'Failed to upload image file' },
-          { status: 500 }
-        )
-      }
+    // If new image was uploaded, mark old one for deletion
+    if (episodeData.image_url && episodeData.image_url !== (existingEpisode as { audio_url: string; image_url: string | null }).image_url) {
+      const existingImageUrl = (existingEpisode as { audio_url: string; image_url: string | null }).image_url
+      oldImageKey = existingImageUrl ? existingImageUrl.split('/').pop() || null : null
     }
 
     // Update episode
@@ -343,16 +265,16 @@ export async function PUT(
     if (updateError) {
       console.error('Episode update error:', updateError)
       // Rollback: delete newly uploaded files
-      if (oldAudioUrl) {
+      if (episodeData.audio_key) {
         await s3Client.send(new DeleteObjectCommand({
           Bucket: process.env.R2_AUDIO_BUCKET_NAME!,
-          Key: audioUrl.split('/').pop()!
+          Key: episodeData.audio_key
         })).catch(() => {})
       }
-      if (oldImageUrl) {
+      if (episodeData.image_key) {
         await s3Client.send(new DeleteObjectCommand({
           Bucket: process.env.R2_IMAGES_BUCKET_NAME!,
-          Key: imageUrl!.split('/').pop()!
+          Key: episodeData.image_key
         })).catch(() => {})
       }
       return NextResponse.json(
@@ -444,19 +366,17 @@ export async function PUT(
     }
 
     // Delete old files from R2 after successful update
-    if (oldAudioUrl) {
-      const oldAudioKey = oldAudioUrl.split('/').pop()
+    if (oldAudioKey) {
       await s3Client.send(new DeleteObjectCommand({
         Bucket: process.env.R2_AUDIO_BUCKET_NAME!,
-        Key: oldAudioKey!
+        Key: oldAudioKey
       })).catch((err) => console.error('Failed to delete old audio:', err))
     }
 
-    if (oldImageUrl) {
-      const oldImageKey = oldImageUrl.split('/').pop()
+    if (oldImageKey) {
       await s3Client.send(new DeleteObjectCommand({
         Bucket: process.env.R2_IMAGES_BUCKET_NAME!,
-        Key: oldImageKey!
+        Key: oldImageKey
       })).catch((err) => console.error('Failed to delete old image:', err))
     }
 
