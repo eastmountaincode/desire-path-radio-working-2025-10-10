@@ -5,3 +5,8 @@
 .dark .ai-analytics-table-header {
     background-color: var(--color-grey6);
 }
+
+.description-column {
+    min-width: 300px;
+    max-width: 500px;
+}

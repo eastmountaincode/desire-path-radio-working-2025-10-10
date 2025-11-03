@@ -31,7 +31,3 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- we grant to anon/authenticated. The admin check provides the security layer.
 GRANT EXECUTE ON FUNCTION execute_raw_sql(text) TO anon, authenticated;
 
--- Note: For even tighter security, you could:
--- 1. Add a service role key to your .env.local
--- 2. Use that in the AI query route instead of the publishable key
--- 3. Grant only to service_role here

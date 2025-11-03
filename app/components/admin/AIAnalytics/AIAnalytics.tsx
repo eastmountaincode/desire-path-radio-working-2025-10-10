@@ -56,10 +56,12 @@ export default function AIAnalytics() {
     'What episodes aired in 2024?',
     'Show me the total play count across all episodes.',
     'What are the least played episodes?',
+    'How many episodes have more than 1 host?',
+    
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mb-8">
       {/* Info Banner */}
       <div className="p-4 border border-current rounded">
         <h3 className="font-semibold mb-2 flex items-center gap-2">
@@ -158,14 +160,16 @@ export default function AIAnalytics() {
             {result.rowCount === 0 ? (
               <p className="text-sm opacity-60">No results found</p>
             ) : (
-              <div className="border border-current rounded overflow-x-auto max-h-96 overflow-y-auto">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-grey1 dark:bg-grey6">
-                    <tr className="border-b border-current">
+                <div className="border border-current rounded overflow-x-auto max-h-96 overflow-y-auto">
+                  <table className="w-full text-sm">
+                    <thead className="sticky top-0 ai-analytics-table-header">
+                      <tr className="border-b border-current">
                       {result.columns.map((col) => (
                         <th
                           key={col}
-                          className="px-4 py-2 text-left font-semibold"
+                          className={`px-4 py-2 text-left font-semibold ${
+                            col.toLowerCase().includes('description') ? 'description-column' : ''
+                          }`}
                         >
                           {col}
                         </th>
@@ -176,10 +180,15 @@ export default function AIAnalytics() {
                     {result.rows.map((row, rowIndex) => (
                       <tr
                         key={rowIndex}
-                        className="border-b border-current border-opacity-30"
+                        className={rowIndex === result.rows.length - 1 ? '' : 'border-b border-current border-opacity-30'}
                       >
                         {result.columns.map((col) => (
-                          <td key={col} className="px-4 py-2">
+                          <td 
+                            key={col} 
+                            className={`px-4 py-2 ${
+                              col.toLowerCase().includes('description') ? 'description-column' : ''
+                            }`}
+                          >
                             {formatCellValue(row[col])}
                           </td>
                         ))}
