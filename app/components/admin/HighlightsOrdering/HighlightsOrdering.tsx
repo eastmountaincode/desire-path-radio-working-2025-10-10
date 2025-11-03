@@ -38,7 +38,6 @@ export default function HighlightsOrdering() {
     variant: 'alert',
     onConfirm: () => {}
   })
-  const [episodeToRemove, setEpisodeToRemove] = useState<number | null>(null)
 
   const devMode = useDevMode()
   const MAX_HIGHLIGHTS = 5
@@ -129,7 +128,6 @@ export default function HighlightsOrdering() {
   }
 
   const handleRemoveHighlight = (episodeId: number) => {
-    setEpisodeToRemove(episodeId)
     setModalState({
       isOpen: true,
       title: 'Remove Highlight',
@@ -157,7 +155,6 @@ export default function HighlightsOrdering() {
       }
 
       await fetchHighlights()
-      setEpisodeToRemove(null)
     } catch (error) {
       console.error('Failed to remove highlight:', error)
       setModalState({
