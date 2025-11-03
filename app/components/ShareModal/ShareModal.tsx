@@ -33,7 +33,7 @@ export default function ShareModal({
   }
 
   return (
-    <div className="share-modal-backdrop p-6" onClick={onClose}>
+    <div className="share-modal-backdrop p-5" onClick={onClose}>
       <div
         className={`share-modal ${devMode ? 'border border-red-500' : ''}`}
         onClick={(e) => e.stopPropagation()}

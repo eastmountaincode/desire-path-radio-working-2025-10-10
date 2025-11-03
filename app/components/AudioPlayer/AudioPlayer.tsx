@@ -271,7 +271,7 @@ export default function AudioPlayer() {
                 </div>
 
                 {/* Center section - Time and Progress (hidden in live mode) */}
-                <div className={`flex items-center gap-3 flex-shrink-0 ${devMode ? 'border border-green-500' : ''}`}>
+                <div className={`max-w-[700px] flex items-center gap-3 flex-1 ${devMode ? 'border border-green-500' : ''}`}>
                     {!isLiveMode && (
                         <>
                             <AudioPlayerTimeDisplay time={currentTime} alignment="right" />
@@ -281,7 +281,6 @@ export default function AudioPlayer() {
                                 isDragging={isDragging}
                                 onProgressClick={handleProgressClick}
                                 onThumbDrag={handleThumbDrag}
-                                className="flex-shrink-0"
                             />
 
                             <AudioPlayerTimeDisplay time={duration} alignment="right" />
@@ -289,7 +288,7 @@ export default function AudioPlayer() {
                     )}
 
                     {/* Additional controls (desktop only) */}
-                    <div className={`flex ${isLiveMode ? '' : 'ml-2'} items-center gap-4 flex-shrink-0 ${devMode ? 'border border-indigo-500' : ''}`}>
+                    <div className={`hidden lg:flex ${isLiveMode ? '' : 'lg:ml-2'} items-center gap-4 flex-shrink-0 ${devMode ? 'border border-indigo-500' : ''}`}>
                         {/* Seek buttons (only in archive mode) */}
                         {!isLiveMode && (
                             <>
@@ -345,7 +344,7 @@ export default function AudioPlayer() {
             </div>
 
             {/* Mobile Layout - 3 Columns */}
-            <div className={`md:hidden grid grid-cols-[auto_1fr_auto] gap-4 items-center px-7 h-full ${devMode ? 'border border-yellow-500' : ''}`}>
+            <div className={`md:hidden grid grid-cols-[auto_1fr_auto] gap-4 items-center px-5 h-full ${devMode ? 'border border-yellow-500' : ''}`}>
                 {/* Left Column - Play Button */}
                 <AudioPlayerPlayPauseButton
                     isPlaying={isPlaying}
@@ -353,7 +352,7 @@ export default function AudioPlayer() {
                     onToggle={isPlaying ? pause : resume}
                 />
 
-                {/* Center Column - Title and Progress (stacked) */}
+                {/* Center Column - Title, Time, and Progress (stacked) */}
                 <div className={`flex flex-col gap-0 min-w-0 px-0 ${devMode ? 'border border-green-500' : ''}`}>
                     <AudioPlayerTitleDisplay
                         isLive={isLiveMode}
@@ -363,21 +362,27 @@ export default function AudioPlayer() {
                         onRefCallback={setMobileTitleElement}
                     />
 
-                    {/* Progress Bar with Timestamps (hidden in live mode) */}
+                    {/* Time and Progress (hidden in live mode) */}
                     {!isLiveMode && (
-                        <div className={`flex items-center gap-2 mt-1 ${devMode ? 'border border-blue-500' : ''}`}>
-                            <AudioPlayerTimeDisplay time={currentTime} alignment="left" />
+                        <>
+                            {/* Timestamps Row */}
+                            <div className={`flex items-center gap-1 ${devMode ? 'border border-blue-500' : ''}`}>
+                                <AudioPlayerTimeDisplay time={currentTime} alignment="left" />
+                                <span className="text-xs text-grey5 dark:text-grey4">/</span>
+                                <AudioPlayerTimeDisplay time={duration} alignment="left" />
+                            </div>
 
-                            <AudioPlayerProgressBar
-                                displayPercentage={displayPercentage}
-                                isDragging={isDragging}
-                                onProgressClick={handleProgressClick}
-                                onThumbDrag={handleThumbDrag}
-                                className="flex-1"
-                            />
-
-                            <AudioPlayerTimeDisplay time={duration} alignment="left" />
-                        </div>
+                            {/* Progress Bar Row */}
+                            <div className={`mt-1 ${devMode ? 'border border-purple-500' : ''}`}>
+                                <AudioPlayerProgressBar
+                                    displayPercentage={displayPercentage}
+                                    isDragging={isDragging}
+                                    onProgressClick={handleProgressClick}
+                                    onThumbDrag={handleThumbDrag}
+                                    className="w-full"
+                                />
+                            </div>
+                        </>
                     )}
                 </div>
 

@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useDevMode } from '@/app/components/DevModeProvider'
 import Image from 'next/image'
 
 export default function AdminSchedulePage() {
+  const router = useRouter()
   const devMode = useDevMode()
   const [currentImage, setCurrentImage] = useState<string | null>(null)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
@@ -28,6 +30,11 @@ export default function AdminSchedulePage() {
     try {
       setIsLoading(true)
       const response = await fetch('/api/admin/schedule')
+
+      if (response.status === 401) {
+        router.push('/admin')
+        return
+      }
 
       if (!response.ok) {
         throw new Error('Failed to fetch current schedule')
@@ -86,6 +93,11 @@ export default function AdminSchedulePage() {
         body: formData,
       })
 
+      if (response.status === 401) {
+        router.push('/admin')
+        return
+      }
+
       if (!response.ok) {
         const data = await response.json()
         throw new Error(data.error || 'Failed to upload schedule image')
@@ -136,6 +148,11 @@ export default function AdminSchedulePage() {
       const response = await fetch('/api/admin/schedule', {
         method: 'DELETE',
       })
+
+      if (response.status === 401) {
+        router.push('/admin')
+        return
+      }
 
       if (!response.ok) {
         const data = await response.json()
