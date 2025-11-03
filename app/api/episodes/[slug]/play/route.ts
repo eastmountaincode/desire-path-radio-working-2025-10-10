@@ -26,8 +26,8 @@ export async function POST(
     // Increment the play count using a database-level operation to avoid race conditions
     const { error: updateError } = await supabase
       .from('episodes')
-      .update({ play_count: (episode.play_count || 0) + 1 })
-      .eq('id', episode.id)
+      .update({ play_count: ((episode as { play_count: number | null; id: number }).play_count || 0) + 1 } as never)
+      .eq('id', (episode as { play_count: number | null; id: number }).id)
 
     if (updateError) {
       console.error('Failed to update play count:', updateError)
@@ -39,7 +39,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      play_count: (episode.play_count || 0) + 1
+      play_count: ((episode as { play_count: number | null; id: number }).play_count || 0) + 1
     })
 
   } catch (error) {

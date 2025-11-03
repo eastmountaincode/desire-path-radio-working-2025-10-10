@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDevMode } from '@/app/components/DevModeProvider'
 import Image from 'next/image'
@@ -21,12 +21,7 @@ export default function AdminSchedulePage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const selectedFileRef = useRef<File | null>(null)
 
-  // Fetch current schedule image on mount
-  useEffect(() => {
-    fetchCurrentSchedule()
-  }, [])
-
-  const fetchCurrentSchedule = async () => {
+  const fetchCurrentSchedule = useCallback(async () => {
     try {
       setIsLoading(true)
       const response = await fetch('/api/admin/schedule')
@@ -51,7 +46,12 @@ export default function AdminSchedulePage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [router])
+
+  // Fetch current schedule image on mount
+  useEffect(() => {
+    fetchCurrentSchedule()
+  }, [fetchCurrentSchedule])
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

@@ -17,7 +17,6 @@ export default function AudioPlayer() {
         mode,
         currentEpisode,
         liveChannel,
-        liveStreamData,
         isPlaying,
         isLoading,
         currentTime,

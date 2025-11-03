@@ -35,7 +35,7 @@ export async function GET() {
 
     return NextResponse.json({ logs: data })
 
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }

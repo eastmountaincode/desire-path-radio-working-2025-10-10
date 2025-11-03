@@ -165,7 +165,7 @@ export default function SubmitShowProposalForm() {
         <div className="form-field-group">
           <label htmlFor="category" className="form-label">
             Category
-            <span className="form-label-subtitle">Music, talk, educational, experimental, etc. feel free to create your own "category."</span>
+            <span className="form-label-subtitle">Music, talk, educational, experimental, etc. feel free to create your own &quot;category.&quot;</span>
           </label>
           <input
             type="text"
@@ -274,7 +274,7 @@ export default function SubmitShowProposalForm() {
         {/* Submit Status Messages */}
         {submitStatus === 'success' && (
           <div className="submit-success-message">
-            Thank you for your submission! We'll be in touch soon.
+            Thank you for your submission! We&apos;ll be in touch soon.
           </div>
         )}
 

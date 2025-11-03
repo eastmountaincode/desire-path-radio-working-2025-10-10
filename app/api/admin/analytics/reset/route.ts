@@ -20,7 +20,7 @@ export async function POST() {
     // Reset all play counts to 0
     const { error } = await supabase
       .from('episodes')
-      .update({ play_count: 0 })
+      .update({ play_count: 0 } as never)
       .neq('id', 0) // Update all rows (using neq with a condition that's always true)
 
     if (error) {

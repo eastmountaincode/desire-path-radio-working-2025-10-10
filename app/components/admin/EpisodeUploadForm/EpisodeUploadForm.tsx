@@ -206,7 +206,7 @@ export default function EpisodeUploadForm({
             // Mark database as processing
             setUploadSteps(prev => ({ ...prev, database: 'processing' }))
 
-            const result = await response.json()
+            await response.json()
 
             // Mark database as completed
             setUploadSteps(prev => ({ ...prev, database: 'completed' }))
@@ -267,7 +267,7 @@ export default function EpisodeUploadForm({
 
     return (
         <form
-            onSubmit={handleSubmit}
+            onSubmit={(e) => e.preventDefault()}
             className={`space-y-6 mb-6 max-w-7xl self-start ${devMode ? 'border border-red-500' : ''}`}
         >
 

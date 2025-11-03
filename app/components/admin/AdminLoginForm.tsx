@@ -35,7 +35,7 @@ export default function AdminLoginForm() {
         setError(data.error || "Invalid password")
         setPassword("")
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.")
     } finally {
       setLoading(false)

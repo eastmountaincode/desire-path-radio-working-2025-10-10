@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminEpisodeCard from '../AdminEpisodeCard/AdminEpisodeCard'
 import ArchiveTableHeader from '@/app/components/archive/ArchiveTableHeader/ArchiveTableHeader'
@@ -93,7 +93,7 @@ export default function EpisodesManagement({ mode = 'published' }: EpisodesManag
     }
   }
 
-  const fetchEpisodes = async (
+  const fetchEpisodes = useCallback(async (
     currentOffset: number = 0,
     tagSlugs: string[] = [],
     order: 'asc' | 'desc' = 'desc'
@@ -126,7 +126,7 @@ export default function EpisodesManagement({ mode = 'published' }: EpisodesManag
     } finally {
       setLoading(false)
     }
-  }
+  }, [mode])
 
   useEffect(() => {
     fetchHighlightedEpisodes()
@@ -137,7 +137,7 @@ export default function EpisodesManagement({ mode = 'published' }: EpisodesManag
     setEpisodes([])
     const selectedTagSlugs = selectedTags.map((tag) => tag.slug)
     fetchEpisodes(0, selectedTagSlugs, sortOrder)
-  }, [selectedTags, sortOrder, mode])
+  }, [selectedTags, sortOrder, mode, fetchEpisodes])
 
   const loadMore = () => {
     const selectedTagSlugs = selectedTags.map((tag) => tag.slug)

@@ -79,7 +79,7 @@ async function deleteFromR2(bucketName: string, key: string): Promise<void> {
 }
 
 // GET - Fetch current schedule image
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check authentication
     const cookieStore = await cookies()
@@ -223,7 +223,7 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE - Delete current schedule image
-export async function DELETE(request: NextRequest) {
+export async function DELETE() {
   try {
     // Check authentication
     const cookieStore = await cookies()

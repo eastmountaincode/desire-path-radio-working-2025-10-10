@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     )
 
     // Ping the database
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('episodes')
       .select('id')
       .limit(1)
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
       message: 'Database pinged and logged'
     })
 
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }

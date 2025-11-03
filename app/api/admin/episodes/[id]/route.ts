@@ -238,8 +238,8 @@ export async function PUT(
 
     const episodeData = JSON.parse(episodeDataStr)
 
-    let audioUrl = existingEpisode.audio_url
-    let imageUrl = existingEpisode.image_url
+    let audioUrl = (existingEpisode as { audio_url: string; image_url: string | null }).audio_url
+    let imageUrl = (existingEpisode as { audio_url: string; image_url: string | null }).image_url
     let oldAudioUrl = null
     let oldImageUrl = null
 
@@ -268,7 +268,7 @@ export async function PUT(
           throw new Error('Audio upload to R2 failed')
         }
 
-        oldAudioUrl = existingEpisode.audio_url
+        oldAudioUrl = (existingEpisode as { audio_url: string; image_url: string | null }).audio_url
         audioUrl = `${process.env.MEDIA_PROXY_AUDIO_URL}/${audioFileName}`
       } catch (error) {
         console.error('Audio upload error:', error)
@@ -304,13 +304,12 @@ export async function PUT(
           throw new Error('Image upload to R2 failed')
         }
 
-        oldImageUrl = existingEpisode.image_url
+        oldImageUrl = (existingEpisode as { audio_url: string; image_url: string | null }).image_url
         imageUrl = `${process.env.MEDIA_PROXY_IMAGE_URL}/${imageFileName}`
       } catch (error) {
         console.error('Image upload error:', error)
         // Rollback: delete new audio if it was uploaded
         if (oldAudioUrl) {
-          const oldAudioKey = oldAudioUrl.split('/').pop()
           await s3Client.send(new DeleteObjectCommand({
             Bucket: process.env.R2_AUDIO_BUCKET_NAME!,
             Key: audioUrl.split('/').pop()!
@@ -324,7 +323,7 @@ export async function PUT(
     }
 
     // Update episode
-    const { data: updatedEpisode, error: updateError } = await supabase
+    const { error: updateError } = await supabase
       .from('episodes')
       .update({
         title: episodeData.title,
@@ -336,7 +335,7 @@ export async function PUT(
         duration_seconds: episodeData.duration_seconds,
         test_type: episodeData.test_type || 'none',
         status: episodeData.status || 'published',
-      })
+      } as never)
       .eq('id', episodeId)
       .select('id')
       .single()
@@ -379,11 +378,11 @@ export async function PUT(
         .single()
 
       if (existingHost) {
-        hostIds.push(existingHost.id)
+        hostIds.push((existingHost as { id: number }).id)
       } else {
         const { data: newHost, error: hostError } = await supabase
           .from('hosts')
-          .insert({ name: host.name, organization: host.organization || null })
+          .insert({ name: host.name, organization: host.organization || null } as never)
           .select('id')
           .single()
 
@@ -391,7 +390,7 @@ export async function PUT(
           console.error('Host creation error:', hostError)
           continue
         }
-        hostIds.push(newHost.id)
+        hostIds.push((newHost as { id: number }).id)
       }
     }
 
@@ -399,7 +398,7 @@ export async function PUT(
     if (hostIds.length > 0) {
       await supabase
         .from('episode_hosts')
-        .insert(hostIds.map(hostId => ({ episode_id: episodeId, host_id: hostId })))
+        .insert(hostIds.map(hostId => ({ episode_id: episodeId, host_id: hostId })) as never)
     }
 
     // Delete old episode_tags relationships
@@ -421,11 +420,11 @@ export async function PUT(
         .single()
 
       if (existingTag) {
-        tagIds.push(existingTag.id)
+        tagIds.push((existingTag as { id: number }).id)
       } else {
         const { data: newTag, error: tagError } = await supabase
           .from('tags')
-          .insert({ type: tag.type, name: tag.value, slug: tagSlug })
+          .insert({ type: tag.type, name: tag.value, slug: tagSlug } as never)
           .select('id')
           .single()
 
@@ -433,7 +432,7 @@ export async function PUT(
           console.error('Tag creation error:', tagError)
           continue
         }
-        tagIds.push(newTag.id)
+        tagIds.push((newTag as { id: number }).id)
       }
     }
 
@@ -441,7 +440,7 @@ export async function PUT(
     if (tagIds.length > 0) {
       await supabase
         .from('episode_tags')
-        .insert(tagIds.map(tagId => ({ episode_id: episodeId, tag_id: tagId })))
+        .insert(tagIds.map(tagId => ({ episode_id: episodeId, tag_id: tagId })) as never)
     }
 
     // Delete old files from R2 after successful update
@@ -534,9 +533,9 @@ export async function DELETE(
     }
 
     // Delete audio file from R2 if it exists
-    if (episode.audio_url) {
+    if ((episode as { audio_url: string; image_url: string | null }).audio_url) {
       try {
-        const audioKey = episode.audio_url.split('/').pop()
+        const audioKey = (episode as { audio_url: string; image_url: string | null }).audio_url.split('/').pop()
         if (audioKey) {
           await s3Client.send(new DeleteObjectCommand({
             Bucket: process.env.R2_AUDIO_BUCKET_NAME!,
@@ -550,9 +549,9 @@ export async function DELETE(
     }
 
     // Delete image file from R2 if it exists
-    if (episode.image_url) {
+    if ((episode as { audio_url: string; image_url: string | null }).image_url) {
       try {
-        const imageKey = episode.image_url.split('/').pop()
+        const imageKey = (episode as { audio_url: string; image_url: string | null }).image_url!.split('/').pop()
         if (imageKey) {
           await s3Client.send(new DeleteObjectCommand({
             Bucket: process.env.R2_IMAGES_BUCKET_NAME!,
@@ -570,7 +569,7 @@ export async function DELETE(
       message: 'Episode deleted successfully',
       deletedEpisode: {
         id: episodeId,
-        title: episode.title
+        title: (episode as { audio_url: string; image_url: string | null; title: string }).title
       }
     })
 

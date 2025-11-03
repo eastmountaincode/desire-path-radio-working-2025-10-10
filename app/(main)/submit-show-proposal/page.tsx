@@ -27,13 +27,13 @@ export default function SubmitShowProposal() {
               DPR is looking for one-offs, series, and recurring shows. We are looking for hosts from all over the world with different backgrounds and interests. All potential shows must submit a show proposal.
             </p>
             <p className={devMode ? 'border border-cyan-500' : ''}>
-              DPR is a platform for information exchange and creative expression. No prior radio experience required. If you have an idea you're excited about, we want to hear it.
+              DPR is a platform for information exchange and creative expression. No prior radio experience required. If you have an idea you&apos;re excited about, we want to hear it.
             </p>
             <p className={devMode ? 'border border-cyan-500' : ''}>
               DPR supports LGBTQIA+ and POCI folx, a free Palestine, the abolition of ICE, and the dismantling of facism. DPR does not stand for hate speech, racism, sexism, plagiarism, or -phobias of any kind. We are looking for collaborators who align with these core values.
             </p>
             <p className={devMode ? 'border border-cyan-500' : ''}>
-              At this moment in time, DPR is a fully remote, internet-hosted radio station. Don't sweat the tech - we'll get you the set up if you have a show. All programming will start off pre-recorded before transitioning to a live option.
+              At this moment in time, DPR is a fully remote, internet-hosted radio station. Don&apos;t sweat the tech - we&apos;ll get you the set up if you have a show. All programming will start off pre-recorded before transitioning to a live option.
             </p>
           </div>
         </section>

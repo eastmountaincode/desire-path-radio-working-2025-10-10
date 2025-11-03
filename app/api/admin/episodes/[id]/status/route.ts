@@ -43,7 +43,7 @@ export async function PATCH(
     // Update the episode status
     const { data, error } = await supabase
       .from('episodes')
-      .update({ status })
+      .update({ status } as never)
       .eq('id', episodeId)
       .select('id, title, slug, status')
       .single()
