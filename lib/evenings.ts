@@ -31,7 +31,7 @@ export async function fetchStreamData(slug: string): Promise<EveningsStreamData>
     }
 
     const data = await response.json()
-    console.log('Evenings stream data:', data)
+    // console.log('Evenings stream data:', data)
     return data
   } catch (error) {
     console.error('Error fetching stream data:', error)

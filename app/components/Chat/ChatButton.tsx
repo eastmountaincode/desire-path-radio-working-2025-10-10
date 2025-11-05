@@ -5,8 +5,10 @@ import { useChat } from './ChatProvider'
 import { useDevMode } from '../DevModeProvider'
 import './chat-styles.css'
 
+const MAX_MESSAGE_LENGTH = 500
+
 export default function ChatButton() {
-  const { isOpen, openChat, closeChat, screenName } = useChat()
+  const { isOpen, openChat, closeChat, screenName, sendMessage } = useChat()
   const devMode = useDevMode()
   const [message, setMessage] = useState('')
 
@@ -20,10 +22,12 @@ export default function ChatButton() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!message.trim()) return
+    const trimmed = message.trim()
 
-    // TODO: Send message to backend
-    console.log('Send message:', message)
+    if (!trimmed) return
+    if (trimmed.length > MAX_MESSAGE_LENGTH) return
+
+    sendMessage(trimmed)
     setMessage('')
   }
 
@@ -37,6 +41,7 @@ export default function ChatButton() {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="type message..."
             disabled={!screenName}
+            maxLength={MAX_MESSAGE_LENGTH}
             className={`chat-input flex-1 px-3 py-2 outline-none max-md:px-2 ${devMode ? 'border border-blue-500' : ''}`}
           />
           <button

@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import ClearCookieButton from '../../components/admin/ClearCookieButton'
+import ClearChatButton from '../../components/admin/ClearChatButton'
 import DatabaseKeepAlive from '../../components/admin/DatabaseKeepAlive/DatabaseKeepAlive'
 
 // Force dynamic rendering to check authentication on every request
@@ -21,6 +22,10 @@ export default async function AdminDashboard() {
 
       <div className="mb-6">
         <DatabaseKeepAlive />
+      </div>
+
+      <div className="mb-6">
+        <ClearChatButton />
       </div>
 
       <ClearCookieButton />

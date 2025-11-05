@@ -33,7 +33,7 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
             try {
                 setError(null)
                 const data = await fetchStreamData(stationSlug)
-                console.log(`[${channelNumber}] Stream data loaded:`, data)
+                // console.log(`[${channelNumber}] Stream data loaded:`, data)
                 setStreamData(data)
             } catch (err) {
                 setError('Failed to load stream')

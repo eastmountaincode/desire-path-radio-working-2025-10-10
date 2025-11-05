@@ -129,11 +129,46 @@
 .dark .chat-settings-button {
   background-color: var(--color-grey6);
   color: var(--color-grey1);
-  border-color: var(--color-grey6);
+  border-color: var(--color-grey1);
+}
+
+.chat-settings-button.active {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+}
+
+.dark .chat-settings-button.active {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
 }
 
 .chat-settings-button:hover {
   opacity: 0.9;
+}
+
+/* Chat Settings Content */
+.chat-settings-content {
+  background-color: var(--color-grey1);
+}
+
+.dark .chat-settings-content {
+  background-color: var(--color-grey6);
+}
+
+.chat-settings-title {
+  color: var(--color-grey6);
+}
+
+.dark .chat-settings-title {
+  color: var(--color-grey1);
+}
+
+.chat-settings-current {
+  color: var(--color-grey6);
+}
+
+.dark .chat-settings-current {
+  color: var(--color-grey1);
 }
 
 /* Message List */

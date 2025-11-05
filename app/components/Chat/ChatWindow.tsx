@@ -21,22 +21,28 @@ export default function ChatWindow() {
                 <>
                     <div className={`chat-header flex border-b ${devMode ? 'border border-orange-500' : ''}`}>
                         <button
-                            className={`channel-toggle-button group flex-1 py-3 px-4 cursor-pointer ${activeChannel === 'channel1' ? 'active' : ''
+                            className={`channel-toggle-button group flex-1 py-3 px-4 cursor-pointer ${activeChannel === 'channel1' && !showSettings ? 'active' : ''
                                 } ${devMode ? 'border border-purple-500' : ''}`}
-                            onClick={() => switchChannel('channel1')}
+                            onClick={() => {
+                                switchChannel('channel1')
+                                setShowSettings(false)
+                            }}
                         >
-                            <span className={activeChannel === 'channel1' ? '' : 'invisible group-hover:visible'}>[</span>channel 1<span className={activeChannel === 'channel1' ? '' : 'invisible group-hover:visible'}>]</span>
+                            <span className={activeChannel === 'channel1' && !showSettings ? '' : 'invisible group-hover:visible'}>[</span>channel 1<span className={activeChannel === 'channel1' && !showSettings ? '' : 'invisible group-hover:visible'}>]</span>
                         </button>
                         <button
-                            className={`channel-toggle-button group flex-1 py-3 px-4 cursor-pointer ${activeChannel === 'channel2' ? 'active' : ''
+                            className={`channel-toggle-button group flex-1 py-3 px-4 cursor-pointer ${activeChannel === 'channel2' && !showSettings ? 'active' : ''
                                 } ${devMode ? 'border border-pink-500' : ''}`}
-                            onClick={() => switchChannel('channel2')}
+                            onClick={() => {
+                                switchChannel('channel2')
+                                setShowSettings(false)
+                            }}
                         >
-                            <span className={activeChannel === 'channel2' ? '' : 'invisible group-hover:visible'}>[</span>channel 2<span className={activeChannel === 'channel2' ? '' : 'invisible group-hover:visible'}>]</span>
+                            <span className={activeChannel === 'channel2' && !showSettings ? '' : 'invisible group-hover:visible'}>[</span>channel 2<span className={activeChannel === 'channel2' && !showSettings ? '' : 'invisible group-hover:visible'}>]</span>
                         </button>
                         <button
                             onClick={() => setShowSettings(!showSettings)}
-                            className={`chat-settings-button cursor-pointer flex items-center justify-center aspect-square h-full ${devMode ? 'border border-yellow-500' : ''}`}
+                            className={`chat-settings-button cursor-pointer flex items-center justify-center aspect-square h-full ${showSettings ? 'active' : ''} ${devMode ? 'border border-yellow-500' : ''}`}
                             aria-label="Chat settings"
                         >
                             <svg
@@ -50,12 +56,12 @@ export default function ChatWindow() {
                         </button>
                     </div>
                     {showSettings ? (
-                        <div className={`flex-1 p-6 flex flex-col gap-2 justify-center ${devMode ? 'border border-indigo-500' : ''}`}>
-                            <h3 className={`m-0 flex items-center gap-2 ${devMode ? 'border border-violet-500' : ''}`}>
+                        <div className={`chat-settings-content flex-1 p-6 flex flex-col gap-2 justify-center ${devMode ? 'border border-indigo-500' : ''}`}>
+                            <h3 className={`chat-settings-title m-0 flex items-center gap-2 ${devMode ? 'border border-violet-500' : ''}`}>
                                 <i className="fi fi-tr-circle-user text-sm translate-y-[2px]"></i>
                                 <span>change screen name</span>
                             </h3>
-                            <div className={`mb-4 ${devMode ? 'border border-fuchsia-500' : ''}`}>
+                            <div className={`chat-settings-current mb-4 ${devMode ? 'border border-fuchsia-500' : ''}`}>
                                 <span className="font-bold">current:</span> {screenName}
                             </div>
                             <form
