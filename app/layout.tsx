@@ -11,6 +11,27 @@ import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   title: "DPR",
   description: "Desire Path Radio",
+  openGraph: {
+    title: "DPR",
+    description: "Desire Path Radio",
+    siteName: "DPR",
+    images: [
+      {
+        url: "/DPR_Opengraph.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Desire Path Radio",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DPR",
+    description: "Desire Path Radio",
+    images: ["/DPR_Opengraph.jpg"],
+  },
 };
 
 export default function RootLayout({

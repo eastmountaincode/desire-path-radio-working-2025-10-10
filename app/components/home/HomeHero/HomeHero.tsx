@@ -32,18 +32,9 @@ export default function HomeHero() {
                             Exploratory programming where nature meets culture, for the outdoor community and beyond. Based in New York, streaming earth-wide.
                         </p>
                         <p className={`home-hero-about-text ${devMode ? 'border border-orange-500' : ''}`}>
-                            Music from the underground + talk, educational, documentary, experimental, archival, research from the field.
+                            Music from the underground and talk, educational, documentary, experimental, archival, research from the field.
                         </p>
                         <div className={`flex flex-col gap-1 items-start ${devMode ? 'border border-purple-500' : ''}`}>
-                            {/* <a href="/about" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
-                                <span className={devMode ? 'border border-green-500' : ''}>about us</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
-                            </a>
-                            <a href="/schedule" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
-                                <span className={devMode ? 'border border-green-500' : ''}>schedule</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
-                            </a>
-                            <a href="https://www.instagram.com/desirepath.radio/" target="_blank" rel="noopener noreferrer" className={`home-hero-link flex gap-1 no-underline ${devMode ? 'border border-red-500' : ''}`}>
-                                <span className={devMode ? 'border border-green-500' : ''}>instagram</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
-                            </a> */}
                             <Link href="/submit-show-proposal" className={`flex gap-1 home-hero-link no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>submit a show proposal</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
                             </Link>

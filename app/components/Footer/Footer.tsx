@@ -54,9 +54,9 @@ export default function Footer() {
                         height={120}
                         className={`footer-logo ${devMode ? 'border border-red-500' : ''}`}
                     />
-                    <div className={`${devMode ? 'border border-cyan-500' : ''}`}>
+                    {/* <div className={`${devMode ? 'border border-cyan-500' : ''}`}>
                         desire path radio | 2025
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
