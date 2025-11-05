@@ -88,14 +88,6 @@ export default function Header() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {/* <button
-                        onClick={() => setShowToggles(!showToggles)}
-                        className="text-sm border px-2 py-1 rounded"
-                        title={showToggles ? "Hide toggles" : "Show toggles"}
-                    >
-                        {showToggles ? "Hide" : "Show"}
-                    </button> */}
-
                     <ThemeToggle />
 
                     {/* Hamburger menu button - mobile only */}

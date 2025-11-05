@@ -65,6 +65,13 @@ export default function TagsSection({ tags, onChange }: TagsSectionProps) {
     return [...category.tags, ...customTags]
   }
 
+  // Helper function to get channel label
+  const getChannelLabel = (tagValue: string) => {
+    if (tagValue === 'Channel 1') return 'Channel 1 (Music)'
+    if (tagValue === 'Channel 2') return 'Channel 2 (Talk)'
+    return tagValue
+  }
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold">Tags</h2>
@@ -83,7 +90,7 @@ export default function TagsSection({ tags, onChange }: TagsSectionProps) {
                     : ''
                 }`}
               >
-                {tagValue}
+                {category.type === 'Channel' ? getChannelLabel(tagValue) : tagValue}
               </button>
             ))}
           </div>

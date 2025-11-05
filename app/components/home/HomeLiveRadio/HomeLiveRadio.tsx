@@ -14,7 +14,7 @@ export default function HomeLiveRadio() {
     const [ch2State, setCh2State] = useState<ChannelState>('live')
 
     // Station slugs for Evenings.fm API
-    const ch1StationSlug = 'desire-path-radio-test-ab'
+    const ch1StationSlug = 'desire-path-radio'
     const ch2StationSlug = 'desire-path-radio-channel-2'
 
     // Cycle through states: offline -> live -> mock -> offline

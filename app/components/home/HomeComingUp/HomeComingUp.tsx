@@ -27,17 +27,7 @@ export default function HomeComingUp() {
         fetchComingUpText()
     }, [])
 
-    if (loading) {
-        return (
-            <section className={`pt-12 pb-12 ${devMode ? 'border border-red-500' : ''}`}>
-                <div className={`max-w-3xl ${devMode ? 'border border-blue-500' : ''}`}>
-                    <h2 className="mb-6 text-3xl font-[family-name:var(--font-monument-wide)]">Coming Up</h2>
-                </div>
-            </section>
-        )
-    }
-
-    if (!text) {
+    if (loading || !text) {
         return null
     }
 

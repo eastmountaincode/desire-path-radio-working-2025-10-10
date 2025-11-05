@@ -1,0 +1,192 @@
+/* Chat Input Bar */
+.chat-input-bar {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  border-color: var(--color-grey6);
+}
+
+.dark .chat-input-bar {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+  border-color: var(--color-grey1);
+}
+
+/* Chat Input */
+.chat-input {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  border: none;
+  font-size: 16px;
+}
+
+.dark .chat-input {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+}
+
+.chat-input::placeholder {
+  color: var(--color-grey4);
+}
+
+.dark .chat-input::placeholder {
+  color: var(--color-grey3);
+}
+
+/* Chat Submit Button */
+.chat-submit-button {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  border: none;
+}
+
+.dark .chat-submit-button {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+}
+
+.chat-submit-button:hover {
+  opacity: 0.8;
+}
+
+/* Chat Toggle Button */
+.chat-toggle-button {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+}
+
+.dark .chat-toggle-button {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+}
+
+/* Chat Window - background colors */
+.chat-window {
+  background-color: var(--color-grey1);
+  border-color: var(--color-grey6);
+}
+
+.dark .chat-window {
+  background-color: var(--color-grey6);
+  border-color: var(--color-grey1);
+}
+
+/* Chat Header */
+.chat-header {
+  background-color: var(--color-grey1);
+  border-bottom: 1px solid var(--color-grey6);
+}
+
+.dark .chat-header {
+  background-color: var(--color-grey6);
+  border-bottom-color: var(--color-grey1);
+}
+
+/* Channel Toggle */
+.channel-toggle-button {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  border: none;
+  border-right: 1px solid var(--color-grey6);
+}
+
+.channel-toggle-button:last-child {
+  border-right: none;
+}
+
+.dark .channel-toggle-button {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+  border-right-color: var(--color-grey1);
+}
+
+.channel-toggle-button.active {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+}
+
+.dark .channel-toggle-button.active {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+}
+
+/* Chat Settings Bar */
+.chat-settings-bar {
+  background-color: var(--color-grey1);
+  border-bottom-color: var(--color-grey6);
+}
+
+.dark .chat-settings-bar {
+  background-color: var(--color-grey6);
+  border-bottom-color: var(--color-grey1);
+}
+
+.chat-settings-button {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  border-color: var(--color-grey6);
+}
+
+.dark .chat-settings-button {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+  border-color: var(--color-grey6);
+}
+
+.chat-settings-button:hover {
+  opacity: 0.9;
+}
+
+/* Message List */
+.message-username {
+  color: var(--color-grey6);
+}
+
+.dark .message-username {
+  color: var(--color-grey1);
+}
+
+.message-text {
+  color: var(--color-grey6);
+}
+
+.dark .message-text {
+  color: var(--color-grey1);
+}
+
+/* Screen Name Prompt */
+.screen-name-title {
+  color: var(--color-grey6);
+}
+
+.dark .screen-name-title {
+  color: var(--color-grey1);
+}
+
+.screen-name-input {
+  border-color: var(--color-grey6);
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  font-size: 16px;
+}
+
+.dark .screen-name-input {
+  background-color: var(--color-grey6);
+  border-color: var(--color-grey1);
+  color: var(--color-grey1);
+}
+
+.screen-name-input:focus {
+  outline: none;
+}
+
+.screen-name-submit {
+  color: var(--color-grey6);
+  background-color: var(--color-grey1);
+  border-color: var(--color-grey6);
+}
+
+.dark .screen-name-submit {
+  color: var(--color-grey1);
+  background-color: var(--color-grey6);
+  border-color: var(--color-grey1);
+}

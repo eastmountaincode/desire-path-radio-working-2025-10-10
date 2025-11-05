@@ -86,14 +86,6 @@
     color: var(--color-brand-dpr-orange);
 }
 
-.live-channel-container.live-active .live-channel-play-button:hover {
-    color: var(--color-brand-dpr-orange);
-}
-
-.dark .live-channel-container.live-active .live-channel-play-button:hover {
-    color: var(--color-brand-dpr-orange);
-}
-
 .live-channel-play-text {
     font-family: var(--font-mono);
     font-size: 14px;

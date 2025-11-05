@@ -60,17 +60,7 @@ export default function HomeHighlights() {
         })
     }
 
-    if (loading) {
-        return (
-            <section className={`pt-12 pb-12 ${devMode ? 'border border-red-500' : ''}`}>
-                <div className={devMode ? 'border border-blue-500' : ''}>
-                    <h2 className="mb-6 text-3xl font-[family-name:var(--font-monument-wide)]">Highlights</h2>
-                </div>
-            </section>
-        )
-    }
-
-    if (episodes.length === 0) {
+    if (loading || episodes.length === 0) {
         return null
     }
 

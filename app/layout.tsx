@@ -5,6 +5,7 @@ import { DevModeProvider } from "./components/DevModeProvider";
 import { AudioPlayerProvider } from "./components/AudioPlayer/AudioPlayerProvider";
 import { MobileMenuProvider } from "./components/MobileMenuProvider";
 import { LiveChannelToggleProvider } from "./components/LiveChannelToggleProvider";
+import { ChatProvider } from "./components/Chat/ChatProvider";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
@@ -19,13 +20,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-thin-rounded/css/uicons-thin-rounded.css" />
+      </head>
       <body className="antialiased">
         <DevModeProvider>
           <ThemeProvider>
             <MobileMenuProvider>
               <AudioPlayerProvider>
                 <LiveChannelToggleProvider>
-                  {children}
+                  <ChatProvider>
+                    {children}
+                  </ChatProvider>
                 </LiveChannelToggleProvider>
               </AudioPlayerProvider>
             </MobileMenuProvider>

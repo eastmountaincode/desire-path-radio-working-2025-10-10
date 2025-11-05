@@ -3,6 +3,7 @@
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import AudioPlayer from "../components/AudioPlayer/AudioPlayer";
+import ChatWidget from "../components/Chat/ChatWidget";
 import { useAudioPlayer } from "../components/AudioPlayer/AudioPlayerProvider";
 import { useMobileMenu } from "../components/MobileMenuProvider";
 import { useState, useEffect } from "react";
@@ -45,6 +46,7 @@ export default function MainLayout({
         </div>
       </main>
       <Footer />
+      <ChatWidget />
     </>
   )
 }
