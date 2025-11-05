@@ -39,8 +39,8 @@ export default function DatabaseKeepAlive() {
 
   if (loading) {
     return (
-      <div className="border border-current rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Database Keep-Alive Status</h2>
+      <div className="border p-4 rounded">
+        <h2 className="text-xl mb-4">Database Keep-Alive Status</h2>
         <p className="text-sm opacity-70">Loading...</p>
       </div>
     )
@@ -48,8 +48,8 @@ export default function DatabaseKeepAlive() {
 
   if (error) {
     return (
-      <div className="border border-current rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Database Keep-Alive Status</h2>
+      <div className="border p-4 rounded">
+        <h2 className="text-xl mb-4">Database Keep-Alive Status</h2>
         <p className="text-sm text-red-500">Error: {error}</p>
       </div>
     )
@@ -58,10 +58,10 @@ export default function DatabaseKeepAlive() {
   const latestLog = logs[0]
 
   return (
-    <div className={`border border-current rounded-lg p-6 ${devMode ? 'border-green-500' : ''}`}>
+    <div className={`border p-4 rounded ${devMode ? 'border-green-500' : ''}`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`flex items-center gap-2 text-xl font-semibold mb-4 w-full text-left hover:opacity-70 transition-opacity ${devMode ? 'border border-blue-500' : ''}`}
+        className={`flex items-center gap-2 text-xl mb-4 w-full text-left hover:opacity-70 transition-opacity ${devMode ? 'border border-blue-500' : ''}`}
       >
         <span className="text-sm">
           {isExpanded ? '▼' : '▶'}
