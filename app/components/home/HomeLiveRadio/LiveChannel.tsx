@@ -6,6 +6,7 @@ import { useAudioPlayer } from '../../AudioPlayer/AudioPlayerProvider'
 import { fetchStreamData, type EveningsStreamData } from '../../../../lib/evenings'
 import type { ChannelState } from './LiveChannelToggle'
 import PlayPauseButton from '../../PlayPauseButton/PlayPauseButton'
+import ParsedDescription from './ParsedDescription'
 
 interface LiveChannelProps {
     channelNumber: 'ch1' | 'ch2'
@@ -33,7 +34,7 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
             try {
                 setError(null)
                 const data = await fetchStreamData(stationSlug)
-                // console.log(`[${channelNumber}] Stream data loaded:`, data)
+                console.log(`[${channelNumber}] Stream data loaded:`, data)
                 setStreamData(data)
             } catch (err) {
                 setError('Failed to load stream')
@@ -133,11 +134,11 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
             ) : (
                 <div className={`flex-1 flex flex-col md:flex-row gap-4 min-h-0 p-3 ${devMode ? 'border border-blue-500' : ''}`}>
                     {/* Show image - square aspect on mobile, fixed width on desktop */}
-                    <div className={`relative w-full md:w-48 md:flex-shrink-0 aspect-square overflow-hidden ${devMode ? 'border border-red-500' : ''}`}>
+                    <div className={`relative w-full md:w-48 md:flex-shrink-0 aspect-square md:aspect-auto overflow-hidden ${devMode ? 'border border-red-500' : ''}`}>
                         <img
                             src={showImage}
                             alt={showTitle}
-                            className="w-full h-full object-cover"
+                            className="w-full h-auto object-contain"
                         />
                     </div>
 
@@ -146,9 +147,10 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
                         {/* Show info */}
                         <div className={`flex flex-col gap-1 flex-shrink-0 ${devMode ? 'border border-purple-500' : ''}`}>
                             <h3 className="live-show-title text-lg">{showTitle}</h3>
-                            <p className="live-show-info text-sm">
-                                {showDescription}
-                            </p>
+                            <ParsedDescription
+                                text={showDescription}
+                                className="live-show-info text-sm"
+                            />
                         </div>
 
                         {/* Play/Pause Button */}

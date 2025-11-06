@@ -12,6 +12,7 @@ const navItems = [
     { href: "/admin/archive", label: "archive", icon: "๏" },
     { href: "/admin/coming-up", label: "coming up", icon: "಄" },
     { href: "/admin/schedule", label: "schedule", icon: "◷" },
+    { href: "/admin/how-to", label: "how to", icon: "?" },
     { href: "/admin/settings", label: "settings", icon: "⚙" },
 ]
 

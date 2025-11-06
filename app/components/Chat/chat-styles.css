@@ -225,3 +225,8 @@
   background-color: var(--color-grey6);
   border-color: var(--color-grey1);
 }
+
+/* Leaf Icons */
+.dark .leaf-icon {
+  filter: brightness(0) saturate(100%) invert(100%);
+}
