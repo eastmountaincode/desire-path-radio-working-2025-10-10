@@ -6,30 +6,50 @@ import { useChat } from './ChatProvider'
 import { useDevMode } from '../DevModeProvider'
 import './chat-styles.css'
 
-// Simple hash function to assign a leaf (0-9) based on userId
+// Simple hash function to assign a leaf (0-29) based on userId
 function getUserLeaf(userId: string): number {
   let hash = 0
   for (let i = 0; i < userId.length; i++) {
     hash = ((hash << 5) - hash) + userId.charCodeAt(i)
     hash = hash & hash // Convert to 32bit integer
   }
-  return Math.abs(hash) % 10
+  return Math.abs(hash) % 30
 }
 
 // Get the leaf SVG path for a user
 function getLeafPath(userId: string): string {
   const leafNumber = getUserLeaf(userId)
   const leafNames = [
-    'Artboard 2.svg',
-    'Artboard 2 copy.svg',
-    'Artboard 2 copy 2.svg',
-    'Artboard 2 copy 3.svg',
-    'Artboard 2 copy 4.svg',
-    'Artboard 2 copy 5.svg',
-    'Artboard 2 copy 6.svg',
-    'Artboard 2 copy 7.svg',
-    'Artboard 2 copy 8.svg',
-    'Artboard 2 copy 9.svg',
+    'alders_3.svg',
+    'apple_2.svg',
+    'basswoods_3.svg',
+    'beeches_2.svg',
+    'birches_3.svg',
+    'buckthorns_2.svg',
+    'bumelias.svg',
+    'catalpas.svg',
+    'cherries_2.svg',
+    'chestnut_2.svg',
+    'dogwoods.svg',
+    'elms_3.svg',
+    'hackberries_2.svg',
+    'hawthords_3.svg',
+    'hollies.svg',
+    'hollies_2.svg',
+    'hornbeam_2.svg',
+    'magnolia.svg',
+    'mountain-laurel.svg',
+    'mulberries_3.svg',
+    'oaks.svg',
+    'persimmons.svg',
+    'plums_2.svg',
+    'poplar_3.svg',
+    'serviceberries_3.svg',
+    'silverbells_3.svg',
+    'tupelos.svg',
+    'viburnums.svg',
+    'viburnums_3.svg',
+    'willows_2.svg',
   ]
   return `/images/processed_leaves_1/${leafNames[leafNumber]}`
 }
