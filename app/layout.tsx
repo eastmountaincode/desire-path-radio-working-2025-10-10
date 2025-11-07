@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     siteName: "DPR",
     images: [
       {
-        url: "/DPR_Opengraph.jpg",
+        url: "/DPR_Opengraph_orange_and_green.jpg",
         width: 1200,
         height: 630,
         alt: "Desire Path Radio",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "DPR",
     description: "Desire Path Radio",
-    images: ["/DPR_Opengraph.jpg"],
+    images: ["/DPR_Opengraph_orange_and_green.jpg"],
   },
 };
 
