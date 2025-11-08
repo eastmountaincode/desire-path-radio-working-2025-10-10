@@ -32,7 +32,7 @@ export default function HomeHero() {
                             Exploratory programming where nature meets culture, for the outdoor community and beyond. Based in New York, streaming earth-wide.
                         </p>
                         <p className={`home-hero-about-text ${devMode ? 'border border-orange-500' : ''}`}>
-                            Music from the underground and talk, educational, documentary, experimental, archival, research from the field.
+                            Music from the underground. Talk, education, documentary, experimental, archival from the field.
                         </p>
                         <div className={`flex flex-col gap-1 items-start ${devMode ? 'border border-purple-500' : ''}`}>
                             <Link href="/submit-show-proposal" className={`flex gap-1 home-hero-link no-underline ${devMode ? 'border border-red-500' : ''}`}>
