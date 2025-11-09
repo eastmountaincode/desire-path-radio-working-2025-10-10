@@ -35,10 +35,17 @@ export default function Footer() {
                         donate
                     </a>
                     <a
+                        href="mailto:info@desirepathradio.com"
+                        className={`footer-link footer-external-link mt-4 ${devMode ? 'border border-green-500' : ''}`}
+                    >
+                        <span className={devMode ? 'border border-yellow-500' : ''}>info@desirepathradio.com</span>
+                        <i className={`fi fi-rr-envelope text-xs ${devMode ? 'border border-cyan-500' : ''}`}></i>
+                    </a>
+                    <a
                         href="https://instagram.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`footer-link footer-external-link mt-4 ${devMode ? 'border border-green-500' : ''}`}
+                        className={`footer-link footer-external-link ${devMode ? 'border border-green-500' : ''}`}
                     >
                         <span className={devMode ? 'border border-yellow-500' : ''}>instagram</span>
                         <i className={`fi fi-brands-instagram text-xs ${devMode ? 'border border-cyan-500' : ''}`}></i>
@@ -83,10 +90,17 @@ export default function Footer() {
                     donate
                 </a>
                 <a
+                    href="mailto:info@desirepathradio.com"
+                    className={`footer-link footer-external-link mt-4 ${devMode ? 'border border-green-500' : ''}`}
+                >
+                    <span className={devMode ? 'border border-yellow-500' : ''}>info@desirepathradio.com</span>
+                    <i className={`fi fi-rr-envelope text-xs ${devMode ? 'border border-cyan-500' : ''}`}></i>
+                </a>
+                <a
                     href="https://instagram.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`footer-link footer-external-link mt-4 ${devMode ? 'border border-green-500' : ''}`}
+                    className={`footer-link footer-external-link ${devMode ? 'border border-green-500' : ''}`}
                 >
                     <span className={devMode ? 'border border-yellow-500' : ''}>instagram</span>
                     <i className={`fi fi-brands-instagram text-xs ${devMode ? 'border border-cyan-500' : ''}`}></i>
