@@ -38,7 +38,7 @@ export default function Footer() {
                         href="mailto:info@desirepathradio.com"
                         className={`footer-link footer-external-link mt-4 ${devMode ? 'border border-green-500' : ''}`}
                     >
-                        <span className={devMode ? 'border border-yellow-500' : ''}>info@desirepathradio.com</span>
+                        <span className={devMode ? 'border border-yellow-500' : ''}>email</span>
                         <i className={`fi fi-rr-envelope text-xs ${devMode ? 'border border-cyan-500' : ''}`}></i>
                     </a>
                     <a
@@ -93,7 +93,7 @@ export default function Footer() {
                     href="mailto:info@desirepathradio.com"
                     className={`footer-link footer-external-link mt-4 ${devMode ? 'border border-green-500' : ''}`}
                 >
-                    <span className={devMode ? 'border border-yellow-500' : ''}>info@desirepathradio.com</span>
+                    <span className={devMode ? 'border border-yellow-500' : ''}>email</span>
                     <i className={`fi fi-rr-envelope text-xs ${devMode ? 'border border-cyan-500' : ''}`}></i>
                 </a>
                 <a
