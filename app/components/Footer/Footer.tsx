@@ -42,7 +42,7 @@ export default function Footer() {
                         <i className={`fi fi-rr-envelope text-xs ${devMode ? 'border border-cyan-500' : ''}`}></i>
                     </a>
                     <a
-                        href="https://instagram.com"
+                        href="https://www.instagram.com/desirepath.radio/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`footer-link footer-external-link ${devMode ? 'border border-green-500' : ''}`}
