@@ -54,6 +54,48 @@ function getLeafPath(userId: string): string {
   return `/images/processed_leaves_1/${leafNames[leafNumber]}`
 }
 
+// Format timestamp to a readable format
+function formatTimestamp(timestamp: string): string {
+  const date = new Date(timestamp)
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+  const timeString = date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  })
+
+  // If today, just show time
+  if (messageDate.getTime() === today.getTime()) {
+    return timeString
+  }
+
+  // If yesterday
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (messageDate.getTime() === yesterday.getTime()) {
+    return `Yesterday ${timeString}`
+  }
+
+  // If within this week, show day name
+  const daysAgo = Math.floor((today.getTime() - messageDate.getTime()) / (1000 * 60 * 60 * 24))
+  if (daysAgo < 7) {
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' })
+    return `${dayName} ${timeString}`
+  }
+
+  // Otherwise show full date
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  })
+}
+
 export default function MessageList() {
   const { activeChannel, messages, userId } = useChat()
   const devMode = useDevMode()
@@ -89,13 +131,18 @@ export default function MessageList() {
                   className="w-full h-full leaf-icon"
                 />
               </div>
-              <div className={`flex flex-col gap-1 ${isMyMessage ? 'items-end' : 'items-start'}`}>
+              <div className={`flex flex-col gap-0.5 ${isMyMessage ? 'items-end' : 'items-start'}`}>
                 <div className={`message-username text-xs font-bold ${devMode ? 'border border-amber-500' : ''}`}>
                   {msg.username}
                 </div>
                 <div className={`message-text text-sm break-words ${devMode ? 'border border-rose-500' : ''}`}>
                   {msg.message}
                 </div>
+                {msg.timestamp && (
+                  <div className={`message-timestamp text-xs opacity-60 ${devMode ? 'border border-blue-500' : ''}`}>
+                    {formatTimestamp(msg.timestamp)}
+                  </div>
+                )}
               </div>
             </div>
           )

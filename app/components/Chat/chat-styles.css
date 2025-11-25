@@ -188,6 +188,14 @@
   color: var(--color-grey1);
 }
 
+.message-timestamp {
+  color: var(--color-grey4);
+}
+
+.dark .message-timestamp {
+  color: var(--color-grey3);
+}
+
 /* Screen Name Prompt */
 .screen-name-title {
   color: var(--color-grey6);

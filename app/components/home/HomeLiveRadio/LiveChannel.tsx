@@ -104,7 +104,7 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
     // Mock show data for mock dev state only
     const mockShow = {
         title: 'Saving the Old Growth Forest',
-        description: 'Luis Hernandez, Urban Planner / Oregon, Pacific Northwest | April 18, 2025',
+        description: 'Luis Hernandez, Urban Planner / Oregon, Pacific Northwest | April 18, 2025{{newline}}{{social:instagram:luishernandez}}',
         imageUrl: 'https://placehold.co/600x600/CCCCCC/666666?text=Show+Image'
     }
 

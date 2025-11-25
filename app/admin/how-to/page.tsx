@@ -19,7 +19,7 @@ export default async function HowToPage() {
             <div className="space-y-8">
                 {/* Description Formatting */}
                 <section className="border border-current p-6">
-                    <h2 className="text-2xl mb-4 font-[family-name:var(--font-monument-wide)]">Description Formatting</h2>
+                    <h2 className="text-2xl mb-4 font-[family-name:var(--font-monument-wide)]">Live RadioDescription Formatting</h2>
 
                     <div className="space-y-4">
                         <div>
@@ -46,18 +46,38 @@ export default async function HowToPage() {
                                 </div>
                             </div>
                         </div>
+                        <div>
+                            <h3 className="text-lg mb-2 font-[family-name:var(--font-monument)]">Instagram Links</h3>
+                            <p className="mb-2 text-sm">
+                                Add clickable Instagram links in your descriptions using the{' '}
+                                <code className="px-2 py-1">{'{{social:instagram:handle}}'}</code> command.
+                                This displays as a clickable Instagram icon that links to the profile.
+                            </p>
+
+                            <div className="p-4 border border-current">
+                                <p className="text-sm font-mono mb-2">Example:</p>
+                                <code className="text-xs block">
+                                    {'{{social:instagram:myhandle}}'}
+                                </code>
+                            </div>
+
+                            <div className="mt-4 p-4 border border-current">
+                                <p className="text-sm font-mono mb-2">Renders as:</p>
+                                <div className="text-xs">
+                                    <p><a href="https://instagram.com/myhandle"><i className="fi fi-brands-instagram"></i></a> (clickable Instagram icon)</p>
+                                </div>
+                            </div>
+
+                            <div className="mt-4 p-4 border border-current">
+                                <p className="text-sm font-mono mb-2">Example:</p>
+                                <code className="text-xs block">
+                                    Today&apos;s guest is John Doe{'{{newline}}'}Find them on Instagram: {'{{social:instagram:johndoe}}'}
+                                </code>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-
-
-                {/* Future Sections */}
-                <section className="border border-current p-6 opacity-50">
-                    <h2 className="text-2xl mb-4 font-[family-name:var(--font-monument-wide)]">Coming Soon</h2>
-                    <p className="text-sm">
-                        Additional documentation will be added here as new features are implemented.
-                    </p>
-                </section>
             </div>
         </div>
     )

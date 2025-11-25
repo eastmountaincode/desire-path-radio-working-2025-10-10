@@ -10,6 +10,7 @@ export interface Message {
   userId: string
   username: string
   message: string
+  timestamp?: string
 }
 
 interface ChatContextType {

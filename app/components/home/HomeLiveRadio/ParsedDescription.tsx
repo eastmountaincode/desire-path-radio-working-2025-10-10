@@ -6,6 +6,7 @@
  *
  * Currently supported commands:
  * - {{newline}} - inserts a paragraph break (two line breaks)
+ * - {{social:instagram:handle}} - inserts an Instagram link
  *
  * Future commands can be added to the switch statement below.
  */
@@ -13,6 +14,18 @@
 interface ParsedDescriptionProps {
     text: string
     className?: string
+}
+
+// Helper function to generate social media URLs
+function getSocialUrl(platform: string, handle: string): string | null {
+    // Remove @ if present
+    const cleanHandle = handle.replace(/^@/, '')
+
+    if (platform === 'instagram') {
+        return `https://instagram.com/${cleanHandle}`
+    }
+
+    return null
 }
 
 export default function ParsedDescription({ text, className }: ParsedDescriptionProps) {
@@ -26,9 +39,34 @@ export default function ParsedDescription({ text, className }: ParsedDescription
         const commandMatch = part.match(/^{{(.+)}}$/)
 
         if (commandMatch) {
-            const command = commandMatch[1].toLowerCase().trim()
+            const commandText = commandMatch[1].toLowerCase().trim()
 
-            switch (command) {
+            // Check for social command pattern: social:platform:handle
+            const socialMatch = commandText.match(/^social:([^:]+):(.+)$/)
+
+            if (socialMatch) {
+                const platform = socialMatch[1].trim()
+                const handle = socialMatch[2].trim()
+                const url = getSocialUrl(platform, handle)
+
+                if (url) {
+                    return (
+                        <a
+                            key={index}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center hover:opacity-70"
+                        >
+                            <i className="fi fi-brands-instagram text-base"></i>
+                        </a>
+                    )
+                }
+                // If platform not recognized, return raw text
+                return part
+            }
+
+            switch (commandText) { 
                 case 'newline':
                     // Two line breaks for paragraph separation
                     return <span key={index}><br /><br /></span>
