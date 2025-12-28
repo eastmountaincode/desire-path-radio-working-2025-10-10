@@ -11,6 +11,7 @@ export interface Message {
   username: string
   message: string
   timestamp?: string
+  imageUrl?: string
 }
 
 interface ChatContextType {
@@ -24,10 +25,13 @@ interface ChatContextType {
   closeChat: () => void
   setScreenName: (name: string) => void
   switchChannel: (channel: Channel) => void
-  sendMessage: (message: string) => void
+  sendMessage: (message: string, imageUrl?: string) => void
+  uploadImage: (file: File) => Promise<string | null>
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
+
+const SCREEN_NAME_KEY = 'dpr_chat_screen_name'
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -40,6 +44,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const socketRef = useRef<Socket | null>(null)
+
+  // Load screen name from localStorage on mount
+  useEffect(() => {
+    const savedName = localStorage.getItem(SCREEN_NAME_KEY)
+    if (savedName) {
+      setScreenNameState(savedName)
+    }
+  }, [])
 
   // Connect to Socket.IO server once on mount
   useEffect(() => {
@@ -124,20 +136,53 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const setScreenName = (name: string) => {
     setScreenNameState(name)
+    localStorage.setItem(SCREEN_NAME_KEY, name)
   }
 
   const switchChannel = (channel: Channel) => {
     setActiveChannel(channel)
   }
 
-  const sendMessage = (message: string) => {
-    if (!socketRef.current || !screenName || !message.trim()) return
+  const sendMessage = (message: string, imageUrl?: string) => {
+    if (!socketRef.current || !screenName) return
+
+    const hasMessage = message && message.trim().length > 0
+    const hasImage = imageUrl && imageUrl.length > 0
+
+    if (!hasMessage && !hasImage) return
 
     socketRef.current.emit('send_message', {
       channel: activeChannel,
       username: screenName,
-      message: message.trim()
+      message: hasMessage ? message.trim() : '',
+      ...(hasImage && { imageUrl })
     })
+  }
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001'
+
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+
+      const response = await fetch(`${socketUrl}/upload`, {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        console.error('Upload error:', error.error)
+        return null
+      }
+
+      const data = await response.json()
+      return data.imageUrl
+    } catch (error) {
+      console.error('Upload failed:', error)
+      return null
+    }
   }
 
   return (
@@ -154,6 +199,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setScreenName,
         switchChannel,
         sendMessage,
+        uploadImage,
       }}
     >
       {children}

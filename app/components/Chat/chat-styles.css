@@ -238,3 +238,73 @@
 .dark .leaf-icon {
   filter: brightness(0) saturate(100%) invert(100%);
 }
+
+/* Chat Icons (local SVGs) */
+.chat-icon {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+}
+
+.dark .chat-icon {
+  filter: brightness(0) saturate(100%) invert(100%);
+}
+
+/* Image Upload Button */
+.chat-image-button {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  border: none;
+  cursor: pointer;
+}
+
+.dark .chat-image-button {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+}
+
+.chat-image-button:hover {
+  opacity: 0.8;
+}
+
+.chat-image-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Drag and Drop Overlay */
+.drag-over {
+  background-color: var(--color-grey2);
+  outline: 2px dashed var(--color-grey4);
+  outline-offset: -2px;
+}
+
+.dark .drag-over {
+  background-color: var(--color-grey5);
+  outline: 2px dashed var(--color-grey3);
+  outline-offset: -2px;
+}
+
+/* Input with selected image */
+.chat-input.has-image {
+  font-style: italic;
+}
+
+/* Message Images */
+.message-image-link {
+  display: block;
+  margin-top: 4px;
+}
+
+.message-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.message-image:hover {
+  opacity: 0.9;
+}

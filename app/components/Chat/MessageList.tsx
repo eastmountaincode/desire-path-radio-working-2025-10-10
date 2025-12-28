@@ -103,9 +103,13 @@ export default function MessageList() {
 
   const channelMessages = messages[activeChannel]
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    scrollToBottom()
   }, [channelMessages])
 
   return (
@@ -135,9 +139,26 @@ export default function MessageList() {
                 <div className={`message-username text-xs font-bold ${devMode ? 'border border-amber-500' : ''}`}>
                   {msg.username}
                 </div>
-                <div className={`message-text text-sm break-words ${devMode ? 'border border-rose-500' : ''}`}>
-                  {msg.message}
-                </div>
+                {msg.message && (
+                  <div className={`message-text text-sm break-words ${devMode ? 'border border-rose-500' : ''}`}>
+                    {msg.message}
+                  </div>
+                )}
+                {msg.imageUrl && (
+                  <a
+                    href={`${process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001'}${msg.imageUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="message-image-link"
+                  >
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001'}${msg.imageUrl}`}
+                      alt="uploaded image"
+                      className="message-image"
+                      onLoad={scrollToBottom}
+                    />
+                  </a>
+                )}
                 {msg.timestamp && (
                   <div className={`message-timestamp text-xs opacity-60 ${devMode ? 'border border-blue-500' : ''}`}>
                     {formatTimestamp(msg.timestamp)}
