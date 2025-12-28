@@ -161,7 +161,7 @@ export default function ChatButton() {
 
           {selectedFile ? (
             // Image selected - show filename with X to clear
-            <div className={`chat-input flex-1 px-3 py-2 flex items-center gap-2 min-w-0 overflow-hidden ${devMode ? 'border border-blue-500' : ''}`}>
+            <div className={`chat-input flex-1 min-w-0 px-3 py-2 flex items-center gap-2 overflow-hidden ${devMode ? 'border border-blue-500' : ''}`}>
               <span className="text-sm opacity-70 truncate">{selectedFile.name}</span>
               <button
                 type="button"
@@ -182,14 +182,14 @@ export default function ChatButton() {
               placeholder={isDragOver ? 'Drop image here...' : 'type message...'}
               disabled={!screenName || isUploading}
               maxLength={MAX_MESSAGE_LENGTH}
-              className={`chat-input flex-1 px-3 py-2 outline-none max-md:px-2 ${devMode ? 'border border-blue-500' : ''}`}
+              className={`chat-input flex-1 min-w-0 px-3 py-2 outline-none max-md:px-2 ${devMode ? 'border border-blue-500' : ''}`}
             />
           )}
 
           <button
             type="submit"
             disabled={!screenName || isUploading}
-            className={`chat-submit-button px-4 cursor-pointer flex items-center border-l max-md:px-3 ${devMode ? 'border border-green-500' : ''}`}
+            className={`chat-submit-button px-4 cursor-pointer flex items-center border-l flex-shrink-0 max-md:px-3 ${devMode ? 'border border-green-500' : ''}`}
             aria-label={isUploading ? 'Uploading...' : 'Send message'}
           >
             {isUploading ? (
@@ -202,7 +202,7 @@ export default function ChatButton() {
       )}
       <button
         onClick={handleToggleChat}
-        className={`chat-toggle-button flex items-center gap-2 px-4 py-2 cursor-pointer max-md:px-3 ${isOpen ? 'border-l' : ''} ${devMode ? 'border border-purple-500' : ''}`}
+        className={`chat-toggle-button flex items-center gap-2 px-4 py-2 cursor-pointer flex-shrink-0 max-md:px-3 ${isOpen ? 'border-l' : ''} ${devMode ? 'border border-purple-500' : ''}`}
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         <i className={`fi fi-tr-messages text-lg translate-y-[1px] ${devMode ? 'border border-pink-500' : ''}`}></i>
