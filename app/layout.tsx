@@ -9,12 +9,34 @@ import { ChatProvider } from "./components/Chat/ChatProvider";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
-  title: "DPR",
-  description: "Desire Path Radio",
+  title: {
+    default: "Desire Path Radio | Underground Music & Talks from New York",
+    template: "%s | Desire Path Radio",
+  },
+  description:
+    "Desire Path Radio is a New York-based online radio station featuring music from the underground, education, documentary, experimental, archival from the field. Tune in for curated sounds and community-driven programming.",
+  keywords: [
+    "Desire Path Radio",
+    "DPR",
+    "online radio",
+    "underground music",
+    "New York radio",
+    "DJ sets",
+    "live music",
+    "internet radio",
+  ],
+  authors: [{ name: "Desire Path Radio" }],
+  creator: "Desire Path Radio",
+  metadataBase: new URL("https://www.desirepathradio.com"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "DPR",
-    description: "Desire Path Radio",
-    siteName: "DPR",
+    title: "Desire Path Radio | Underground Music & Talks from New York",
+    description:
+      "New York-based online radio station featuring underground music, DJ sets, live performances, and talks.",
+    siteName: "Desire Path Radio",
+    url: "https://www.desirepathradio.com",
     images: [
       {
         url: "/DPR_Opengraph_orange_and_green.jpg",
@@ -28,9 +50,21 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "DPR",
-    description: "Desire Path Radio",
+    title: "Desire Path Radio | Underground Music & Talks from New York",
+    description:
+      "New York-based online radio station featuring underground music, DJ sets, live performances, and talks.",
     images: ["/DPR_Opengraph_orange_and_green.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -43,6 +77,27 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-thin-rounded/css/uicons-thin-rounded.css" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "RadioStation",
+              name: "Desire Path Radio",
+              alternateName: "DPR",
+              url: "https://www.desirepathradio.com",
+              logo: "https://www.desirepathradio.com/DPR_Opengraph_orange_and_green.jpg",
+              description:
+                "New York-based online radio station featuring underground music, DJ sets, live performances, and talks.",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "New York",
+                addressCountry: "US",
+              },
+              sameAs: ["https://www.instagram.com/desirepathradio"],
+            }),
+          }}
+        />
       </head>
       <body className="antialiased">
         <DevModeProvider>
