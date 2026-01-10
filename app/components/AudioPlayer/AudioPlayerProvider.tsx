@@ -278,6 +278,75 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         }
     }, [currentEpisode])
 
+    // Media Session API for lock screen / control center artwork
+    useEffect(() => {
+        if (!('mediaSession' in navigator)) return
+
+        // Only set metadata when we have something playing
+        if (mode === null) {
+            // Clear metadata when stopped
+            navigator.mediaSession.metadata = null
+            return
+        }
+
+        const artwork = [
+            { src: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+            { src: '/web-app-manifest-192x192.png', sizes: '192x192', type: 'image/png' },
+            { src: '/web-app-manifest-512x512.png', sizes: '512x512', type: 'image/png' },
+            { src: '/artwork-1400x1400.png', sizes: '1400x1400', type: 'image/png' },
+        ]
+
+        if (mode === 'archive' && currentEpisode) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: currentEpisode.title,
+                artist: currentEpisode.hosts || 'Desire Path Radio',
+                album: 'Desire Path Radio',
+                artwork,
+            })
+        } else if (mode === 'live' && liveStreamData) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: liveStreamData.name || 'Live',
+                artist: liveStreamData.description || 'Desire Path Radio',
+                album: 'Desire Path Radio - Live',
+                artwork,
+            })
+        }
+
+        // Set up action handlers
+        navigator.mediaSession.setActionHandler('play', () => {
+            resume()
+        })
+        navigator.mediaSession.setActionHandler('pause', () => {
+            pause()
+        })
+
+        // Seek handlers only for archive mode
+        if (mode === 'archive') {
+            navigator.mediaSession.setActionHandler('seekbackward', () => {
+                if (audioRef.current) {
+                    seek(Math.max(0, audioRef.current.currentTime - 15))
+                }
+            })
+            navigator.mediaSession.setActionHandler('seekforward', () => {
+                if (audioRef.current) {
+                    seek(audioRef.current.currentTime + 15)
+                }
+            })
+        } else {
+            // Remove seek handlers for live streams
+            navigator.mediaSession.setActionHandler('seekbackward', null)
+            navigator.mediaSession.setActionHandler('seekforward', null)
+        }
+
+        return () => {
+            // Clean up action handlers
+            navigator.mediaSession.setActionHandler('play', null)
+            navigator.mediaSession.setActionHandler('pause', null)
+            navigator.mediaSession.setActionHandler('seekbackward', null)
+            navigator.mediaSession.setActionHandler('seekforward', null)
+        }
+    }, [mode, currentEpisode, liveStreamData])
+
     return (
         <AudioPlayerContext.Provider
             value={{
