@@ -10,7 +10,7 @@ import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: {
-    default: "Desire Path Radio | Underground Music & Talks from New York",
+    default: "Desire Path Radio",
     template: "%s | Desire Path Radio",
   },
   description:
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Desire Path Radio | Underground Music & Talks from New York",
+    title: "Desire Path Radio",
     description:
       "New York-based online radio station featuring underground music, DJ sets, live performances, and talks.",
     siteName: "Desire Path Radio",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Desire Path Radio | Underground Music & Talks from New York",
+    title: "Desire Path Radio",
     description:
       "New York-based online radio station featuring underground music, DJ sets, live performances, and talks.",
     images: ["/DPR_Opengraph_orange_and_green.jpg"],
