@@ -87,7 +87,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className={`footer-link ${devMode ? 'border border-green-500' : ''}`}
                 >
-                    donate
+                    support
                 </a>
                 <a
                     href="mailto:info@desirepathradio.com"
