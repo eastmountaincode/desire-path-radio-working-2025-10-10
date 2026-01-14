@@ -84,6 +84,14 @@ export default function Header() {
                         >
                             <span className="invisible group-hover:visible">[</span>shop<span className="invisible group-hover:visible">]</span>
                         </a>
+                        <a
+                            href="https://www.gofundme.com/f/desire-path-radio"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group"
+                        >
+                            <span className="invisible group-hover:visible">[</span>support<span className="invisible group-hover:visible">]</span>
+                        </a>
                     </nav>
                 </div>
 
@@ -143,6 +151,15 @@ export default function Header() {
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
                         <span className="invisible group-hover:visible">[</span>shop<span className="invisible group-hover:visible">]</span>
+                    </a>
+                    <a
+                        href="https://www.gofundme.com/f/desire-path-radio"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        <span className="invisible group-hover:visible">[</span>support<span className="invisible group-hover:visible">]</span>
                     </a>
                 </nav>
             )}
