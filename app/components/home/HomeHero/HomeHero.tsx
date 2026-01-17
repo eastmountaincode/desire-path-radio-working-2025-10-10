@@ -16,11 +16,12 @@ export default function HomeHero() {
 
                 <div className="h-4" />
 
-                {/* DPR Logo */}
+                {/* Logo */}
                 <div className={`mb-8 flex justify-end ${devMode ? 'border border-pink-500' : ''}`}>
+                    <h1 className="sr-only">Desire Path Radio</h1>
                     <img
                         src="/images/logo/DPR_LOGO.svg"
-                        alt="DPR Logo"
+                        alt="Desire Path Radio"
                         className="h-[107px] md:h-[164px] w-auto dpr-logo"
                     />
                 </div>

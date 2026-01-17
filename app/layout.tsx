@@ -17,7 +17,6 @@ export const metadata: Metadata = {
     "Desire Path Radio is a New York-based online radio station featuring music from the underground, education, documentary, experimental, archival from the field. Tune in for curated sounds and community-driven programming.",
   keywords: [
     "Desire Path Radio",
-    "DPR",
     "online radio",
     "underground music",
     "New York radio",
@@ -84,7 +83,6 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "RadioStation",
               name: "Desire Path Radio",
-              alternateName: "DPR",
               url: "https://desirepathradio.com",
               logo: "https://desirepathradio.com/DPR_Opengraph_orange_and_green.jpg",
               description:
