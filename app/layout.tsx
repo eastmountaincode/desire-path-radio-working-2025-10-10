@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Desire Path Radio" }],
   creator: "Desire Path Radio",
-  metadataBase: new URL("https://www.desirepathradio.com"),
+  metadataBase: new URL("https://desirepathradio.com"),
   alternates: {
     canonical: "/",
   },
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     description:
       "New York-based online radio station featuring underground music, DJ sets, live performances, and talks.",
     siteName: "Desire Path Radio",
-    url: "https://www.desirepathradio.com",
+    url: "https://desirepathradio.com",
     images: [
       {
         url: "/DPR_Opengraph_orange_and_green.jpg",
@@ -85,8 +85,8 @@ export default function RootLayout({
               "@type": "RadioStation",
               name: "Desire Path Radio",
               alternateName: "DPR",
-              url: "https://www.desirepathradio.com",
-              logo: "https://www.desirepathradio.com/DPR_Opengraph_orange_and_green.jpg",
+              url: "https://desirepathradio.com",
+              logo: "https://desirepathradio.com/DPR_Opengraph_orange_and_green.jpg",
               description:
                 "New York-based online radio station featuring underground music, DJ sets, live performances, and talks.",
               address: {
