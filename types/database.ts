@@ -47,6 +47,11 @@ export interface ComingUpText {
   content: string
 }
 
+export interface AboutText {
+  id: number
+  content: string
+}
+
 export interface EpisodeHighlight {
   id: number
   episode_id: number
@@ -93,6 +98,11 @@ export interface Database {
         Row: ComingUpText
         Insert: Omit<ComingUpText, 'id'>
         Update: Partial<Omit<ComingUpText, 'id'>>
+      }
+      about_text: {
+        Row: AboutText
+        Insert: Omit<AboutText, 'id'>
+        Update: Partial<Omit<AboutText, 'id'>>
       }
       episode_highlights: {
         Row: EpisodeHighlight

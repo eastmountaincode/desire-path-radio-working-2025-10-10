@@ -76,6 +76,13 @@ CREATE TABLE coming_up_text (
     content TEXT NOT NULL
 );
 
+-- About Text
+-- Stores the markdown content for the /about page
+CREATE TABLE about_text (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL
+);
+
 -- Schedule Images
 -- Stores uploaded schedule images
 CREATE TABLE schedule_image (

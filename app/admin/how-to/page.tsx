@@ -19,7 +19,7 @@ export default async function HowToPage() {
             <div className="space-y-8">
                 {/* Description Formatting */}
                 <section className="border border-current p-6">
-                    <h2 className="text-2xl mb-4 font-[family-name:var(--font-monument-wide)]">Live RadioDescription Formatting</h2>
+                    <h2 className="text-2xl mb-4 font-[family-name:var(--font-monument-wide)]">Live Radio Description Formatting</h2>
 
                     <div className="space-y-4">
                         <div>
