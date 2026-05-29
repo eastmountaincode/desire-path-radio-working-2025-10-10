@@ -1,5 +1,43 @@
 /* Live Channel Styles */
 
+.live-radio-display {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.channel-indicators {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.channel-indicator {
+    width: max-content;
+    border: 1px solid currentColor;
+    padding: 0.18rem 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0;
+    color: var(--color-grey6);
+    background: transparent;
+}
+
+.dark .channel-indicator {
+    color: var(--color-grey1);
+}
+
+.channel-indicator.active {
+    border-color: var(--color-brand-dpr-orange);
+    background: var(--color-brand-dpr-orange);
+    color: var(--color-grey6);
+}
+
 .live-channel-container {
     background: radial-gradient(circle at center, #ADADAD, var(--color-grey1));
 }
@@ -92,3 +130,19 @@
     line-height: 1.5;
 }
 
+@media (min-width: 768px) {
+    .live-radio-display {
+        display: grid;
+        grid-template-columns: max-content minmax(560px, 640px);
+        justify-content: center;
+        align-items: center;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 2rem;
+    }
+
+    .channel-indicators {
+        flex-direction: column;
+        align-self: center;
+    }
+}

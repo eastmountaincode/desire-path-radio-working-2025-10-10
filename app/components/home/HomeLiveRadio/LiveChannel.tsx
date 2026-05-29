@@ -9,24 +9,36 @@ import PlayPauseButton from '../../PlayPauseButton/PlayPauseButton'
 import ParsedDescription from './ParsedDescription'
 
 interface LiveChannelProps {
-    channelNumber: 'ch1' | 'ch2'
-    channelType: string
     devState: ChannelState
     stationSlug: string
 }
 
-export default function LiveChannel({ channelNumber, channelType, devState, stationSlug }: LiveChannelProps) {
+type DisplayChannel = '1' | '2'
+
+function parseChannelTag(description: string): {
+    displayChannel: DisplayChannel | null
+    cleanedDescription: string
+} {
+    const channelMatch = description.match(/{{\s*channel\s*:\s*([12])\s*}}/i)
+
+    return {
+        displayChannel: channelMatch ? channelMatch[1] as DisplayChannel : null,
+        cleanedDescription: description.replace(/{{\s*channel\s*:\s*[12]\s*}}/gi, '').trim(),
+    }
+}
+
+export default function LiveChannel({ devState, stationSlug }: LiveChannelProps) {
     const devMode = useDevMode()
-    const { mode, liveChannel, playLiveChannel, preloadLiveChannel, pause, isPlaying: audioPlayerIsPlaying, isLoading } = useAudioPlayer()
+    const { mode, liveStream, playLiveStream, preloadLiveStream, pause, isPlaying: audioPlayerIsPlaying, isLoading } = useAudioPlayer()
 
     const [streamData, setStreamData] = useState<EveningsStreamData | null>(null)
     const [error, setError] = useState<string | null>(null)
 
-    // Check if this specific channel is currently playing in the audio player
-    const isThisChannelPlaying = mode === 'live' && liveChannel?.channelNumber === channelNumber && audioPlayerIsPlaying
+    // Check if this live stream is currently playing in the audio player
+    const isThisChannelPlaying = mode === 'live' && liveStream?.stationSlug === stationSlug && audioPlayerIsPlaying
 
-    // Check if this specific channel is currently loading
-    const isThisChannelLoading = mode === 'live' && liveChannel?.channelNumber === channelNumber && isLoading
+    // Check if this live stream is currently loading
+    const isThisChannelLoading = mode === 'live' && liveStream?.stationSlug === stationSlug && isLoading
 
     // Fetch stream data only when in 'live' state
     useEffect(() => {
@@ -34,11 +46,10 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
             try {
                 setError(null)
                 const data = await fetchStreamData(stationSlug)
-                console.log(`[${channelNumber}] Stream data loaded:`, data)
                 setStreamData(data)
             } catch (err) {
                 setError('Failed to load stream')
-                console.error(`[${channelNumber}] Error loading stream data:`, err)
+                console.error('Error loading stream data:', err)
             }
         }
 
@@ -57,14 +68,14 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
             // Reset stream data for other states
             setStreamData(null)
         }
-    }, [stationSlug, devState, channelNumber])
+    }, [stationSlug, devState])
 
     // Preload stream when it becomes available (for faster playback)
     useEffect(() => {
         if (devState === 'live' && streamData?.online && streamData?.streamUrl) {
-            preloadLiveChannel(channelNumber, stationSlug, streamData.streamUrl)
+            preloadLiveStream(stationSlug, streamData.streamUrl)
         }
-    }, [devState, streamData?.online, streamData?.streamUrl, channelNumber, stationSlug, preloadLiveChannel])
+    }, [devState, streamData?.online, streamData?.streamUrl, stationSlug, preloadLiveStream])
 
     // Stop playback when stream goes offline
     useEffect(() => {
@@ -89,12 +100,14 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
                     online: true,
                     name: 'Mock Show',
                     streamUrl: 'https://stream.example.com/mock',
-                    description: 'Mock description',
-                    image: 'https://placehold.co/600x600/CCCCCC/666666?text=Mock'
+                    description: 'Mock description {{channel:1}}',
                   }
                 : streamData!
 
-            playLiveChannel(channelNumber, channelType, stationSlug, dataToPlay)
+            const { displayChannel } = parseChannelTag(dataToPlay.description || '')
+            const channelLabel = displayChannel ? `CHANNEL ${displayChannel}` : ''
+
+            playLiveStream(channelLabel, stationSlug, dataToPlay)
         }
     }
 
@@ -104,81 +117,86 @@ export default function LiveChannel({ channelNumber, channelType, devState, stat
     // Mock show data for mock dev state only
     const mockShow = {
         title: 'Saving the Old Growth Forest',
-        description: 'Luis Hernandez, Urban Planner / Oregon, Pacific Northwest | April 18, 2025{{newline}}{{social:instagram:luishernandez}}',
-        imageUrl: 'https://placehold.co/600x600/CCCCCC/666666?text=Show+Image'
+        description: 'Luis Hernandez, Urban Planner / Oregon, Pacific Northwest | April 18, 2025 {{channel:1}}{{newline}}{{social:instagram:luishernandez}}',
+        imageUrl: ''
     }
 
     // Use real data in live state, mock data in mock state
     const showTitle = devState === 'mock' ? mockShow.title : (streamData?.name || '')
     const showDescription = devState === 'mock' ? mockShow.description : (streamData?.description || '')
-    const showImage = devState === 'mock' ? mockShow.imageUrl : (streamData?.image || 'https://placehold.co/600x600/CCCCCC/666666?text=Show+Image')
+    const showImage = devState === 'mock' ? mockShow.imageUrl : (streamData?.image || '')
+    const { displayChannel, cleanedDescription } = parseChannelTag(showDescription)
 
     return (
-        <div className={`live-channel-container ${isStreamOnline ? 'live-active' : ''} w-full min-h-[300px] rounded-lg p-3 flex flex-col ${devMode ? 'border border-green-500' : ''}`}>
-            {/* Channel header */}
-            <div className={`flex items-center gap-2 mb-2 ${devMode ? 'border border-yellow-500' : ''}`}>
-                {isStreamOnline && <div className="live-indicator-dot"></div>}
-                <div className="text-sm font-mono">
-                    {channelNumber.toUpperCase()}: {channelType.charAt(0).toUpperCase() + channelType.slice(1)}
+        <div className={`live-radio-display ${devMode ? 'border border-green-500' : ''}`}>
+            <div className={`channel-indicators ${devMode ? 'border border-yellow-500' : ''}`} aria-label="Live channel indicator">
+                <div className={`channel-indicator ${displayChannel === '1' ? 'active' : ''}`}>
+                    CHANNEL 1
+                </div>
+                <div className={`channel-indicator ${displayChannel === '2' ? 'active' : ''}`}>
+                    CHANNEL 2
                 </div>
             </div>
 
-            {/* Conditional rendering based on stream status */}
-            {!isStreamOnline ? (
-                <div className={`flex-1 flex flex-col items-center justify-center gap-3 ${devMode ? 'border border-blue-500' : ''}`}>
-                    <i className="fi fi-ts-hand-dots text-2xl live-channel-inactive-icon"></i>
-                    <p className="text-sm live-channel-inactive-text">
-                        {error ? error : 'not live at the moment'}
-                    </p>
-                </div>
-            ) : (
-                <div className={`flex-1 flex flex-col md:flex-row gap-4 min-h-0 p-3 ${devMode ? 'border border-blue-500' : ''}`}>
-                    {/* Show image - square aspect on mobile, fixed width on desktop */}
-                    <div className={`relative w-full md:w-48 md:flex-shrink-0 aspect-square md:aspect-auto overflow-hidden ${devMode ? 'border border-red-500' : ''}`}>
-                        <img
-                            src={showImage}
-                            alt={showTitle}
-                            className="w-full h-auto object-contain"
-                        />
+            <div className={`live-channel-container ${isStreamOnline ? 'live-active' : ''} w-full min-h-[300px] rounded-lg p-3 flex flex-col ${devMode ? 'border border-green-500' : ''}`}>
+                {/* Conditional rendering based on stream status */}
+                {!isStreamOnline ? (
+                    <div className={`flex-1 flex flex-col items-center justify-center gap-3 ${devMode ? 'border border-blue-500' : ''}`}>
+                        <i className="fi fi-ts-hand-dots text-2xl live-channel-inactive-icon"></i>
+                        <p className="text-sm live-channel-inactive-text">
+                            {error ? error : 'not live at the moment'}
+                        </p>
                     </div>
+                ) : (
+                    <div className={`flex-1 flex flex-col md:flex-row gap-4 min-h-0 p-3 ${devMode ? 'border border-blue-500' : ''}`}>
+                        {showImage && (
+                            <div className={`relative w-full md:w-48 md:flex-shrink-0 aspect-square md:aspect-auto overflow-hidden ${devMode ? 'border border-red-500' : ''}`}>
+                                <img
+                                    src={showImage}
+                                    alt={showTitle}
+                                    className="w-full h-auto object-contain"
+                                />
+                            </div>
+                        )}
 
-                    {/* Content container for title, description, and button */}
-                    <div className={`flex flex-col gap-4 flex-1 min-w-0 ${devMode ? 'border border-cyan-500' : ''}`}>
-                        {/* Show info */}
-                        <div className={`flex flex-col gap-1 flex-shrink-0 ${devMode ? 'border border-purple-500' : ''}`}>
-                            <h3 className="live-show-title text-lg">{showTitle}</h3>
-                            <ParsedDescription
-                                text={showDescription}
-                                className="live-show-info text-sm"
-                            />
-                        </div>
+                        {/* Content container for title, description, and button */}
+                        <div className={`flex flex-col gap-4 flex-1 min-w-0 ${devMode ? 'border border-cyan-500' : ''}`}>
+                            {/* Show info */}
+                            <div className={`flex flex-col gap-1 flex-shrink-0 ${devMode ? 'border border-purple-500' : ''}`}>
+                                <h3 className="live-show-title text-lg">{showTitle}</h3>
+                                <ParsedDescription
+                                    text={cleanedDescription}
+                                    className="live-show-info text-sm"
+                                />
+                            </div>
 
-                        {/* Play/Pause Button */}
-                        <div className={`${devMode ? 'border border-orange-500' : ''}`}>
-                            <button
-                                onClick={togglePlay}
-                                className={`live-channel-play-button ${devMode ? 'border border-cyan-500' : ''}`}
-                                aria-label={isThisChannelLoading ? 'Loading' : (isThisChannelPlaying ? 'Pause' : 'Play')}
-                                disabled={isThisChannelLoading}
-                            >
-                                {isThisChannelLoading ? (
-                                    <>
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className={`animate-spin ${devMode ? 'border border-red-500' : ''}`}>
-                                            <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.25" />
-                                            <path d="M8 2 A6 6 0 0 1 14 8" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                                        </svg>
-                                        <span className={`live-channel-play-text ${devMode ? 'border border-yellow-500' : ''}`}>Loading...</span>
-                                    </>
-                                ) : (
-                                    <div className={devMode ? 'border border-red-500' : ''}>
-                                        <PlayPauseButton isPlaying={isThisChannelPlaying} />
-                                    </div>
-                                )}
-                            </button>
+                            {/* Play/Pause Button */}
+                            <div className={`${devMode ? 'border border-orange-500' : ''}`}>
+                                <button
+                                    onClick={togglePlay}
+                                    className={`live-channel-play-button ${devMode ? 'border border-cyan-500' : ''}`}
+                                    aria-label={isThisChannelLoading ? 'Loading' : (isThisChannelPlaying ? 'Pause' : 'Play')}
+                                    disabled={isThisChannelLoading}
+                                >
+                                    {isThisChannelLoading ? (
+                                        <>
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className={`animate-spin ${devMode ? 'border border-red-500' : ''}`}>
+                                                <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.25" />
+                                                <path d="M8 2 A6 6 0 0 1 14 8" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                                            </svg>
+                                            <span className={`live-channel-play-text ${devMode ? 'border border-yellow-500' : ''}`}>Loading...</span>
+                                        </>
+                                    ) : (
+                                        <div className={devMode ? 'border border-red-500' : ''}>
+                                            <PlayPauseButton isPlaying={isThisChannelPlaying} />
+                                        </div>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     )
 }

@@ -83,6 +83,13 @@ CREATE TABLE about_text (
     content TEXT NOT NULL
 );
 
+-- Homepage Text
+-- Stores the introductory copy for the homepage hero
+CREATE TABLE homepage_text (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL
+);
+
 -- Schedule Images
 -- Stores uploaded schedule images
 CREATE TABLE schedule_image (
@@ -101,4 +108,3 @@ CREATE TABLE admin_logs (
     message TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
-

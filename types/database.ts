@@ -52,6 +52,11 @@ export interface AboutText {
   content: string
 }
 
+export interface HomepageText {
+  id: number
+  content: string
+}
+
 export interface EpisodeHighlight {
   id: number
   episode_id: number
@@ -104,6 +109,11 @@ export interface Database {
         Insert: Omit<AboutText, 'id'>
         Update: Partial<Omit<AboutText, 'id'>>
       }
+      homepage_text: {
+        Row: HomepageText
+        Insert: Omit<HomepageText, 'id'>
+        Update: Partial<Omit<HomepageText, 'id'>>
+      }
       episode_highlights: {
         Row: EpisodeHighlight
         Insert: Omit<EpisodeHighlight, 'id' | 'created_at'>
@@ -117,4 +127,3 @@ export interface Database {
     }
   }
 }
-

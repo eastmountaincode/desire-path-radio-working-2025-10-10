@@ -16,7 +16,7 @@ export default function AudioPlayer() {
     const {
         mode,
         currentEpisode,
-        liveChannel,
+        liveStream,
         isPlaying,
         isLoading,
         currentTime,
@@ -62,7 +62,7 @@ export default function AudioPlayer() {
             // Reset to 0 when component unmounts
             setAudioPlayerHeight(0)
         }
-    }, [setAudioPlayerHeight, currentEpisode, liveChannel])
+    }, [setAudioPlayerHeight, currentEpisode, liveStream])
 
     // Check if title is truncated
     useEffect(() => {
@@ -93,10 +93,9 @@ export default function AudioPlayer() {
 
                     // Get the actual text content
                     const isLive = mode === 'live'
-                    const channelText = liveChannel
-                        ? `${liveChannel.channelNumber.toUpperCase()}: ${liveChannel.channelType.charAt(0).toUpperCase() + liveChannel.channelType.slice(1)}`
-                        : ''
-                    const textContent = isLive ? `LIVE • ${channelText}` : currentEpisode?.title || ''
+                    const textContent = isLive
+                        ? liveStream?.label ? `LIVE • ${liveStream.label}` : 'LIVE'
+                        : currentEpisode?.title || ''
 
                     if (hasMarquee) {
                         // Element is already in marquee mode, measure the original text width
@@ -152,16 +151,14 @@ export default function AudioPlayer() {
             resizeObserver.disconnect()
             window.removeEventListener('resize', checkTruncation)
         }
-    }, [desktopTitleElement, mobileTitleElement, currentEpisode, liveChannel, mode])
+    }, [desktopTitleElement, mobileTitleElement, currentEpisode, liveStream, mode])
 
     // Don't render if nothing is loaded
-    if (!currentEpisode && !liveChannel) return null
+    if (!currentEpisode && !liveStream) return null
 
     // Determine display content based on mode
     const isLiveMode = mode === 'live'
-    const channelLabel = liveChannel
-        ? `${liveChannel.channelNumber.toUpperCase()}: ${liveChannel.channelType.charAt(0).toUpperCase() + liveChannel.channelType.slice(1)}`
-        : ''
+    const liveTitle = liveStream?.label ? `LIVE • ${liveStream.label}` : 'LIVE'
 
     const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
         // Don't handle clicks if we're dragging
@@ -262,7 +259,7 @@ export default function AudioPlayer() {
 
                     <AudioPlayerTitleDisplay
                         isLive={isLiveMode}
-                        title={isLiveMode ? `LIVE • ${channelLabel}` : currentEpisode?.title || ''}
+                        title={isLiveMode ? liveTitle : currentEpisode?.title || ''}
                         slug={currentEpisode?.slug}
                         isTruncated={isTruncated}
                         onRefCallback={setDesktopTitleElement}
@@ -355,7 +352,7 @@ export default function AudioPlayer() {
                 <div className={`flex flex-col gap-0 min-w-0 px-0 ${devMode ? 'border border-green-500' : ''}`}>
                     <AudioPlayerTitleDisplay
                         isLive={isLiveMode}
-                        title={isLiveMode ? `LIVE • ${channelLabel}` : currentEpisode?.title || ''}
+                        title={isLiveMode ? liveTitle : currentEpisode?.title || ''}
                         slug={currentEpisode?.slug}
                         isTruncated={isTruncated}
                         onRefCallback={setMobileTitleElement}
@@ -391,4 +388,3 @@ export default function AudioPlayer() {
         </div>
     )
 }
-

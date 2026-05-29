@@ -47,6 +47,33 @@ export default async function HowToPage() {
                             </div>
                         </div>
                         <div>
+                            <h3 className="text-lg mb-2 font-[family-name:var(--font-monument)]">Channel Indicators</h3>
+                            <p className="mb-2 text-sm">
+                                Add a channel tag to the Evenings.fm description when a live show should display
+                                the Channel 1 or Channel 2 indicator on the home page. The tag is only used by the
+                                website and will be hidden from the public description.
+                            </p>
+
+                            <div className="p-4 border border-current">
+                                <p className="text-sm font-mono mb-2">Examples:</p>
+                                <code className="text-xs block mb-1">
+                                    Today&apos;s live set description {'{{channel:1}}'}
+                                </code>
+                                <code className="text-xs block">
+                                    Today&apos;s live talk description {'{{channel:2}}'}
+                                </code>
+                            </div>
+
+                            <div className="mt-4 p-4 border border-current">
+                                <p className="text-sm font-mono mb-2">Behavior:</p>
+                                <p className="text-xs">
+                                    If the description does not include one of these tags, the show still plays normally
+                                    and both channel indicators appear unfilled. Use the tag to fill the correct channel
+                                    indicator with DPR orange.
+                                </p>
+                            </div>
+                        </div>
+                        <div>
                             <h3 className="text-lg mb-2 font-[family-name:var(--font-monument)]">Instagram Links</h3>
                             <p className="mb-2 text-sm">
                                 Add clickable Instagram links in your descriptions using the{' '}

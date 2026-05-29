@@ -17,10 +17,9 @@ interface AudioPlayerContextType {
         hosts?: string
     } | null
 
-    // Live channel info (for live mode)
-    liveChannel: {
-        channelNumber: 'ch1' | 'ch2'
-        channelType: string
+    // Live stream info (for live mode)
+    liveStream: {
+        label: string
         stationSlug: string
     } | null
     liveStreamData: EveningsStreamData | null
@@ -41,14 +40,12 @@ interface AudioPlayerContextType {
         imageUrl?: string
         hosts?: string
     }) => void
-    playLiveChannel: (
-        channelNumber: 'ch1' | 'ch2',
-        channelType: string,
+    playLiveStream: (
+        label: string,
         stationSlug: string,
         streamData: EveningsStreamData
     ) => void
-    preloadLiveChannel: (
-        channelNumber: 'ch1' | 'ch2',
+    preloadLiveStream: (
         stationSlug: string,
         streamUrl: string
     ) => void
@@ -67,7 +64,7 @@ const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(und
 export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     const [mode, setMode] = useState<'archive' | 'live' | null>(null)
     const [currentEpisode, setCurrentEpisode] = useState<AudioPlayerContextType['currentEpisode']>(null)
-    const [liveChannel, setLiveChannel] = useState<AudioPlayerContextType['liveChannel']>(null)
+    const [liveStream, setLiveStream] = useState<AudioPlayerContextType['liveStream']>(null)
     const [liveStreamData, setLiveStreamData] = useState<EveningsStreamData | null>(null)
     const [isPlaying, setIsPlaying] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -76,7 +73,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     const [volume, setVolumeState] = useState(1)
 
     const audioRef = useRef<HTMLAudioElement>(null)
-    const preloadedChannelRef = useRef<{ channelNumber: string; stationSlug: string; streamUrl: string } | null>(null)
+    const preloadedStreamRef = useRef<{ stationSlug: string; streamUrl: string } | null>(null)
     const playCountTrackedRef = useRef<number | null>(null) // Track which episode ID has been counted
 
     // Play a new episode (archive mode)
@@ -86,7 +83,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         // Switch to archive mode
         setMode('archive')
         setCurrentEpisode(episode)
-        setLiveChannel(null)
+        setLiveStream(null)
         setLiveStreamData(null)
         setIsPlaying(true)
 
@@ -97,9 +94,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    // Preload a live channel (buffer without playing)
-    const preloadLiveChannel = (
-        channelNumber: 'ch1' | 'ch2',
+    // Preload the live stream (buffer without playing)
+    const preloadLiveStream = (
         stationSlug: string,
         streamUrl: string
     ) => {
@@ -116,25 +112,23 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         if (!isCurrentlyPlayingOrLoading && !isSameStream) {
             audio.src = streamUrl
             audio.load()
-            preloadedChannelRef.current = { channelNumber, stationSlug, streamUrl }
+            preloadedStreamRef.current = { stationSlug, streamUrl }
         }
     }
 
-    // Play a live channel (live mode)
-    const playLiveChannel = async (
-        channelNumber: 'ch1' | 'ch2',
-        channelType: string,
+    // Play the live stream (live mode)
+    const playLiveStream = async (
+        label: string,
         stationSlug: string,
         streamData: EveningsStreamData
     ) => {
         if (!streamData.streamUrl || !audioRef.current) return
 
         const audio = audioRef.current
-        console.log(`[${channelNumber}] playLiveChannel called, streamUrl:`, streamData.streamUrl)
 
         // Switch to live mode immediately (for UI responsiveness)
         setMode('live')
-        setLiveChannel({ channelNumber, channelType, stationSlug })
+        setLiveStream({ label, stationSlug })
         setLiveStreamData(streamData)
         setCurrentEpisode(null)
         setIsLoading(true)
@@ -142,23 +136,19 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
 
         // Check if we need to set a new source
         const needsNewSource = audio.src !== streamData.streamUrl
-        console.log(`[${channelNumber}] needsNewSource:`, needsNewSource, 'current src:', audio.src)
 
         if (needsNewSource) {
             // Set the new source
             audio.src = streamData.streamUrl
-            console.log(`[${channelNumber}] Setting new source, waiting for canplay...`)
 
             // Wait for the audio to be ready to play
             await new Promise<void>((resolve, reject) => {
                 const onCanPlay = () => {
-                    console.log(`[${channelNumber}] canplay event fired`)
                     audio.removeEventListener('canplay', onCanPlay)
                     audio.removeEventListener('error', onError)
                     resolve()
                 }
                 const onError = (e: Event) => {
-                    console.log(`[${channelNumber}] error event fired:`, e)
                     audio.removeEventListener('canplay', onCanPlay)
                     audio.removeEventListener('error', onError)
                     reject(e)
@@ -170,13 +160,11 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            console.log(`[${channelNumber}] Calling play()...`)
             await audio.play()
-            console.log(`[${channelNumber}] play() succeeded`)
             setIsLoading(false)
             setIsPlaying(true)
         } catch (err) {
-            console.error(`[${channelNumber}] Error playing live channel:`, err)
+            console.error('Error playing live stream:', err)
             setIsLoading(false)
             setIsPlaying(false)
         }
@@ -200,7 +188,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         setIsLoading(false)
         setMode(null)
         setCurrentEpisode(null)
-        setLiveChannel(null)
+        setLiveStream(null)
         setLiveStreamData(null)
         setCurrentTime(0)
         if (audioRef.current) {
@@ -352,7 +340,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
             value={{
                 mode,
                 currentEpisode,
-                liveChannel,
+                liveStream,
                 liveStreamData,
                 isPlaying,
                 isLoading,
@@ -360,8 +348,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
                 duration,
                 volume,
                 play,
-                playLiveChannel,
-                preloadLiveChannel,
+                playLiveStream,
+                preloadLiveStream,
                 pause,
                 resume,
                 stop,
@@ -384,4 +372,3 @@ export function useAudioPlayer() {
     }
     return context
 }
-

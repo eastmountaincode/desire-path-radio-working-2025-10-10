@@ -1,12 +1,39 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { useDevMode } from '../../DevModeProvider'
 import DesirePathAnimation from './DesirePathAnimation'
+import { DEFAULT_HOMEPAGE_TEXT, getHomepageParagraphs } from '@/lib/homepage'
 import './home-hero-styles.css'
 
 export default function HomeHero() {
     const devMode = useDevMode()
+    const [homepageText, setHomepageText] = useState(DEFAULT_HOMEPAGE_TEXT)
+
+    useEffect(() => {
+        let isMounted = true
+
+        async function fetchHomepageText() {
+            try {
+                const response = await fetch('/api/homepage-text')
+                if (!response.ok) return
+
+                const data = await response.json()
+                if (isMounted && typeof data.text === 'string' && data.text.trim()) {
+                    setHomepageText(data.text)
+                }
+            } catch (error) {
+                console.error('Failed to fetch homepage text:', error)
+            }
+        }
+
+        fetchHomepageText()
+
+        return () => {
+            isMounted = false
+        }
+    }, [])
 
     return (
         <section className={`relative overflow-hidden ${devMode ? 'border border-green-500' : ''}`}>
@@ -29,12 +56,14 @@ export default function HomeHero() {
                 {/* About Text - Two columns on desktop, one on mobile */}
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-start ${devMode ? 'border border-yellow-500' : ''}`}>
                     <div className="space-y-6">
-                        <p className={`home-hero-about-text ${devMode ? 'border border-orange-500' : ''}`}>
-                            Exploratory programming where nature meets culture, for the outdoor community and beyond. Based in New York, streaming earth-wide.
-                        </p>
-                        <p className={`home-hero-about-text ${devMode ? 'border border-orange-500' : ''}`}>
-                            Music from the underground. Talk, education, documentary, experimental, archival from the field.
-                        </p>
+                        {getHomepageParagraphs(homepageText).map((paragraph, index) => (
+                            <p
+                                key={`${paragraph}-${index}`}
+                                className={`home-hero-about-text ${devMode ? 'border border-orange-500' : ''}`}
+                            >
+                                {paragraph}
+                            </p>
+                        ))}
                         <div className={`flex flex-col gap-1 items-start ${devMode ? 'border border-purple-500' : ''}`}>
                             <Link href="/submit-show-proposal" className={`flex gap-1 home-hero-link no-underline ${devMode ? 'border border-red-500' : ''}`}>
                                 <span className={devMode ? 'border border-green-500' : ''}>submit a show proposal</span> <i className={`fi fi-ts-arrow-small-right home-hero-link-arrow ${devMode ? 'border border-blue-500' : ''}`}></i>
@@ -47,4 +76,3 @@ export default function HomeHero() {
         </section>
     )
 }
-

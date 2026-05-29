@@ -7,6 +7,7 @@
  * Currently supported commands:
  * - {{newline}} - inserts a paragraph break (two line breaks)
  * - {{social:instagram:handle}} - inserts an Instagram link
+ * - {{channel:1}} / {{channel:2}} - handled before rendering and hidden from the visible text
  *
  * Future commands can be added to the switch statement below.
  */

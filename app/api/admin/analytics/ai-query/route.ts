@@ -64,6 +64,11 @@ CREATE TABLE coming_up_text (
     content TEXT NOT NULL
 );
 
+CREATE TABLE homepage_text (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL
+);
+
 CREATE TABLE schedule_image (
     id SERIAL PRIMARY KEY,
     image_url TEXT NOT NULL,
