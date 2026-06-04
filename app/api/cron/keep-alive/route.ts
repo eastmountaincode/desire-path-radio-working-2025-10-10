@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createServerSupabase } from '@/lib/supabase'
 
 export async function GET(request: Request) {
   // Verify request is from Vercel Cron
@@ -9,10 +9,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-    )
+    const supabase = await createServerSupabase()
 
     // Ping the database
     const { error } = await supabase
@@ -26,7 +23,7 @@ export async function GET(request: Request) {
         event_type: 'database_keep_alive',
         status: 'error',
         message: `Database ping failed: ${error.message}`
-      })
+      } as never)
 
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
@@ -36,7 +33,7 @@ export async function GET(request: Request) {
       event_type: 'database_keep_alive',
       status: 'success',
       message: 'Database pinged successfully'
-    })
+    } as never)
 
     return NextResponse.json({
       success: true,

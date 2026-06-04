@@ -71,6 +71,14 @@ export interface ScheduleImage {
   uploaded_at: string
 }
 
+export interface AdminLog {
+  id: number
+  event_type: string
+  status: string
+  message: string | null
+  created_at: string
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -123,6 +131,11 @@ export interface Database {
         Row: ScheduleImage
         Insert: Omit<ScheduleImage, 'id' | 'uploaded_at'>
         Update: Partial<Omit<ScheduleImage, 'id' | 'uploaded_at'>>
+      }
+      admin_logs: {
+        Row: AdminLog
+        Insert: Omit<AdminLog, 'id' | 'created_at'> & { id?: number; created_at?: string }
+        Update: Partial<Omit<AdminLog, 'id' | 'created_at'>>
       }
     }
   }

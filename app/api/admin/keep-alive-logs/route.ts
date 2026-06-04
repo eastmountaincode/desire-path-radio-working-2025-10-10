@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+import { createServerSupabase } from '@/lib/supabase'
 
 export async function GET() {
   // Check authentication
@@ -12,10 +12,7 @@ export async function GET() {
   }
 
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-    )
+    const supabase = await createServerSupabase()
 
     // Fetch keep-alive logs from the last 90 days
     const ninetyDaysAgo = new Date()
