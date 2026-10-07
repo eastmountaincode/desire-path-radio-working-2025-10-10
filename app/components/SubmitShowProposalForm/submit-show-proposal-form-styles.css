@@ -125,3 +125,11 @@
   text-align: center;
   font-size: 15px;
 }
+
+.captcha-retry-button {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
