@@ -31,7 +31,8 @@ it('removes spent widgets and creates a fresh one after a submission or retry', 
   rerender(<ProposalCaptcha resetKey={1} onVerified={onVerified} onError={onError} />)
   expect(remove).toHaveBeenCalledWith('widget-1')
   expect(renderWidget).toHaveBeenCalledTimes(2)
-  fireEvent.click(screen.getByText('Retry verification'))
+  act(() => renderWidget.mock.calls[1][1]['error-callback']())
+  fireEvent.click(screen.getByRole('button', { name: 'Retry CAPTCHA' }))
   expect(renderWidget).toHaveBeenCalledTimes(3)
   unmount()
   expect(remove).toHaveBeenCalledTimes(3)
@@ -50,7 +51,7 @@ it('fails visibly when the script is blocked and retries script loading', () => 
   act(() => jest.advanceTimersByTime(15000))
   expect(onError).toHaveBeenCalledWith(expect.stringContaining('could not load'))
   expect(document.querySelector('#proposal-turnstile-script')).toBeNull()
-  fireEvent.click(screen.getByText('Retry verification'))
+  fireEvent.click(screen.getByRole('button', { name: 'Retry CAPTCHA' }))
   const script = document.querySelector('#proposal-turnstile-script')!
   window.turnstile = { render: renderWidget, remove }
   fireEvent.load(script)

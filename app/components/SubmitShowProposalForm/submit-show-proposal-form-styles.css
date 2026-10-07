@@ -126,10 +126,14 @@
   font-size: 15px;
 }
 
+.captcha-widget {
+  width: 300px;
+  max-width: 100%;
+}
+
 .captcha-retry-button {
   align-self: flex-start;
   font-family: var(--font-mono);
-  font-size: 13px;
-  text-decoration: underline;
+  font-size: 20px;
   cursor: pointer;
 }

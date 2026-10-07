@@ -21,6 +21,7 @@ type Props = {
 export default function ProposalCaptcha({ resetKey, onVerified, onError }: Props) {
   const container = useRef<HTMLDivElement>(null)
   const [retryKey, setRetryKey] = useState(0)
+  const [failed, setFailed] = useState(false)
   const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
   useEffect(() => {
@@ -28,6 +29,12 @@ export default function ProposalCaptcha({ resetKey, onVerified, onError }: Props
     let active = true
     let widgetId: string | undefined
     let timer: ReturnType<typeof setTimeout>
+    const reportError = (message: string) => {
+      if (active) {
+        setFailed(true)
+        onError(message)
+      }
+    }
     const render = () => {
       clearTimeout(timer)
       if (!active || !container.current || !window.turnstile || widgetId !== undefined) return
@@ -35,27 +42,32 @@ export default function ProposalCaptcha({ resetKey, onVerified, onError }: Props
         widgetId = window.turnstile.render(container.current, {
           sitekey,
           action: proposalCaptchaAction,
-          size: 'flexible',
+          size: 'normal',
           theme: 'auto',
-          callback: (token: string) => { if (active) onVerified(token) },
+          callback: (token: string) => {
+            if (active) {
+              setFailed(false)
+              onVerified(token)
+            }
+          },
           'error-callback': () => {
-            if (active) onError('Verification failed to load. Check your connection and retry verification.')
+            reportError('CAPTCHA failed to load. Please try again.')
           },
           'expired-callback': () => {
-            if (active) onError('Verification expired. Please complete verification again.')
+            reportError('CAPTCHA expired. Please try again.')
           },
           'timeout-callback': () => {
-            if (active) onError('Verification timed out. Please retry verification.')
+            reportError('CAPTCHA timed out. Please try again.')
           },
         })
       } catch {
-        onError('Verification could not start. Please retry verification.')
+        reportError('CAPTCHA could not start. Please try again.')
       }
     }
     const scriptError = () => {
       clearTimeout(timer)
       script?.remove()
-      if (active) onError('Verification could not load. Allow challenges.cloudflare.com and retry verification. Your form text is still here.')
+      reportError('CAPTCHA could not load. Please try again.')
     }
     let script = document.querySelector<HTMLScriptElement>('#proposal-turnstile-script')
     if (window.turnstile) {
@@ -83,17 +95,17 @@ export default function ProposalCaptcha({ resetKey, onVerified, onError }: Props
 
   return (
     <div className="form-field-group">
-      <p className="form-label">Verification</p>
       {sitekey ? (
         <>
-          <div ref={container} />
-          <button type="button" className="captcha-retry-button" onClick={() => {
-            onError('Please complete verification before submitting.')
+          <div ref={container} className="captcha-widget" />
+          {failed && <button type="button" className="captcha-retry-button" aria-label="Retry CAPTCHA" onClick={() => {
+            setFailed(false)
+            onError('')
             setRetryKey(key => key + 1)
-          }}>Retry verification</button>
+          }}>↻</button>}
         </>
       ) : (
-        <p role="alert">Proposal submission is temporarily unavailable. Your form text will stay here; please try again later.</p>
+        <p role="alert">Submissions are temporarily unavailable. Please try again later.</p>
       )}
     </div>
   )

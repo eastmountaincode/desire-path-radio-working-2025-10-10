@@ -10,13 +10,13 @@ export default function SubmitShowProposalForm() {
   const devMode = useDevMode()
   const [formData, setFormData] = useState({ ...emptyProposal })
   const [captchaToken, setCaptchaToken] = useState('')
-  const [captchaMessage, setCaptchaMessage] = useState('Complete verification before submitting.')
+  const [captchaMessage, setCaptchaMessage] = useState('')
   const [captchaResetKey, setCaptchaResetKey] = useState(0)
   const submissionId = useRef<string | null>(null)
   const submitting = useRef(false)
   const onCaptchaVerified = useCallback((token: string) => {
     setCaptchaToken(token)
-    setCaptchaMessage('Verification complete.')
+    setCaptchaMessage('')
   }, [])
   const onCaptchaError = useCallback((message: string) => {
     setCaptchaToken('')
@@ -74,7 +74,7 @@ export default function SubmitShowProposalForm() {
       submitting.current = false
       setIsSubmitting(false)
       setCaptchaToken('')
-      setCaptchaMessage('Complete verification before submitting again.')
+      setCaptchaMessage('')
       setCaptchaResetKey(key => key + 1)
     }
   }
@@ -280,7 +280,7 @@ export default function SubmitShowProposalForm() {
           </div>
 
           <ProposalCaptcha resetKey={captchaResetKey} onVerified={onCaptchaVerified} onError={onCaptchaError} />
-          <p role="status" aria-live="polite">{captchaMessage}</p>
+          {captchaMessage && <p role="alert">{captchaMessage}</p>}
 
           {/* Submit Status Messages */}
           {submitStatus === 'success' && (
