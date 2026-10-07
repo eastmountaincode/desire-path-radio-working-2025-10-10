@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useTheme } from 'next-themes'
 import { proposalCaptchaAction } from '@/lib/show-proposal'
 
 type Turnstile = {
@@ -23,9 +24,12 @@ export default function ProposalCaptcha({ resetKey, onVerified, onError }: Props
   const [retryKey, setRetryKey] = useState(0)
   const [failed, setFailed] = useState(false)
   const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  const { resolvedTheme } = useTheme()
+  const theme = resolvedTheme === 'dark' ? 'dark' : resolvedTheme === 'light' ? 'light' : undefined
 
   useEffect(() => {
-    if (!sitekey || !container.current) return
+    if (!sitekey || !container.current || !theme) return
+    onError('')
     let active = true
     let widgetId: string | undefined
     let timer: ReturnType<typeof setTimeout>
@@ -43,7 +47,7 @@ export default function ProposalCaptcha({ resetKey, onVerified, onError }: Props
           sitekey,
           action: proposalCaptchaAction,
           size: 'normal',
-          theme: 'auto',
+          theme,
           callback: (token: string) => {
             if (active) {
               setFailed(false)
@@ -91,7 +95,7 @@ export default function ProposalCaptcha({ resetKey, onVerified, onError }: Props
       script?.removeEventListener('error', scriptError)
       if (widgetId !== undefined) window.turnstile?.remove(widgetId)
     }
-  }, [sitekey, resetKey, retryKey, onVerified, onError])
+  }, [sitekey, resetKey, retryKey, theme, onVerified, onError])
 
   return (
     <div className="form-field-group">

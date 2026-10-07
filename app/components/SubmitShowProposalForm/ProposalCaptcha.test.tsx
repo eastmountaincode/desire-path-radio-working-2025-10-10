@@ -2,6 +2,8 @@ import '@testing-library/jest-dom'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import ProposalCaptcha from './ProposalCaptcha'
 
+jest.mock('next-themes', () => ({ useTheme: () => ({ resolvedTheme: 'light' }) }))
+
 const renderWidget = jest.fn()
 const remove = jest.fn()
 const onVerified = jest.fn()
