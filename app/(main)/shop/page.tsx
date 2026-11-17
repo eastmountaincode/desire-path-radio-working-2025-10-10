@@ -29,16 +29,16 @@ export default function Shop() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-6 font-[family-name:var(--font-monument-wide)]">[shop]</h1>
         {error && <p role="alert">Unable to load shop. Please try again.</p>}
-        <div className={`grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 ${devMode ? 'outline outline-blue-500' : ''}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 ${devMode ? 'outline outline-blue-500' : ''}`}>
           {items.map(item => (
-            <figure key={item.id} className={`row-span-3 grid grid-rows-subgrid gap-y-2 pb-4 ${devMode ? 'outline outline-green-500' : ''}`}>
+            <figure key={item.id} className={`row-span-3 grid grid-rows-subgrid gap-y-2 ${devMode ? 'outline outline-green-500' : ''}`}>
               <div className={`flex items-end w-full mb-2 ${devMode ? 'outline outline-red-500' : ''}`}>
                 <Image unoptimized src={item.image_url} alt={item.title || item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
                   width={800} height={800} className="w-full h-auto object-contain" />
               </div>
               <figcaption className="row-span-2 grid grid-rows-subgrid gap-y-2 break-words">
-                <div>{item.title && <h2 className={`font-[family-name:var(--font-monument-wide)] text-[28px] leading-[1.2] tracking-[0em] font-normal ${devMode ? 'outline outline-yellow-500' : ''}`}>{item.title}</h2>}</div>
-                <p className={`whitespace-pre-wrap font-[family-name:var(--font-monument)] text-[15px] leading-[1.6] tracking-[0em] ${devMode ? 'outline outline-orange-500' : ''}`}>{item.description}</p>
+                <div>{item.title && <h2 className={`font-[family-name:var(--font-monument-wide)] text-[17px] md:text-[20px] leading-[1.2] tracking-[0em] font-normal ${devMode ? 'outline outline-yellow-500' : ''}`}>{item.title}</h2>}</div>
+                <p className={`whitespace-pre-wrap font-[family-name:var(--font-monument)] text-[14px] leading-[1.6] tracking-[0em] ${devMode ? 'outline outline-orange-500' : ''}`}>{item.description}</p>
               </figcaption>
             </figure>
           ))}
