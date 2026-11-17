@@ -114,6 +114,7 @@ export default function AdminShopPage() {
           <label className="block">
             <span className="block mb-2">Photo</span>
             <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={busy}
+              className="block max-w-full text-sm file:mr-4 file:border file:border-current file:bg-transparent file:px-4 file:py-2 file:text-current file:cursor-pointer hover:file:text-brand-dpr-orange disabled:opacity-50"
               onChange={event => {
                 const selected = event.target.files?.[0]
                 if (!selected) return
