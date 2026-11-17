@@ -27,13 +27,15 @@ export default function Shop() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-6 font-[family-name:var(--font-monument-wide)]">[shop]</h1>
         {error && <p role="alert">Unable to load shop. Please try again.</p>}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
           {items.map(item => (
-            <figure key={item.id}>
-              <Image unoptimized src={item.image_url} alt={item.title || item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
-                width={800} height={800} className="w-full h-auto" />
-              <figcaption className="mt-4 break-words">
-                {item.title && <h2 className="font-semibold mb-2">{item.title}</h2>}
+            <figure key={item.id} className="row-span-3 grid grid-rows-subgrid gap-y-2 pb-4">
+              <div className="relative aspect-square w-full mb-2">
+                <Image unoptimized src={item.image_url} alt={item.title || item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
+                  fill sizes="(min-width: 768px) 448px, 100vw" className="object-contain" />
+              </div>
+              <figcaption className="row-span-2 grid grid-rows-subgrid gap-y-2 break-words">
+                <div>{item.title && <h2 className="font-semibold">{item.title}</h2>}</div>
                 <p className="whitespace-pre-wrap">{item.description}</p>
               </figcaption>
             </figure>
