@@ -17,23 +17,15 @@ export default function Footer() {
                     <Link href="/about" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
                         about
                     </Link>
-                    <Link href="/schedule" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
-                        schedule
-                    </Link>
                     <Link href="/archive" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
                         archive
                     </Link>
                     <Link href="/submit-show-proposal" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
-                        submit show proposal
+                        submissions
                     </Link>
-                    <a
-                        href="https://www.gofundme.com/f/desire-path-radio"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`footer-link ${devMode ? 'border border-green-500' : ''}`}
-                    >
-                        support
-                    </a>
+                    <Link href="/shop" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
+                        shop
+                    </Link>
                     <a
                         href="mailto:info@desirepathradio.com"
                         className={`footer-link footer-external-link mt-4 ${devMode ? 'border border-green-500' : ''}`}
@@ -72,23 +64,15 @@ export default function Footer() {
                 <Link href="/about" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
                     about
                 </Link>
-                <Link href="/schedule" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
-                    schedule
-                </Link>
                 <Link href="/archive" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
                     archive
                 </Link>
                 <Link href="/submit-show-proposal" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
-                    submit show proposal
+                    submissions
                 </Link>
-                <a
-                    href="https://www.gofundme.com/f/desire-path-radio"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`footer-link ${devMode ? 'border border-green-500' : ''}`}
-                >
-                    support
-                </a>
+                <Link href="/shop" className={`footer-link ${devMode ? 'border border-green-500' : ''}`}>
+                    shop
+                </Link>
                 <a
                     href="mailto:info@desirepathradio.com"
                     className={`footer-link footer-external-link mt-4 ${devMode ? 'border border-green-500' : ''}`}

@@ -59,39 +59,29 @@ export default function Header() {
                             <span className={isActive("/") ? "" : "invisible group-hover:visible"}>[</span>home<span className={isActive("/") ? "" : "invisible group-hover:visible"}>]</span>
                         </Link>
                         <Link
-                            href="/archive"
-                            className={`group ${isActive("/archive") ? "text-brand-dpr-orange" : ""}`}
-                        >
-                            <span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>[</span>archive<span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>]</span>
-                        </Link>
-                        <Link
                             href="/about"
                             className={`group ${isActive("/about") ? "text-brand-dpr-orange" : ""}`}
                         >
                             <span className={isActive("/about") ? "" : "invisible group-hover:visible"}>[</span>about<span className={isActive("/about") ? "" : "invisible group-hover:visible"}>]</span>
                         </Link>
                         <Link
-                            href="/schedule"
-                            className={`group ${isActive("/schedule") ? "text-brand-dpr-orange" : ""}`}
+                            href="/archive"
+                            className={`group ${isActive("/archive") ? "text-brand-dpr-orange" : ""}`}
                         >
-                            <span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>[</span>schedule<span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>]</span>
+                            <span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>[</span>archive<span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>]</span>
                         </Link>
-                        <a
-                            href="https://vmgkdp-0h.myshopify.com/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group"
+                        <Link
+                            href="/submit-show-proposal"
+                            className={`group ${isActive("/submit-show-proposal") ? "text-brand-dpr-orange" : ""}`}
                         >
-                            <span className="invisible group-hover:visible">[</span>shop<span className="invisible group-hover:visible">]</span>
-                        </a>
-                        <a
-                            href="https://www.gofundme.com/f/desire-path-radio"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group"
+                            <span className={isActive("/submit-show-proposal") ? "" : "invisible group-hover:visible"}>[</span>submissions<span className={isActive("/submit-show-proposal") ? "" : "invisible group-hover:visible"}>]</span>
+                        </Link>
+                        <Link
+                            href="/shop"
+                            className={`group ${isActive("/shop") ? "text-brand-dpr-orange" : ""}`}
                         >
-                            <span className="invisible group-hover:visible">[</span>support<span className="invisible group-hover:visible">]</span>
-                        </a>
+                            <span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>[</span>shop<span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>]</span>
+                        </Link>
                     </nav>
                 </div>
 
@@ -123,13 +113,6 @@ export default function Header() {
                         <span className={isActive("/") ? "" : "invisible group-hover:visible"}>[</span>home<span className={isActive("/") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
                     <Link
-                        href="/archive"
-                        className={`group ${isActive("/archive") ? "text-brand-dpr-orange" : ""}`}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        <span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>[</span>archive<span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>]</span>
-                    </Link>
-                    <Link
                         href="/about"
                         className={`group ${isActive("/about") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setIsMobileMenuOpen(false)}
@@ -137,30 +120,26 @@ export default function Header() {
                         <span className={isActive("/about") ? "" : "invisible group-hover:visible"}>[</span>about<span className={isActive("/about") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
                     <Link
-                        href="/schedule"
-                        className={`group ${isActive("/schedule") ? "text-brand-dpr-orange" : ""}`}
+                        href="/archive"
+                        className={`group ${isActive("/archive") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
-                        <span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>[</span>schedule<span className={isActive("/schedule") ? "" : "invisible group-hover:visible"}>]</span>
+                        <span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>[</span>archive<span className={isActive("/archive") ? "" : "invisible group-hover:visible"}>]</span>
                     </Link>
-                    <a
-                        href="https://vmgkdp-0h.myshopify.com/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group"
+                    <Link
+                        href="/submit-show-proposal"
+                        className={`group ${isActive("/submit-show-proposal") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
-                        <span className="invisible group-hover:visible">[</span>shop<span className="invisible group-hover:visible">]</span>
-                    </a>
-                    <a
-                        href="https://www.gofundme.com/f/desire-path-radio"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group"
+                        <span className={isActive("/submit-show-proposal") ? "" : "invisible group-hover:visible"}>[</span>submissions<span className={isActive("/submit-show-proposal") ? "" : "invisible group-hover:visible"}>]</span>
+                    </Link>
+                    <Link
+                        href="/shop"
+                        className={`group ${isActive("/shop") ? "text-brand-dpr-orange" : ""}`}
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
-                        <span className="invisible group-hover:visible">[</span>support<span className="invisible group-hover:visible">]</span>
-                    </a>
+                        <span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>[</span>shop<span className={isActive("/shop") ? "" : "invisible group-hover:visible"}>]</span>
+                    </Link>
                 </nav>
             )}
         </header>

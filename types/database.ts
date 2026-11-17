@@ -1,3 +1,5 @@
+import type { ShopItem } from '@/lib/shop'
+
 export type TagType = 'CHANNEL' | 'FORMAT' | 'GENRE' | 'TOPIC'
 
 export type TestType = 'none' | 'jest' | 'manual'
@@ -82,6 +84,11 @@ export interface AdminLog {
 export interface Database {
   public: {
     Tables: {
+      merch_items: {
+        Row: ShopItem
+        Insert: Pick<ShopItem, 'description' | 'image_url' | 'image_key'>
+        Update: Partial<Pick<ShopItem, 'description' | 'image_url' | 'image_key' | 'deleted_at'>>
+      }
       episodes: {
         Row: Episode
         Insert: Omit<Episode, 'id' | 'created_at'> & { test_type?: TestType; status?: EpisodeStatus }
