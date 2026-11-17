@@ -149,7 +149,7 @@ export default function AdminShopPage() {
           <div className="space-y-8">
             {items.map(item => (
               <div key={item.id} className="flex flex-col sm:flex-row gap-4">
-                <Image src={item.image_url} alt={item.title || item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
+                <Image unoptimized src={item.image_url} alt={item.title || item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
                   width={160} height={160} className="w-40 h-auto object-contain self-start" />
                 <div className="min-w-0 flex-1">
                   {item.title && <h2 className="font-semibold break-words mb-2">{item.title}</h2>}
