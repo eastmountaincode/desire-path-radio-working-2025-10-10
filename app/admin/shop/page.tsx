@@ -1,5 +1,7 @@
 'use client'
 
+import ShopDescription from '@/app/components/ShopDescription/ShopDescription'
+
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -136,7 +138,7 @@ export default function AdminShopPage() {
           <label className="block">
             <span className="block mb-2">Description</span>
             <textarea value={description} onChange={event => setDescription(event.target.value)} disabled={busy}
-              required maxLength={10000} rows={6} className="w-full border border-current p-3 bg-transparent" />
+              placeholder="Links: [link text](https://example.com)" required maxLength={10000} rows={6} className="w-full border border-current p-3 bg-transparent" />
           </label>
           <div className="flex gap-3">
             <button type="submit" disabled={busy} className={buttonClass}>{busy ? 'Saving...' : 'Save'}</button>
@@ -153,7 +155,7 @@ export default function AdminShopPage() {
                   width={160} height={160} className="w-40 h-auto object-contain self-start" />
                 <div className="min-w-0 flex-1">
                   {item.title && <h2 className="font-semibold break-words mb-2">{item.title}</h2>}
-                  <p className="whitespace-pre-wrap break-words mb-4">{item.description}</p>
+                  <div className="mb-4"><ShopDescription text={item.description} /></div>
                   {removing === item.id ? (
                     <div className="flex flex-wrap items-center gap-3">
                       <span>Remove this item?</span>

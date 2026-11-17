@@ -18,7 +18,6 @@ test('keeps full photos and content in aligned image, title, and description row
   render(<Shop />)
   expect(await screen.findByText('Short title')).toHaveClass('font-[family-name:var(--font-monument-wide)]', 'text-[17px]', 'md:text-[20px]', 'leading-[1.2]')
   expect(screen.getByText('A longer title that can wrap naturally')).toBeInTheDocument()
-  expect(screen.getByText(/Second description/)).toHaveAttribute('class', 'whitespace-pre-wrap ')
   expect(screen.getByText(/Second description/)).toHaveTextContent('Second description Second line')
   for (const image of screen.getAllByRole('img')) {
     expect(image).toHaveClass('object-contain')

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import DesirePathAnimation from '@/app/components/home/HomeHero/DesirePathAnimation'
 import { useDevMode } from '@/app/components/DevModeProvider'
+import ShopDescription from '@/app/components/ShopDescription/ShopDescription'
 import type { ShopItem } from '@/lib/shop'
 
 export default function Shop() {
@@ -38,7 +39,7 @@ export default function Shop() {
               </div>
               <figcaption className="row-span-2 grid grid-rows-subgrid gap-y-2 break-words">
                 <div>{item.title && <h2 className={`font-[family-name:var(--font-monument-wide)] text-[17px] md:text-[20px] leading-[1.2] tracking-[0em] font-normal ${devMode ? 'outline outline-yellow-500' : ''}`}>{item.title}</h2>}</div>
-                <p className={`whitespace-pre-wrap ${devMode ? 'outline outline-orange-500' : ''}`}>{item.description}</p>
+                <div className={devMode ? 'outline outline-orange-500' : ''}><ShopDescription text={item.description} /></div>
               </figcaption>
             </figure>
           ))}

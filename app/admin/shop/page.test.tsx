@@ -60,7 +60,8 @@ test('new item requires an image, rejects unsupported files, and saves photo/tex
   fireEvent.change(screen.getByLabelText('Photo'), { target: { files: [new File(['photo'], 'shirt.png', { type: 'image/png' })] } })
   fetchMock.mockImplementationOnce(() => reply({ item: { ...item, id: 2, title: 'Shirt', description: 'New shirt' } }))
   await userEvent.click(screen.getByText('Save'))
-  expect(await screen.findByText('New shirt')).toBeInTheDocument()
+  await waitFor(() => expect(screen.queryByText('Save')).not.toBeInTheDocument())
+  expect(screen.getByText('New shirt')).toBeInTheDocument()
   expect(screen.getByRole('heading', { name: 'Shirt' })).toBeInTheDocument()
   expect(fetchMock.mock.calls[1][1].body.get('title')).toBe('Shirt')
   expect(fetchMock.mock.calls[1][1].body.get('image')).toBeInstanceOf(File)
@@ -93,4 +94,18 @@ test('unauthenticated load routes to existing sign-in', async () => {
   fetchMock.mockImplementationOnce(() => reply({}, 401))
   render(<AdminShopPage />)
   await waitFor(() => expect(push).toHaveBeenCalledWith('/admin'))
+})
+
+
+test('saves Markdown unchanged and renders links in the list', async () => {
+  render(<AdminShopPage />)
+  await userEvent.click(await screen.findByText('Edit'))
+  const description = 'Designed by [Person Online Studios](https://example.com/studio).'
+  fireEvent.change(screen.getByLabelText('Description'), { target: { value: description } })
+  fetchMock.mockImplementationOnce(() => reply({ item: { ...item, description } }))
+  await userEvent.click(screen.getByText('Save'))
+  expect(await screen.findByRole('link', { name: 'Person Online Studios' })).toHaveAttribute('href', 'https://example.com/studio')
+  expect(fetchMock.mock.calls[1][1].body.get('description')).toBe(description)
+  await userEvent.click(screen.getByText('Edit'))
+  expect(screen.getByLabelText('Description')).toHaveValue(description)
 })
