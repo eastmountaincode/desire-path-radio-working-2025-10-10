@@ -24,7 +24,7 @@ test('keeps full photos and content in aligned image, title, and description row
     expect(image).toHaveClass('object-contain')
     expect(image.parentElement).toHaveClass('items-end')
     expect(image.closest('figure')).toHaveClass('grid-rows-subgrid', 'row-span-3')
-    expect(image.closest('figure')).not.toHaveClass('pb-4')
-    expect(image.closest('figure')?.parentElement).toHaveClass('gap-y-8')
+    expect(image.closest('figure')).toHaveClass('last:pb-0', 'md:[&:nth-last-child(2):nth-child(odd)]:pb-0')
+    expect(image.closest('figure')?.parentElement).toHaveClass('gap-y-4')
   }
 })
