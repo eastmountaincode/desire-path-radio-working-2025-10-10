@@ -41,6 +41,10 @@ export async function POST(request: Request) {
   const rawId = form.get('id')
   const id = rawId === null ? null : parseId(rawId)
   if (rawId !== null && id === null) return NextResponse.json({ error: 'Invalid item.' }, { status: 400 })
+  const title = form.get('title')
+  if (title !== null && (typeof title !== 'string' || title.trim().length > 200)) {
+    return NextResponse.json({ error: 'Keep the title to 200 characters or fewer.' }, { status: 400 })
+  }
   const text = form.get('description')
   if (typeof text !== 'string' || !text.trim() || text.trim().length > 10000) {
     return NextResponse.json({ error: 'Add a description of up to 10,000 characters.' }, { status: 400 })
@@ -63,6 +67,7 @@ export async function POST(request: Request) {
       if (!previous) return NextResponse.json({ error: 'Item not found.' }, { status: 404 })
     }
     const values = {
+      title: title === null ? previous?.title || '' : title.trim(),
       description: text.trim(),
       image_url: previous?.image_url || '',
       image_key: previous?.image_key || '',

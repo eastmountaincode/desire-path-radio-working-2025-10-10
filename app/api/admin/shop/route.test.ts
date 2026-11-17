@@ -13,13 +13,14 @@ jest.mock('@aws-sdk/client-s3', () => ({
   PutObjectCommand: jest.fn().mockImplementation(input => ({ input })),
 }))
 const originalEnv = { ...process.env }
-const item = { id: 1, description: 'A shirt', image_url: 'https://images.example/old.png', image_key: 'old.png', created_at: '2026-11-17', deleted_at: null }
+const item = { id: 1, title: 'DPR shirt', description: 'A shirt', image_url: 'https://images.example/old.png', image_key: 'old.png', created_at: '2026-11-17', deleted_at: null }
 const result = (data: unknown, error: unknown = null) => ({ data, error })
 let responses: ReturnType<typeof result>[]
 let query: Record<string, jest.Mock>
-function formRequest(values: { id?: string; description?: string; image?: File } = {}) {
+function formRequest(values: { id?: string; title?: string | File; description?: string; image?: File } = {}) {
   const form = new FormData()
   if (values.id !== undefined) form.set('id', values.id)
+  if (values.title !== undefined) form.set('title', values.title)
   if (values.description !== undefined) form.set('description', values.description)
   if (values.image) form.set('image', values.image)
   return new Request('http://localhost/api/admin/shop', { method: 'POST', body: form })
@@ -42,11 +43,11 @@ beforeEach(() => {
 afterAll(() => { process.env = originalEnv })
 
 it('returns only public fields and excludes removed items in order', async () => {
-  responses.push(result([{ id: 1, description: item.description, image_url: item.image_url }]))
+  responses.push(result([{ id: 1, title: item.title, description: item.description, image_url: item.image_url }]))
   const response = await publicGET()
   expect(response.status).toBe(200)
-  expect(await response.json()).toEqual({ items: [{ id: 1, description: item.description, image_url: item.image_url }] })
-  expect(query.select).toHaveBeenCalledWith('id, description, image_url')
+  expect(await response.json()).toEqual({ items: [{ id: 1, title: item.title, description: item.description, image_url: item.image_url }] })
+  expect(query.select).toHaveBeenCalledWith('id, title, description, image_url')
   expect(query.is).toHaveBeenCalledWith('deleted_at', null)
   expect(query.order).toHaveBeenCalledWith('id')
 })
@@ -89,7 +90,7 @@ it('creates a new item after image upload', async () => {
   expect(response.status).toBe(200)
   expect(await response.json()).toEqual({ item })
   expect(send).toHaveBeenCalledTimes(1)
-  expect(query.insert).toHaveBeenCalledWith({ description: 'A shirt', image_key: expect.stringMatching(/^merch-.*\.png$/), image_url: expect.stringMatching(/^https:\/\/images.example\/merch-.*\.png$/) })
+  expect(query.insert).toHaveBeenCalledWith({ title: '', description: 'A shirt', image_key: expect.stringMatching(/^merch-.*\.png$/), image_url: expect.stringMatching(/^https:\/\/images.example\/merch-.*\.png$/) })
   expect(send.mock.invocationCallOrder[0]).toBeLessThan(query.insert.mock.invocationCallOrder[0])
 })
 it('edits description without replacing the image', async () => {
@@ -97,7 +98,7 @@ it('edits description without replacing the image', async () => {
   const response = await POST(formRequest({ id: '1', description: 'New text' }))
   expect(response.status).toBe(200)
   expect(send).not.toHaveBeenCalled()
-  expect(query.update).toHaveBeenCalledWith({ description: 'New text', image_key: 'old.png', image_url: item.image_url })
+  expect(query.update).toHaveBeenCalledWith({ title: 'DPR shirt', description: 'New text', image_key: 'old.png', image_url: item.image_url })
 })
 it('does not upload when the item was removed or is missing', async () => {
   responses.push(result(null))
@@ -138,4 +139,38 @@ it('reports public database failure without exposing details', async () => {
   const response = await publicGET()
   expect(response.status).toBe(500)
   expect(await response.json()).toEqual({ error: 'Unable to load the shop.' })
+})
+
+it('stores a trimmed title on creation', async () => {
+  responses.push(result(item))
+  const response = await POST(formRequest({ title: ' DPR shirt ', description: 'A shirt', image: image() }))
+  expect(response.status).toBe(200)
+  expect(query.insert).toHaveBeenCalledWith(expect.objectContaining({ title: 'DPR shirt' }))
+})
+it('edits the title without replacing the image', async () => {
+  responses.push(result(item), result({ ...item, title: 'New title' }))
+  const response = await POST(formRequest({ id: '1', title: 'New title', description: item.description }))
+  expect(response.status).toBe(200)
+  expect(query.update).toHaveBeenCalledWith(expect.objectContaining({ title: 'New title' }))
+  expect(send).not.toHaveBeenCalled()
+})
+it('allows an explicitly empty title to clear the old title', async () => {
+  responses.push(result(item), result({ ...item, title: '' }))
+  expect((await POST(formRequest({ id: '1', title: '', description: item.description }))).status).toBe(200)
+  expect(query.update).toHaveBeenCalledWith(expect.objectContaining({ title: '' }))
+})
+it('preserves the title when an older client omits the field', async () => {
+  responses.push(result(item), result(item))
+  expect((await POST(formRequest({ id: '1', description: item.description }))).status).toBe(200)
+  expect(query.update).toHaveBeenCalledWith(expect.objectContaining({ title: item.title }))
+})
+it.each(['a'.repeat(201), new File(['not-text'], 'title.txt')])('rejects invalid titles before storage access', async title => {
+  expect((await POST(formRequest({ title, description: item.description, image: image() }))).status).toBe(400)
+  expect(from).not.toHaveBeenCalled()
+  expect(send).not.toHaveBeenCalled()
+})
+it('accepts a 200-character title', async () => {
+  responses.push(result(item))
+  expect((await POST(formRequest({ title: 'a'.repeat(200), description: item.description, image: image() }))).status).toBe(200)
+  expect(query.insert).toHaveBeenCalledWith(expect.objectContaining({ title: 'a'.repeat(200) }))
 })

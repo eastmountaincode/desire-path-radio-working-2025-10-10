@@ -13,6 +13,7 @@ export default function AdminShopPage() {
   const [items, setItems] = useState<ShopItem[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<ShopItem | 'new' | null>(null)
+  const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
@@ -44,6 +45,7 @@ export default function AdminShopPage() {
 
   function edit(item: ShopItem | 'new') {
     setEditing(item)
+    setTitle(item === 'new' ? '' : item.title || '')
     setDescription(item === 'new' ? '' : item.description)
     setFile(null)
     setError(null)
@@ -52,6 +54,7 @@ export default function AdminShopPage() {
 
   function close() {
     setEditing(null)
+    setTitle('')
     setDescription('')
     setFile(null)
     setError(null)
@@ -66,6 +69,7 @@ export default function AdminShopPage() {
     setError(null)
     try {
       const form = new FormData()
+      form.set('title', title)
       form.set('description', description)
       if (editing !== 'new') form.set('id', String(editing.id))
       if (file) form.set('image', file)
@@ -125,6 +129,11 @@ export default function AdminShopPage() {
               }} />
           </label>
           <label className="block">
+            <span className="block mb-2">Title</span>
+            <input type="text" value={title} onChange={event => setTitle(event.target.value)} disabled={busy}
+              maxLength={200} className="w-full border border-current p-3 bg-transparent" />
+          </label>
+          <label className="block">
             <span className="block mb-2">Description</span>
             <textarea value={description} onChange={event => setDescription(event.target.value)} disabled={busy}
               required maxLength={10000} rows={6} className="w-full border border-current p-3 bg-transparent" />
@@ -140,9 +149,10 @@ export default function AdminShopPage() {
           <div className="space-y-8">
             {items.map(item => (
               <div key={item.id} className="flex flex-col sm:flex-row gap-4">
-                <Image src={item.image_url} alt={item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
+                <Image src={item.image_url} alt={item.title || item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
                   width={160} height={160} className="w-40 h-auto object-contain self-start" />
                 <div className="min-w-0 flex-1">
+                  {item.title && <h2 className="font-semibold break-words mb-2">{item.title}</h2>}
                   <p className="whitespace-pre-wrap break-words mb-4">{item.description}</p>
                   {removing === item.id ? (
                     <div className="flex flex-wrap items-center gap-3">

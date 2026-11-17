@@ -1,5 +1,6 @@
 export interface ShopItem {
   id: number
+  title: string
   description: string
   image_url: string
   image_key: string

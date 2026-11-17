@@ -8,7 +8,7 @@ export async function GET() {
     const supabase = await createServerSupabase()
     const { data, error } = await supabase
       .from('merch_items')
-      .select('id, description, image_url')
+      .select('id, title, description, image_url')
       .is('deleted_at', null)
       .order('id')
 

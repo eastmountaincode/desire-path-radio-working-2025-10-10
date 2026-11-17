@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'media.desirepathradio.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'dpr-media-proxy.zoekase.workers.dev',
       },
     ],

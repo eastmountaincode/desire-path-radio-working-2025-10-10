@@ -30,9 +30,12 @@ export default function Shop() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {items.map(item => (
             <figure key={item.id}>
-              <Image src={item.image_url} alt={item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
+              <Image src={item.image_url} alt={item.title || item.description.split('\n')[0].slice(0, 200) || 'DPR merchandise'}
                 width={800} height={800} className="w-full h-auto" />
-              {item.description && <figcaption className="mt-4 whitespace-pre-wrap break-words">{item.description}</figcaption>}
+              <figcaption className="mt-4 break-words">
+                {item.title && <h2 className="font-semibold mb-2">{item.title}</h2>}
+                <p className="whitespace-pre-wrap">{item.description}</p>
+              </figcaption>
             </figure>
           ))}
         </div>
