@@ -16,12 +16,12 @@ test('keeps full photos and content in aligned image, title, and description row
     { id: 2, title: 'A longer title that can wrap naturally', description: 'Second description\nSecond line', image_url: '/landscape.png' },
   ] }) })
   render(<Shop />)
-  expect(await screen.findByText('Short title')).toHaveClass('font-[family-name:var(--font-monument-wide)]', 'tracking-[-0.0045em]')
+  expect(await screen.findByText('Short title')).toHaveClass('font-[family-name:var(--font-monument-wide)]', 'text-[28px]', 'leading-[1.2]')
   expect(screen.getByText('A longer title that can wrap naturally')).toBeInTheDocument()
   expect(screen.getByText(/Second description/)).toHaveTextContent('Second description Second line')
   for (const image of screen.getAllByRole('img')) {
     expect(image).toHaveClass('object-contain')
-    expect(image.parentElement).toHaveClass('aspect-square')
+    expect(image.parentElement).toHaveClass('items-end')
     expect(image.closest('figure')).toHaveClass('grid-rows-subgrid', 'row-span-3')
   }
 })

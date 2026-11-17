@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react"
 
 // Set to false to disable dev mode in production
-const DEV_MODE_ENABLED = false
+const DEV_MODE_ENABLED = true
 
 const DevModeContext = createContext<boolean>(false)
 
@@ -18,11 +18,12 @@ export function DevModeProvider({ children }: { children: ReactNode }) {
     if (!DEV_MODE_ENABLED) return
 
     const handleKeyPress = (e: KeyboardEvent) => {
+      const target = e.target instanceof HTMLElement ? e.target : null
+      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat || target?.isContentEditable ||
+          target?.closest('input, textarea, select, [contenteditable="true"]')) return
+
       if (e.key === 'b' || e.key === 'B') {
-        setDevMode(prev => {
-          console.log(`Dev mode: ${!prev ? 'ON' : 'OFF'}`)
-          return !prev
-        })
+        setDevMode(prev => !prev)
       }
     }
 
