@@ -35,7 +35,7 @@ export default function Shop() {
                   fill sizes="(min-width: 768px) 448px, 100vw" className="object-contain" />
               </div>
               <figcaption className="row-span-2 grid grid-rows-subgrid gap-y-2 break-words">
-                <div>{item.title && <h2 className="font-semibold">{item.title}</h2>}</div>
+                <div>{item.title && <h2 className="font-[family-name:var(--font-monument-wide)] tracking-[-0.0045em]">{item.title}</h2>}</div>
                 <p className="whitespace-pre-wrap">{item.description}</p>
               </figcaption>
             </figure>

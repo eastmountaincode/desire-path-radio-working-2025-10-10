@@ -16,7 +16,7 @@ test('keeps full photos and content in aligned image, title, and description row
     { id: 2, title: 'A longer title that can wrap naturally', description: 'Second description\nSecond line', image_url: '/landscape.png' },
   ] }) })
   render(<Shop />)
-  expect(await screen.findByText('Short title')).toBeInTheDocument()
+  expect(await screen.findByText('Short title')).toHaveClass('font-[family-name:var(--font-monument-wide)]', 'tracking-[-0.0045em]')
   expect(screen.getByText('A longer title that can wrap naturally')).toBeInTheDocument()
   expect(screen.getByText(/Second description/)).toHaveTextContent('Second description Second line')
   for (const image of screen.getAllByRole('img')) {
