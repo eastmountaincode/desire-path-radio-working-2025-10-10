@@ -19,6 +19,7 @@ test('keeps full photos and content in aligned image, title, and description row
   expect(await screen.findByText('Short title')).toHaveClass('font-[family-name:var(--font-monument-wide)]', 'text-[17px]', 'md:text-[20px]', 'leading-[1.2]')
   expect(screen.getByText('A longer title that can wrap naturally')).toBeInTheDocument()
   expect(screen.getByText(/Second description/)).toHaveTextContent('Second description Second line')
+  expect(screen.queryByRole('button', { name: 'Next photo' })).not.toBeInTheDocument()
   for (const image of screen.getAllByRole('img')) {
     expect(image).toHaveClass('object-contain')
     expect(image.parentElement).toHaveClass('items-end')
@@ -28,23 +29,24 @@ test('keeps full photos and content in aligned image, title, and description row
   }
 })
 
-test('shows the order instructions and opens the selected item’s photos starting with its main photo', async () => {
+test('shows ordering instructions and cycles photos inline in the main photo’s frame', async () => {
   global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({
     intro: 'Order by [email](mailto:orders@example.com).',
     items: [{ id: 1, title: 'Shirt', description: 'A shirt', image_url: '/front.png', gallery_image_urls: ['/back.png'] }],
   }) })
-  const { container } = render(<Shop />)
-  const dialog = container.querySelector('dialog')!
-  dialog.showModal = () => { dialog.setAttribute('open', '') }
-
-  const open = await screen.findByRole('button', { name: 'View photos of Shirt' })
+  render(<Shop />)
+  const gallery = within(await screen.findByRole('group', { name: 'Shirt photos' }))
   expect(screen.getByRole('link', { name: 'email' })).toHaveAttribute('href', 'mailto:orders@example.com')
-  fireEvent.click(open)
-  const viewer = within(screen.getByRole('dialog', { name: 'Merch photos' }))
-  expect(viewer.getByRole('img')).toHaveAttribute('src', '/front.png')
-  fireEvent.click(viewer.getByRole('button', { name: 'Next' }))
-  expect(viewer.getByRole('img')).toHaveAttribute('src', '/back.png')
-  expect(viewer.getByText('2 / 2')).toBeInTheDocument()
-  fireEvent.click(viewer.getByRole('button', { name: 'Previous' }))
-  expect(viewer.getByRole('img')).toHaveAttribute('src', '/front.png')
+  const mainPhoto = gallery.getByRole('img')
+  expect(mainPhoto).toHaveAttribute('src', '/front.png')
+  fireEvent.click(gallery.getByRole('button', { name: 'Next photo' }))
+  const extraPhoto = gallery.getByRole('img')
+  expect(extraPhoto).toHaveAttribute('src', '/back.png')
+  expect(extraPhoto).toHaveClass('object-contain')
+  expect(extraPhoto.parentElement).toBe(mainPhoto.parentElement)
+  expect(mainPhoto).toHaveClass('h-auto', 'invisible')
+  expect(gallery.getByText('Photo 2 of 2')).toBeInTheDocument()
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  fireEvent.click(gallery.getByRole('button', { name: 'Previous photo' }))
+  expect(gallery.getByRole('img')).toBe(mainPhoto)
 })
