@@ -86,8 +86,13 @@ export interface Database {
     Tables: {
       merch_items: {
         Row: ShopItem
-        Insert: Pick<ShopItem, 'description' | 'image_url' | 'image_key'> & { title?: string }
-        Update: Partial<Pick<ShopItem, 'title' | 'description' | 'image_url' | 'image_key' | 'deleted_at'>>
+        Insert: Pick<ShopItem, 'description' | 'image_url' | 'image_key'> & Partial<Pick<ShopItem, 'title' | 'gallery_image_urls'>>
+        Update: Partial<Pick<ShopItem, 'title' | 'description' | 'image_url' | 'image_key' | 'gallery_image_urls' | 'deleted_at'>>
+      }
+      shop_settings: {
+        Row: { id: number; intro: string }
+        Insert: { id: number; intro: string }
+        Update: { intro?: string }
       }
       episodes: {
         Row: Episode

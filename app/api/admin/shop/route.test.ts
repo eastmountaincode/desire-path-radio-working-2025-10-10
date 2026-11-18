@@ -1,5 +1,5 @@
 /** @jest-environment node */
-import { GET, POST, DELETE } from './route'
+import { GET, POST, PUT, PATCH, DELETE } from './route'
 import { GET as publicGET } from '../../shop/route'
 import { MAX_SHOP_IMAGE_BYTES, shopImageError } from '@/lib/shop'
 
@@ -17,6 +17,8 @@ const item = { id: 1, title: 'DPR shirt', description: 'A shirt', image_url: 'ht
 const result = (data: unknown, error: unknown = null) => ({ data, error })
 let responses: ReturnType<typeof result>[]
 let query: Record<string, jest.Mock>
+let settings: Record<string, jest.Mock>
+let settingsResult: ReturnType<typeof result>
 function formRequest(values: { id?: string; title?: string | File; description?: string; image?: File } = {}) {
   const form = new FormData()
   if (values.id !== undefined) form.set('id', values.id)
@@ -36,29 +38,39 @@ beforeEach(() => {
     query[name] = jest.fn().mockImplementation(() => query)
   }
   query.then = jest.fn().mockImplementation(resolve => resolve(responses.shift() || result([])))
-  from.mockReturnValue(query)
+  settingsResult = result(null)
+  settings = {}
+  for (const name of ['select', 'eq', 'maybeSingle', 'upsert']) {
+    settings[name] = jest.fn().mockImplementation(() => settings)
+  }
+  settings.then = jest.fn().mockImplementation(resolve => resolve(settingsResult))
+  from.mockImplementation(table => table === 'shop_settings' ? settings : query)
   send.mockResolvedValue({})
   process.env = { ...originalEnv, R2_ENDPOINT: 'https://r2.example', R2_ACCESS_KEY: 'test', R2_SECRET_ACCESS_KEY: 'test', R2_IMAGES_BUCKET_NAME: 'test-images', MEDIA_PROXY_IMAGE_URL: 'https://images.example/' }
 })
 afterAll(() => { process.env = originalEnv })
 
 it('returns only public fields and excludes removed items in order', async () => {
-  responses.push(result([{ id: 1, title: item.title, description: item.description, image_url: item.image_url }]))
+  const publicItem = { id: 1, title: item.title, description: item.description, image_url: item.image_url, gallery_image_urls: ['/extra.jpg'] }
+  responses.push(result([publicItem]))
+  settingsResult = result({ intro: 'Order by email.' })
   const response = await publicGET()
   expect(response.status).toBe(200)
-  expect(await response.json()).toEqual({ items: [{ id: 1, title: item.title, description: item.description, image_url: item.image_url }] })
-  expect(query.select).toHaveBeenCalledWith('id, title, description, image_url')
+  expect(await response.json()).toEqual({ items: [publicItem], intro: 'Order by email.' })
+  expect(query.select).toHaveBeenCalledWith('id, title, description, image_url, gallery_image_urls')
   expect(query.is).toHaveBeenCalledWith('deleted_at', null)
   expect(query.order).toHaveBeenCalledWith('id')
 })
 it('returns authenticated admin items', async () => {
   responses.push(result([item]))
-  expect(await (await GET()).json()).toEqual({ items: [item] })
+  expect(await (await GET()).json()).toEqual({ items: [item], intro: '' })
 })
 it('rejects unauthenticated reads and writes without accessing storage', async () => {
   getCookie.mockReturnValue(undefined)
   expect((await GET()).status).toBe(401)
   expect((await POST(formRequest())).status).toBe(401)
+  expect((await PUT(formRequest({ image: image() }))).status).toBe(401)
+  expect((await PATCH(new Request('http://localhost/api/admin/shop'))).status).toBe(401)
   expect((await DELETE(new Request('http://localhost/api/admin/shop?id=1'))).status).toBe(401)
   expect(from).not.toHaveBeenCalled()
   expect(send).not.toHaveBeenCalled()
@@ -99,6 +111,38 @@ it('edits description without replacing the image', async () => {
   expect(response.status).toBe(200)
   expect(send).not.toHaveBeenCalled()
   expect(query.update).toHaveBeenCalledWith({ title: 'DPR shirt', description: 'New text', image_key: 'old.png', image_url: item.image_url })
+})
+it('saves and clears the singleton intro', async () => {
+  for (const intro of ['  Order by email.  ', '']) {
+    const response = await PATCH(new Request('http://localhost/api/admin/shop', { method: 'PATCH', body: JSON.stringify({ intro }) }))
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ intro: intro.trim() })
+    expect(settings.upsert).toHaveBeenLastCalledWith({ id: 1, intro: intro.trim() })
+  }
+})
+
+it('uploads photos individually and saves them in order without replacing the main photo', async () => {
+  const first = await (await PUT(formRequest({ image: image() }))).json()
+  const second = await (await PUT(formRequest({ image: image() }))).json()
+  const form = await formRequest({ id: '1', description: item.description }).formData()
+  form.set('update_gallery', 'true')
+  form.append('gallery_image_url', first.url)
+  form.append('gallery_image_url', second.url)
+  responses.push(result(item), result(item))
+  const request = () => new Request('http://localhost/api/admin/shop', { method: 'POST', body: form })
+  expect((await POST(request())).status).toBe(200)
+  expect(query.update).toHaveBeenLastCalledWith(expect.objectContaining({ image_url: item.image_url, gallery_image_urls: [first.url, second.url] }))
+  expect(send).toHaveBeenCalledTimes(2)
+
+  responses.push(result(item), result(item))
+  form.delete('gallery_image_url')
+  expect((await POST(request())).status).toBe(200)
+  expect(query.update).toHaveBeenLastCalledWith(expect.objectContaining({ image_url: item.image_url, gallery_image_urls: [] }))
+
+  responses.push(result(item))
+  form.append('gallery_image_url', 'https://example.com/photo.png')
+  expect((await POST(request())).status).toBe(400)
+  expect(query.update).toHaveBeenCalledTimes(2)
 })
 it('does not upload when the item was removed or is missing', async () => {
   responses.push(result(null))

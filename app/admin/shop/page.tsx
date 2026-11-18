@@ -5,19 +5,24 @@ import ShopDescription from '@/app/components/ShopDescription/ShopDescription'
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { shopImageError } from '@/lib/shop'
+import { MAX_SHOP_INTRO_LENGTH, shopImageError } from '@/lib/shop'
 import type { ShopItem } from '@/lib/shop'
 
 const buttonClass = 'px-4 py-2 border border-current hover:text-brand-dpr-orange disabled:opacity-50 disabled:cursor-not-allowed'
+const fileClass = 'block max-w-full text-sm file:mr-4 file:border file:border-current file:bg-transparent file:px-4 file:py-2 file:text-current file:cursor-pointer hover:file:text-brand-dpr-orange disabled:opacity-50'
+const imageTypes = 'image/jpeg,image/png,image/webp,image/gif'
 
 export default function AdminShopPage() {
   const router = useRouter()
   const [items, setItems] = useState<ShopItem[]>([])
+  const [intro, setIntro] = useState('')
+  const [savedIntro, setSavedIntro] = useState('')
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<ShopItem | 'new' | null>(null)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [gallery, setGallery] = useState<(string | File)[]>([])
   const [preview, setPreview] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -32,7 +37,12 @@ export default function AdminShopPage() {
         if (!response.ok) throw new Error('Unable to load shop.')
         return response.json()
       })
-      .then(data => { if (active && data) setItems(data.items) })
+      .then(data => {
+        if (!active || !data) return
+        setItems(data.items)
+        setIntro(data.intro ?? '')
+        setSavedIntro(data.intro ?? '')
+      })
       .catch(() => { if (active) setError('Unable to load shop. Please reload to try again.') })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
@@ -50,6 +60,7 @@ export default function AdminShopPage() {
     setTitle(item === 'new' ? '' : item.title || '')
     setDescription(item === 'new' ? '' : item.description)
     setFile(null)
+    setGallery(item === 'new' ? [] : item.gallery_image_urls ?? [])
     setError(null)
     setRemoving(null)
   }
@@ -59,7 +70,31 @@ export default function AdminShopPage() {
     setTitle('')
     setDescription('')
     setFile(null)
+    setGallery([])
     setError(null)
+  }
+
+  async function saveIntro(event: React.FormEvent) {
+    event.preventDefault()
+    if (lock.current) return
+    lock.current = true
+    setBusy(true)
+    setError(null)
+    try {
+      const response = await fetch('/api/admin/shop', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ intro }),
+      })
+      if (response.status === 401) throw new Error('Your session expired. Sign in again before saving.')
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Unable to save the shop intro.')
+      setIntro(result.intro)
+      setSavedIntro(result.intro)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to save the shop intro.')
+    } finally {
+      lock.current = false
+      setBusy(false)
+    }
   }
 
   async function save(event: React.FormEvent) {
@@ -75,6 +110,25 @@ export default function AdminShopPage() {
       form.set('description', description)
       if (editing !== 'new') form.set('id', String(editing.id))
       if (file) form.set('image', file)
+      if (editing === 'new' ? gallery.length > 0 : gallery !== editing.gallery_image_urls) {
+        form.set('update_gallery', 'true')
+        const photos = [...gallery]
+        for (const [index, photo] of photos.entries()) {
+          if (typeof photo === 'string') {
+            form.append('gallery_image_url', photo)
+            continue
+          }
+          const upload = new FormData()
+          upload.set('image', photo)
+          const uploaded = await fetch('/api/admin/shop', { method: 'PUT', body: upload })
+          if (uploaded.status === 401) throw new Error('Your session expired. Sign in again before saving.')
+          const result = await uploaded.json()
+          if (!uploaded.ok) throw new Error(result.error || 'Unable to upload this photo.')
+          photos[index] = result.url
+          setGallery([...photos])
+          form.append('gallery_image_url', result.url)
+        }
+      }
       const response = await fetch('/api/admin/shop', { method: 'POST', body: form })
       if (response.status === 401) throw new Error('Your session expired. Sign in again before saving.')
       const result = await response.json()
@@ -118,9 +172,8 @@ export default function AdminShopPage() {
         <form onSubmit={save} className="space-y-4">
           {imageUrl && <Image src={imageUrl} alt="Selected merchandise" width={400} height={400} unoptimized className="w-full max-w-sm h-auto" />}
           <label className="block">
-            <span className="block mb-2">Photo</span>
-            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={busy}
-              className="block max-w-full text-sm file:mr-4 file:border file:border-current file:bg-transparent file:px-4 file:py-2 file:text-current file:cursor-pointer hover:file:text-brand-dpr-orange disabled:opacity-50"
+            <span className="block mb-2">Main photo</span>
+            <input type="file" accept={imageTypes} disabled={busy} className={fileClass}
               onChange={event => {
                 const selected = event.target.files?.[0]
                 if (!selected) return
@@ -130,6 +183,33 @@ export default function AdminShopPage() {
                 setError(null)
               }} />
           </label>
+          <label className="block">
+            <span className="block mb-2">Additional photos</span>
+            <input type="file" accept={imageTypes} multiple disabled={busy} className={fileClass}
+              onChange={event => {
+                const selected = Array.from(event.target.files ?? [])
+                event.target.value = ''
+                const message = selected.map(shopImageError).find(Boolean)
+                if (message) { setError(message); return }
+                setGallery(current => [...current, ...selected])
+                setError(null)
+              }} />
+          </label>
+          {gallery.length > 0 && (
+            <ul className="flex flex-wrap gap-3">
+              {gallery.map((photo, index) => (
+                <li key={index} className="flex max-w-48 flex-col items-start gap-1 text-sm">
+                  {typeof photo === 'string' ? (
+                    <Image unoptimized src={photo} alt={`Additional photo ${index + 1}`} width={96} height={96}
+                      className="h-24 w-24 object-contain" />
+                  ) : <span className="break-all">{photo.name}</span>}
+                  <button type="button" disabled={busy} aria-label={`Remove additional photo ${index + 1}`}
+                    className="min-h-6 underline disabled:opacity-50"
+                    onClick={() => setGallery(current => current.filter((_, position) => position !== index))}>Remove photo</button>
+                </li>
+              ))}
+            </ul>
+          )}
           <label className="block">
             <span className="block mb-2">Title</span>
             <input type="text" value={title} onChange={event => setTitle(event.target.value)} disabled={busy}
@@ -147,6 +227,14 @@ export default function AdminShopPage() {
         </form>
       ) : (
         <>
+          <form onSubmit={saveIntro} className="mb-6 space-y-2">
+            <label className="block">
+              <span className="block mb-2">Shop intro</span>
+              <textarea value={intro} onChange={event => setIntro(event.target.value)} disabled={busy}
+                rows={3} maxLength={MAX_SHOP_INTRO_LENGTH} className="block w-full border border-current p-3 bg-transparent" />
+            </label>
+            <button type="submit" disabled={busy || intro.trim() === savedIntro} className={buttonClass}>Save intro</button>
+          </form>
           <button onClick={() => edit('new')} disabled={busy} className={`${buttonClass} mb-6`}>Add item</button>
           <div className="space-y-8">
             {items.map(item => (

@@ -4,10 +4,14 @@ export interface ShopItem {
   description: string
   image_url: string
   image_key: string
+  gallery_image_urls: string[]
   created_at: string
   deleted_at: string | null
 }
 
+export type PublicShopItem = Pick<ShopItem, 'id' | 'title' | 'description' | 'image_url' | 'gallery_image_urls'>
+
+export const MAX_SHOP_INTRO_LENGTH = 1000
 export const MAX_SHOP_IMAGE_BYTES = 4 * 1024 * 1024
 
 export function shopImageError(file: Pick<File, 'type' | 'size'>): string | null {

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import Shop from './page'
 
 jest.mock('@/app/components/home/HomeHero/DesirePathAnimation', () => ({ __esModule: true, default: () => null }))
@@ -26,4 +26,25 @@ test('keeps full photos and content in aligned image, title, and description row
     expect(image.closest('figure')).toHaveClass('last:pb-0', 'md:[&:nth-last-child(2):nth-child(odd)]:pb-0')
     expect(image.closest('figure')?.parentElement).toHaveClass('gap-y-4')
   }
+})
+
+test('shows the order instructions and opens the selected item’s photos starting with its main photo', async () => {
+  global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({
+    intro: 'Order by [email](mailto:orders@example.com).',
+    items: [{ id: 1, title: 'Shirt', description: 'A shirt', image_url: '/front.png', gallery_image_urls: ['/back.png'] }],
+  }) })
+  const { container } = render(<Shop />)
+  const dialog = container.querySelector('dialog')!
+  dialog.showModal = () => { dialog.setAttribute('open', '') }
+
+  const open = await screen.findByRole('button', { name: 'View photos of Shirt' })
+  expect(screen.getByRole('link', { name: 'email' })).toHaveAttribute('href', 'mailto:orders@example.com')
+  fireEvent.click(open)
+  const viewer = within(screen.getByRole('dialog', { name: 'Merch photos' }))
+  expect(viewer.getByRole('img')).toHaveAttribute('src', '/front.png')
+  fireEvent.click(viewer.getByRole('button', { name: 'Next' }))
+  expect(viewer.getByRole('img')).toHaveAttribute('src', '/back.png')
+  expect(viewer.getByText('2 / 2')).toBeInTheDocument()
+  fireEvent.click(viewer.getByRole('button', { name: 'Previous' }))
+  expect(viewer.getByRole('img')).toHaveAttribute('src', '/front.png')
 })
