@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import DesirePathAnimation from '@/app/components/home/HomeHero/DesirePathAnimation'
 import { useDevMode } from '@/app/components/DevModeProvider'
@@ -12,21 +12,48 @@ const galleryArrowClass = 'grid size-11 place-items-center border border-current
 function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
   const [photoIndex, setPhotoIndex] = useState(0)
   const photos = [item.image_url, ...(item.gallery_image_urls ?? [])]
+  const hasGallery = photos.length > 1
   const showingExtra = photoIndex > 0
+  const activePhoto = useRef<HTMLImageElement>(null)
+  const controls = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const photo = activePhoto.current
+    const row = controls.current
+    if (!hasGallery || !photo || !row) return
+
+    const alignControls = () => {
+      if (!photo.naturalHeight) return
+      const { width, height } = photo.getBoundingClientRect()
+      // A centered, contained photo can leave equal space on either side of its image box.
+      const visibleWidth = Math.min(width, height * photo.naturalWidth / photo.naturalHeight)
+      row.style.paddingInlineEnd = `${(width - visibleWidth) / 2}px`
+    }
+
+    alignControls()
+    const observer = new ResizeObserver(alignControls)
+    observer.observe(photo)
+    photo.addEventListener('load', alignControls)
+    return () => {
+      observer.disconnect()
+      photo.removeEventListener('load', alignControls)
+    }
+  }, [hasGallery, photoIndex])
+
   // Keep the main photo in the layout so its proportions set the frame height.
   const mainPhoto = (
-    <Image unoptimized src={item.image_url} alt={label} width={800} height={800}
+    <Image ref={showingExtra ? undefined : activePhoto} unoptimized src={item.image_url} alt={label} width={800} height={800}
       aria-hidden={showingExtra || undefined} className={`w-full h-auto max-h-[min(56svh,34rem)] object-contain${showingExtra ? ' invisible' : ''}`} />
   )
-  if (photos.length === 1) return mainPhoto
+  if (!hasGallery) return mainPhoto
 
   return (
     <div role="group" aria-label={`${label} photos`} className="w-full">
       <div className="relative">
         {mainPhoto}
-        {showingExtra && <Image fill unoptimized src={photos[photoIndex]} alt={label} className="object-contain" />}
+        {showingExtra && <Image ref={activePhoto} fill unoptimized src={photos[photoIndex]} alt={label} className="object-contain" />}
       </div>
-      <div className="flex justify-center gap-2 pt-2">
+      <div ref={controls} className="flex justify-end gap-2 pt-2">
         <button type="button" aria-label="Previous photo" className={galleryArrowClass}
           onClick={() => setPhotoIndex(index => (index + photos.length - 1) % photos.length)}>
           <i aria-hidden="true" className="fi fi-ts-arrow-small-left translate-y-px" />

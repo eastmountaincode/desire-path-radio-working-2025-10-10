@@ -48,38 +48,15 @@
   opacity: 0.8;
 }
 
-/* Chat controls */
-:is(.chat-toggle-button, .chat-settings-button, .chat-close-button) {
-  --chat-button-background: var(--color-grey1);
-  --chat-button-text: var(--color-grey6);
-  background-color: var(--chat-button-background);
-  color: var(--chat-button-text);
+/* Chat Toggle Button */
+.chat-toggle-button {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
 }
 
-.dark :is(.chat-toggle-button, .chat-settings-button, .chat-close-button) {
-  --chat-button-background: var(--color-grey6);
-  --chat-button-text: var(--color-grey1);
-}
-
-.chat-settings-button {
-  border-color: var(--chat-button-text);
-}
-
-.chat-settings-button.active {
-  background-color: var(--chat-button-text);
-  color: var(--chat-button-background);
-}
-
-@media (hover: hover) {
-  :is(.chat-toggle-button, .chat-settings-button, .chat-close-button):hover {
-    background-color: var(--chat-button-text);
-    color: var(--chat-button-background);
-  }
-
-  .chat-settings-button.active:hover {
-    background-color: var(--chat-button-background);
-    color: var(--chat-button-text);
-  }
+.dark .chat-toggle-button {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
 }
 
 /* Chat Window - background colors */
@@ -141,6 +118,32 @@
 .dark .chat-settings-bar {
   background-color: var(--color-grey6);
   border-bottom-color: var(--color-grey1);
+}
+
+.chat-settings-button {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+  border-color: var(--color-grey6);
+}
+
+.dark .chat-settings-button {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+  border-color: var(--color-grey1);
+}
+
+.chat-settings-button.active {
+  background-color: var(--color-grey6);
+  color: var(--color-grey1);
+}
+
+.dark .chat-settings-button.active {
+  background-color: var(--color-grey1);
+  color: var(--color-grey6);
+}
+
+.chat-settings-button:hover {
+  opacity: 0.9;
 }
 
 /* Chat Settings Content */

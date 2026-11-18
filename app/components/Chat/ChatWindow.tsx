@@ -56,7 +56,7 @@ export default function ChatWindow() {
                         </button>
                         <button
                             onClick={closeChat}
-                            className={`chat-close-button cursor-pointer flex items-center justify-center aspect-square h-full border-l ${devMode ? 'border border-cyan-500' : ''}`}
+                            className={`cursor-pointer flex items-center justify-center aspect-square h-full border-l hover:opacity-70 ${devMode ? 'border border-cyan-500' : ''}`}
                             aria-label="Close chat"
                         >
                             <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
