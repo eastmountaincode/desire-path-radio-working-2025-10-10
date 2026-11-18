@@ -7,7 +7,7 @@ import { useDevMode } from '@/app/components/DevModeProvider'
 import ShopDescription from '@/app/components/ShopDescription/ShopDescription'
 import type { PublicShopItem } from '@/lib/shop'
 
-const galleryArrowClass = 'absolute top-1/2 z-10 grid size-10 -translate-y-1/2 place-items-center bg-grey6/80 text-grey1 text-xl leading-none touch-manipulation hover:text-brand-dpr-orange focus-visible:outline-2 focus-visible:-outline-offset-2'
+const galleryArrowClass = 'grid size-8 place-items-center text-base leading-none touch-manipulation opacity-60 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:-outline-offset-2 active:opacity-80'
 
 function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
   const [photoIndex, setPhotoIndex] = useState(0)
@@ -21,17 +21,21 @@ function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
   if (photos.length === 1) return mainPhoto
 
   return (
-    <div role="group" aria-label={`${label} photos`} className="relative w-full">
-      {mainPhoto}
-      {showingExtra && <Image fill unoptimized src={photos[photoIndex]} alt={label} className="object-contain" />}
-      <button type="button" aria-label="Previous photo" className={`${galleryArrowClass} left-2`}
-        onClick={() => setPhotoIndex(index => (index + photos.length - 1) % photos.length)}>
-        <i aria-hidden="true" className="fi fi-ts-arrow-small-left translate-y-px" />
-      </button>
-      <button type="button" aria-label="Next photo" className={`${galleryArrowClass} right-2`}
-        onClick={() => setPhotoIndex(index => (index + 1) % photos.length)}>
-        <i aria-hidden="true" className="fi fi-ts-arrow-small-right translate-y-px" />
-      </button>
+    <div role="group" aria-label={`${label} photos`} className="w-full">
+      <div className="relative">
+        {mainPhoto}
+        {showingExtra && <Image fill unoptimized src={photos[photoIndex]} alt={label} className="object-contain" />}
+      </div>
+      <div className="flex justify-end">
+        <button type="button" aria-label="Previous photo" className={galleryArrowClass}
+          onClick={() => setPhotoIndex(index => (index + photos.length - 1) % photos.length)}>
+          <i aria-hidden="true" className="fi fi-ts-arrow-small-left translate-y-px" />
+        </button>
+        <button type="button" aria-label="Next photo" className={galleryArrowClass}
+          onClick={() => setPhotoIndex(index => (index + 1) % photos.length)}>
+          <i aria-hidden="true" className="fi fi-ts-arrow-small-right translate-y-px" />
+        </button>
+      </div>
       <span aria-live="polite" className="sr-only">Photo {photoIndex + 1} of {photos.length}</span>
     </div>
   )
