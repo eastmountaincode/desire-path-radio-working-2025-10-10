@@ -14,11 +14,11 @@ function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
   const photos = [item.image_url, ...(item.gallery_image_urls ?? [])]
   const hasGallery = photos.length > 1
   const showingExtra = photoIndex > 0
-  const activePhoto = useRef<HTMLImageElement>(null)
+  const mainPhotoElement = useRef<HTMLImageElement>(null)
   const controls = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const photo = activePhoto.current
+    const photo = mainPhotoElement.current
     const row = controls.current
     if (!hasGallery || !photo || !row) return
 
@@ -38,11 +38,11 @@ function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
       observer.disconnect()
       photo.removeEventListener('load', alignControls)
     }
-  }, [hasGallery, photoIndex])
+  }, [hasGallery])
 
   // Keep the main photo in the layout so its proportions set the frame height.
   const mainPhoto = (
-    <Image ref={showingExtra ? undefined : activePhoto} unoptimized src={item.image_url} alt={label} width={800} height={800}
+    <Image ref={mainPhotoElement} unoptimized src={item.image_url} alt={label} width={800} height={800}
       aria-hidden={showingExtra || undefined} className={`w-full h-auto max-h-[min(56svh,34rem)] object-contain${showingExtra ? ' invisible' : ''}`} />
   )
   if (!hasGallery) return mainPhoto
@@ -51,7 +51,7 @@ function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
     <div role="group" aria-label={`${label} photos`} className="w-full">
       <div className="relative">
         {mainPhoto}
-        {showingExtra && <Image ref={activePhoto} fill unoptimized src={photos[photoIndex]} alt={label} className="object-contain" />}
+        {showingExtra && <Image fill unoptimized src={photos[photoIndex]} alt={label} className="object-contain" />}
       </div>
       <div ref={controls} className="flex justify-end gap-2 pt-2">
         <button type="button" aria-label="Previous photo" className={galleryArrowClass}

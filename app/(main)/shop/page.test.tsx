@@ -31,7 +31,7 @@ test('keeps full photos and content in aligned image, title, and description row
   }
 })
 
-test('cycles photos in a steady frame and aligns controls to the visible photo', async () => {
+test('cycles photos in a steady frame with controls aligned to the first photo', async () => {
   global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({
     intro: 'Order by [email](mailto:orders@example.com).',
     items: [{ id: 1, title: 'Shirt', description: 'A shirt', image_url: '/front.png', gallery_image_urls: ['/back.png'] }],
@@ -54,7 +54,7 @@ test('cycles photos in a steady frame and aligns controls to the visible photo',
   jest.spyOn(extraPhoto, 'getBoundingClientRect').mockReturnValue({ width: 300, height: 400 } as DOMRect)
   Object.defineProperties(extraPhoto, { naturalWidth: { value: 1200 }, naturalHeight: { value: 600 } })
   fireEvent.load(extraPhoto)
-  expect(controls?.style.paddingInlineEnd).toBe('0px')
+  expect(controls?.style.paddingInlineEnd).toBe('50px')
   expect(extraPhoto).toHaveClass('object-contain')
   expect(extraPhoto.parentElement).toBe(mainPhoto.parentElement)
   expect(mainPhoto).toHaveClass('h-auto', 'invisible')
