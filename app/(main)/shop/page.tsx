@@ -7,7 +7,7 @@ import { useDevMode } from '@/app/components/DevModeProvider'
 import ShopDescription from '@/app/components/ShopDescription/ShopDescription'
 import type { PublicShopItem } from '@/lib/shop'
 
-const galleryArrowClass = 'grid size-8 place-items-center text-base leading-none touch-manipulation opacity-60 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:-outline-offset-2 active:opacity-80'
+const galleryArrowClass = 'grid size-11 place-items-center border border-current/45 text-lg leading-none touch-manipulation hover:border-current/70 hover:bg-current/5 focus-visible:outline-2 focus-visible:outline-offset-2 active:bg-current/10 sm:pointer-fine:size-8 sm:pointer-fine:text-base'
 
 function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
   const [photoIndex, setPhotoIndex] = useState(0)
@@ -16,7 +16,7 @@ function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
   // Keep the main photo in the layout so its proportions set the frame height.
   const mainPhoto = (
     <Image unoptimized src={item.image_url} alt={label} width={800} height={800}
-      aria-hidden={showingExtra || undefined} className={`w-full h-auto object-contain${showingExtra ? ' invisible' : ''}`} />
+      aria-hidden={showingExtra || undefined} className={`w-full h-auto max-h-[min(56svh,34rem)] object-contain${showingExtra ? ' invisible' : ''}`} />
   )
   if (photos.length === 1) return mainPhoto
 
@@ -26,7 +26,7 @@ function ShopPhotos({ item, label }: { item: PublicShopItem; label: string }) {
         {mainPhoto}
         {showingExtra && <Image fill unoptimized src={photos[photoIndex]} alt={label} className="object-contain" />}
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-center gap-2 pt-2">
         <button type="button" aria-label="Previous photo" className={galleryArrowClass}
           onClick={() => setPhotoIndex(index => (index + photos.length - 1) % photos.length)}>
           <i aria-hidden="true" className="fi fi-ts-arrow-small-left translate-y-px" />
